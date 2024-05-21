@@ -1,0 +1,135 @@
+// chords.tsx
+export type Note = {
+  string: number;
+  fret: number;
+  finger: number;
+};
+
+export type Chord = {
+  name: string;
+  startingFret: number;
+  notes: Note[];
+};
+
+export const chords: Chord[] = [
+  {
+    name: 'A Major',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 0, finger: 0 },
+      { string: 4, fret: 2, finger: 1 },
+      { string: 3, fret: 2, finger: 2 },
+      { string: 2, fret: 2, finger: 3 },
+      { string: 1, fret: 0, finger: 0 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'A Minor',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 0, finger: 0 },
+      { string: 4, fret: 2, finger: 2 },
+      { string: 3, fret: 2, finger: 3 },
+      { string: 2, fret: 1, finger: 1 },
+      { string: 1, fret: 0, finger: 0 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'C Major',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 0, finger: 0 },
+      { string: 4, fret: 1, finger: 1 },
+      { string: 3, fret: 0, finger: 0 },
+      { string: 2, fret: 2, finger: 2 },
+      { string: 1, fret: 3, finger: 3 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'D Major',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 2, finger: 2 },
+      { string: 4, fret: 3, finger: 3 },
+      { string: 3, fret: 2, finger: 1 },
+      { string: 2, fret: 0, finger: 0 },
+      { string: 1, fret: 0, finger: 0 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'D Minor',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 1, finger: 1 },
+      { string: 4, fret: 3, finger: 3 },
+      { string: 3, fret: 2, finger: 2 },
+      { string: 2, fret: 0, finger: 0 },
+      { string: 1, fret: 0, finger: 0 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'E Major',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 0, finger: 0 },
+      { string: 4, fret: 0, finger: 0 },
+      { string: 3, fret: 1, finger: 1 },
+      { string: 2, fret: 2, finger: 3 },
+      { string: 1, fret: 2, finger: 2 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'E Minor',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 0, finger: 0 },
+      { string: 4, fret: 0, finger: 0 },
+      { string: 3, fret: 0, finger: 0 },
+      { string: 2, fret: 2, finger: 2 },
+      { string: 1, fret: 2, finger: 3 },
+      { string: 0, fret: 0, finger: 0 },
+    ],
+  },
+  {
+    name: 'G Major',
+    startingFret: 1,
+    notes: [
+      { string: 5, fret: 3, finger: 4 },
+      { string: 4, fret: 2, finger: 2 },
+      { string: 3, fret: 0, finger: 0 },
+      { string: 2, fret: 0, finger: 0 },
+      { string: 1, fret: 0, finger: 0 },
+      { string: 0, fret: 3, finger: 3 },
+    ],
+  },
+  {
+    name: 'B Major',
+    startingFret: 2,
+    notes: [
+      { string: 5, fret: 2, finger: 1 },
+      { string: 4, fret: 4, finger: 3 },
+      { string: 3, fret: 4, finger: 4 },
+      { string: 2, fret: 4, finger: 5 },
+      { string: 1, fret: 3, finger: 2 },
+      { string: 0, fret: 2, finger: 1 },
+    ],
+  },
+  {
+    name: 'B Minor',
+    startingFret: 2,
+    notes: [
+      { string: 5, fret: 2, finger: 1 },
+      { string: 4, fret: 3, finger: 2 },
+      { string: 3, fret: 4, finger: 4 },
+      { string: 2, fret: 4, finger: 5 },
+      { string: 1, fret: 2, finger: 1 },
+      { string: 0, fret: 2, finger: 1 },
+    ],
+  },
+];
