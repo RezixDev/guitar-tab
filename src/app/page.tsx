@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import ChordSVG from '../components/ChordSVG';
-import { chords, Chord } from '../components/chords';
+import { chords, Chord, Note } from '../components/chords';
 
 const Home: React.FC = () => {
   const [currentChord, setCurrentChord] = useState<Chord>(chords[0]);
