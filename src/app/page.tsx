@@ -2,10 +2,16 @@
 
 import React, { useState } from 'react';
 import ChordSVG from '../components/ChordSVG';
-import { chords, Chord, Note } from '../components/chords';
+import {
+  standardChords,
+  extendedChords,
+  Chord,
+  Note,
+} from '../components/chords';
 
 const Home: React.FC = () => {
-  const [currentChord, setCurrentChord] = useState<Chord>(chords[0]);
+  const [currentChord, setCurrentChord] = useState<Chord>(standardChords[0]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleChordChange = (chord: Chord) => {
     setCurrentChord(chord);
@@ -31,13 +37,49 @@ const Home: React.FC = () => {
     setCurrentChord(newChord);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredStandardChords = standardChords.filter((chord) =>
+    chord.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredExtendedChords = extendedChords.filter((chord) =>
+    chord.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className='container mx-auto p-4'>
       <h1 className='text-2xl font-bold mb-4'>Guitar Chord Tool</h1>
 
-      {/* Buttons to load chords */}
       <div className='mb-4'>
-        {chords.map((chord, index) => (
+        <label className='mr-2'>Search Chords</label>
+        <input
+          type='text'
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className='border p-1'
+        />
+      </div>
+
+      {/* Buttons to load standard chords */}
+      <div className='mb-4'>
+        <h2 className='text-xl font-bold'>Standard Chords</h2>
+        {filteredStandardChords.map((chord, index) => (
+          <button
+            key={index}
+            onClick={() => handleChordChange(chord)}
+            className='border p-2 m-1'
+          >
+            {chord.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Buttons to load extended chords */}
+      <div className='mb-4'>
+        <h2 className='text-xl font-bold'>Extended Chords</h2>
+        {filteredExtendedChords.map((chord, index) => (
           <button
             key={index}
             onClick={() => handleChordChange(chord)}
