@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 768px) {
+  .fretboard-container {
+    flex-direction: column;
+  }
+
+  .fretboard-svg {
+    transform: rotate(90deg);
+    transform-origin: left top;
+  }
+
+  .fretboard-labels {
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+}
