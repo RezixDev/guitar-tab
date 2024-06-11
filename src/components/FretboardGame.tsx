@@ -1,36 +1,55 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import FretboardSVG from './FretboardSVG';
 import {
   standardTuning,
   halfStepDownTuning,
-  dropDTuning, // Import Drop D tuning
+  dropDTuning,
   generateRandomNote,
   getAllNotePositions,
   getChordPositions,
   chords,
+  Note,
+  Tuning,
+  NotePosition,
 } from '../utils/noteUtils';
 
-const TuningSelector = ({ onChange }) => (
+const TuningSelector = ({
+  onChange,
+}: {
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+}) => (
   <div className='mb-4'>
     <label htmlFor='tuning' className='mr-2'>
       Select Tuning:
     </label>
-    <select id='tuning' onChange={onChange} className='border border-gray-400 p-2'>
+    <select
+      id='tuning'
+      onChange={onChange}
+      className='border border-gray-400 p-2'
+    >
       <option value='standard'>Standard</option>
       <option value='halfStepDown'>Half Step Down</option>
-      <option value='dropD'>Drop D</option> {/* Add Drop D option */}
+      <option value='dropD'>Drop D</option>
     </select>
   </div>
 );
 
-const ChordSelector = ({ onChange }) => (
+const ChordSelector = ({
+  onChange,
+}: {
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+}) => (
   <div className='mb-4'>
     <label htmlFor='chord' className='mr-2'>
       Select Chord:
     </label>
-    <select id='chord' onChange={onChange} className='border border-gray-400 p-2'>
+    <select
+      id='chord'
+      onChange={onChange}
+      className='border border-gray-400 p-2'
+    >
       <option value=''>None</option>
       {Object.keys(chords).map((chord) => (
         <option key={chord} value={chord}>
@@ -41,7 +60,15 @@ const ChordSelector = ({ onChange }) => (
   </div>
 );
 
-const ModeToggle = ({ label, checked, onChange }) => (
+const ModeToggle = ({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) => (
   <div className='mb-4'>
     <label htmlFor={label} className='mr-2'>
       {label}:
@@ -63,21 +90,23 @@ const ModeToggle = ({ label, checked, onChange }) => (
   </div>
 );
 
-const FretboardGame = () => {
-  const [tuning, setTuning] = useState(standardTuning);
-  const [currentNote, setCurrentNote] = useState(generateRandomNote(standardTuning));
-  const [feedback, setFeedback] = useState('');
-  const [points, setPoints] = useState(0);
-  const [showNext, setShowNext] = useState(false);
-  const [newbieMode, setNewbieMode] = useState(true);
-  const [easyMode, setEasyMode] = useState(false);
-  const [hardMode, setHardMode] = useState(false);
-  const [guessedPositions, setGuessedPositions] = useState([]);
-  const [selectedChord, setSelectedChord] = useState('');
-  const [startTime, setStartTime] = useState(Date.now());
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [timeChallenge, setTimeChallenge] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
+const FretboardGame: React.FC = () => {
+  const [tuning, setTuning] = useState<Tuning>(standardTuning);
+  const [currentNote, setCurrentNote] = useState<Note>(
+    generateRandomNote(standardTuning)
+  );
+  const [feedback, setFeedback] = useState<string>('');
+  const [points, setPoints] = useState<number>(0);
+  const [showNext, setShowNext] = useState<boolean>(false);
+  const [newbieMode, setNewbieMode] = useState<boolean>(true);
+  const [easyMode, setEasyMode] = useState<boolean>(false);
+  const [hardMode, setHardMode] = useState<boolean>(false);
+  const [guessedPositions, setGuessedPositions] = useState<NotePosition[]>([]);
+  const [selectedChord, setSelectedChord] = useState<string>('');
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [timeChallenge, setTimeChallenge] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
 
   const width = 900;
   const height = 300;
@@ -93,26 +122,28 @@ const FretboardGame = () => {
   }, [hardMode, currentNote, tuning]);
 
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (timeChallenge) {
       interval = setInterval(() => {
-        setElapsedTime(((Date.now() - startTime) / 1000).toFixed(2));
+        setElapsedTime(
+          parseFloat(((Date.now() - startTime) / 1000).toFixed(2))
+        );
       }, 100);
     }
     return () => clearInterval(interval);
   }, [timeChallenge, startTime]);
 
-  const handleTuningChange = (event) => {
+  const handleTuningChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedTuning =
       event.target.value === 'standard'
         ? standardTuning
         : event.target.value === 'halfStepDown'
         ? halfStepDownTuning
-        : dropDTuning; // Handle Drop D tuning
+        : dropDTuning;
     setTuning(selectedTuning);
   };
 
-  const handleFretClick = (string, fret) => {
+  const handleFretClick = (string: number, fret: number) => {
     if (!newbieMode && !easyMode && !hardMode) {
       setFeedback('Please select a mode.');
       return;
@@ -128,7 +159,7 @@ const FretboardGame = () => {
       setPoints((prev) => prev + 1);
       setFeedback('Correct!');
 
-      if (points + 1 === 5) {
+      if (points + 1 === 20) {
         setShowNotification(true);
         if (timeChallenge) {
           alert(`Great! You did it in ${elapsedTime} seconds!`);
@@ -141,8 +172,11 @@ const FretboardGame = () => {
         const allGuessed = correctPositions.every(
           (position) =>
             guessedPositions.some(
-              (guessed) => guessed.string === position.string && guessed.fret === position.fret
-            ) || (position.string === string && position.fret === fret)
+              (guessed) =>
+                guessed.string === position.string &&
+                guessed.fret === position.fret
+            ) ||
+            (position.string === string && position.fret === fret)
         );
 
         if (allGuessed) {
@@ -152,7 +186,11 @@ const FretboardGame = () => {
         setShowNext(true);
       }
     } else {
-      setFeedback(`Incorrect. Try again! You clicked on String ${string + 1}, Fret ${fret + 1}.`);
+      setFeedback(
+        `Incorrect. Try again! You clicked on String ${string + 1}, Fret ${
+          fret + 1
+        }.`
+      );
     }
   };
 
@@ -163,11 +201,11 @@ const FretboardGame = () => {
     setGuessedPositions([]);
   };
 
-  const handleChordChange = (event) => {
+  const handleChordChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedChord(event.target.value);
   };
 
-  const handleModeChange = (mode) => {
+  const handleModeChange = (mode: string) => {
     if (mode === 'newbieMode') {
       setNewbieMode(!newbieMode);
       if (!newbieMode) {
@@ -241,20 +279,26 @@ const FretboardGame = () => {
       )}
       <div className='mb-4 min-h-12'>
         {showNext && (
-          <button onClick={handleNextClick} className='bg-blue-500 text-white p-2 rounded'>
+          <button
+            onClick={handleNextClick}
+            className='bg-blue-500 text-white p-2 rounded'
+          >
             Next
           </button>
         )}
       </div>
       {showNotification && (
         <div className='mb-4 p-4 bg-green-200 text-green-800 rounded'>
-          Congratulations! You've scored 30 points!
+          Congratulations! Youve scored 30 points!
         </div>
       )}
       <div className='relative'>
         {tuning ? (
           <>
-            <div className='absolute left-0 top-0 h-full flex flex-col justify-center pr-2' style={{ gap: '20px' }}>
+            <div
+              className='absolute left-0 top-0 h-full flex flex-col justify-center pr-2'
+              style={{ gap: '20px' }}
+            >
               {[...Array(6)].map((_, i) => (
                 <div key={`string-name-${i}`} className='text-14 font-Arial'>
                   {tuning[i]}

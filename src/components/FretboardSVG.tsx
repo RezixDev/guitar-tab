@@ -1,8 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { getNote } from '../utils/noteUtils';
+import { Tuning, Note, NotePosition, getNote } from '../utils/noteUtils';
 
-const FretboardSVG = ({
+interface FretboardSVGProps {
+  tuning: Tuning;
+  width: number;
+  height: number;
+  onFretClick: (string: number, fret: number) => void;
+  showNext: boolean;
+  currentNote: Note;
+  guessedPositions: NotePosition[];
+  chordPositions: NotePosition[];
+  easyMode: boolean;
+}
+
+const FretboardSVG: React.FC<FretboardSVGProps> = ({
   tuning,
   width,
   height,
@@ -18,7 +29,7 @@ const FretboardSVG = ({
   const stringSpacing = height / (stringCount + 1);
   const fretSpacing = width / (fretCount + 1);
 
-  const noteColors = {
+  const noteColors: { [key: string]: string } = {
     A: '#1D7669',
     'A#': '#3FB82D',
     B: '#A5E906',
@@ -33,7 +44,7 @@ const FretboardSVG = ({
     'G#': '#1767FC',
   };
 
-  const getLuminance = (hexColor) => {
+  const getLuminance = (hexColor: string): number => {
     const r = parseInt(hexColor.substr(1, 2), 16) / 255;
     const g = parseInt(hexColor.substr(3, 2), 16) / 255;
     const b = parseInt(hexColor.substr(5, 2), 16) / 255;
@@ -45,7 +56,7 @@ const FretboardSVG = ({
     return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
   };
 
-  const getFontColor = (hexColor) =>
+  const getFontColor = (hexColor: string): string =>
     getLuminance(hexColor) > 0.5 ? '#000000' : '#FFFFFF';
 
   const renderStrings = () =>
@@ -212,18 +223,6 @@ const FretboardSVG = ({
       {renderGuessedNotes()}
     </svg>
   );
-};
-
-FretboardSVG.propTypes = {
-  tuning: PropTypes.array.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  onFretClick: PropTypes.func.isRequired,
-  showNext: PropTypes.bool.isRequired,
-  currentNote: PropTypes.object.isRequired,
-  guessedPositions: PropTypes.array.isRequired,
-  chordPositions: PropTypes.array.isRequired,
-  easyMode: PropTypes.bool.isRequired,
 };
 
 export default FretboardSVG;
