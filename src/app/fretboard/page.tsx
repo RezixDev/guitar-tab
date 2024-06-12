@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import FretboardGame from '../../components/FretboardGame';
+import FretboardGame from '../components/FretboardGame';
 
-const Fretboard = () => {
+export default function Page() {
   return (
-    <div>
-      <FretboardGame />
-    </div>
+    <>
+      <div className='container mx-auto'>
+        <FretboardGame />
+      </div>
+    </>
   );
-};
-
-export default Fretboard;
+}

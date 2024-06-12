@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
+import React, { useState, useMemo, ChangeEvent } from 'react';
 import FretboardSVG from './FretboardSVG';
+import ModeToggle from './ModeToggle';
+import useClientEffect from './useClientEffect';
 import {
   standardTuning,
   halfStepDownTuning,
@@ -60,36 +62,6 @@ const ChordSelector = ({
   </div>
 );
 
-const ModeToggle = ({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: () => void;
-}) => (
-  <div className='mb-4'>
-    <label htmlFor={label} className='mr-2'>
-      {label}:
-    </label>
-    <input
-      type='checkbox'
-      id={label}
-      checked={checked}
-      onChange={onChange}
-      className='mr-2'
-    />
-    <span>
-      {label === 'newbieMode'
-        ? 'Show All Notes'
-        : label === 'easyMode'
-        ? 'Guess One Position'
-        : 'Guess All Positions'}
-    </span>
-  </div>
-);
-
 const FretboardGame: React.FC = () => {
   const [tuning, setTuning] = useState<Tuning>(standardTuning);
   const [currentNote, setCurrentNote] = useState<Note>(
@@ -111,17 +83,17 @@ const FretboardGame: React.FC = () => {
   const width = 900;
   const height = 300;
 
-  useEffect(() => {
+  useClientEffect(() => {
     setCurrentNote(generateRandomNote(tuning));
   }, [tuning]);
 
-  useEffect(() => {
+  useClientEffect(() => {
     if (hardMode) {
       setGuessedPositions([]);
     }
   }, [hardMode, currentNote, tuning]);
 
-  useEffect(() => {
+  useClientEffect(() => {
     let interval: NodeJS.Timeout;
     if (timeChallenge) {
       interval = setInterval(() => {
