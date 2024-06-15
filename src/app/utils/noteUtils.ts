@@ -1,3 +1,5 @@
+// noteUtils.ts
+
 export type Tuning = string[];
 
 export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'];
@@ -13,40 +15,23 @@ export const fretNotes: string[][] = [
   ['E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#'],
 ];
 
-interface Chords {
-  [key: string]: string[];
-}
-
-export const chords: Chords = {
-  'C Major': ['C', 'E', 'G'],
-  'G Major': ['G', 'B', 'D'],
-  'D Major': ['D', 'F#', 'A'],
-  'A Major': ['A', 'C#', 'E'],
-  'E Major': ['E', 'G#', 'B'],
-  'F Major': ['F', 'A', 'C'],
-  'B Major': ['B', 'D#', 'F#'],
-};
-
 export interface NotePosition {
-  string: number;
-  fret: number;
-}
-
-export interface Note {
   string: number;
   fret: number;
   note: string;
 }
 
+export interface Note extends NotePosition {}
+
 export const getNoteIndex = (note: string): NotePosition => {
   for (let i = 0; i < fretNotes.length; i++) {
     for (let j = 0; j < fretNotes[i].length; j++) {
       if (fretNotes[i][j] === note) {
-        return { string: i, fret: j };
+        return { string: i, fret: j, note };
       }
     }
   }
-  return { string: 0, fret: 0 };
+  return { string: 0, fret: 0, note };
 };
 
 export const getNote = (
@@ -72,7 +57,7 @@ export const getAllNotePositions = (
   for (let stringIndex = 0; stringIndex < tuning.length; stringIndex++) {
     for (let fretIndex = 0; fretIndex < fretNotes[0].length; fretIndex++) {
       if (getNote(stringIndex, fretIndex, tuning) === note) {
-        positions.push({ string: stringIndex, fret: fretIndex });
+        positions.push({ string: stringIndex, fret: fretIndex, note });
       }
     }
   }
@@ -89,3 +74,9 @@ export const getChordPositions = (
   });
   return positions;
 };
+
+export const majorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+export const minorScale = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+export const majorPentatonicScale = ['C', 'D', 'E', 'G', 'A'];
+export const minorPentatonicScale = ['A', 'C', 'D', 'E', 'G'];
+export const bluesScale = ['A', 'C', 'D', 'D#', 'E', 'G'];
