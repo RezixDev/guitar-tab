@@ -6,7 +6,7 @@ export default function Page() {
     <>
       <div className='app'>
         <h1 className='text-2xl font-bold mb-4'>Scale Viewer</h1>
-        <ScaleViewer width={800} height={300} scale={majorScale} />
+        <ScaleViewer width={800} height={300} />
       </div>
     </>
   );

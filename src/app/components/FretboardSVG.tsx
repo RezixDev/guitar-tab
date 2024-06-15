@@ -9,7 +9,6 @@ interface FretboardSVGProps {
   showNext: boolean;
   currentNote: Note;
   guessedPositions: NotePosition[];
-  chordPositions: NotePosition[];
   easyMode: boolean;
 }
 
@@ -21,7 +20,6 @@ const FretboardSVG: React.FC<FretboardSVGProps> = ({
   showNext,
   currentNote,
   guessedPositions,
-  chordPositions,
   easyMode,
 }) => {
   const stringCount = 6;
@@ -159,30 +157,6 @@ const FretboardSVG: React.FC<FretboardSVGProps> = ({
     </>
   );
 
-  const renderChordNotes = () =>
-    chordPositions.map(({ string, fret }) => (
-      <g key={`chord-note-${string}-${fret}`}>
-        <circle
-          cx={fretSpacing * (fret + 1) - fretSpacing / 2}
-          cy={stringSpacing * (string + 1)}
-          r={12}
-          fill='lightgreen'
-          stroke='black'
-          strokeWidth='1'
-        />
-        <text
-          x={fretSpacing * (fret + 1) - fretSpacing / 2}
-          y={stringSpacing * (string + 1) + 4}
-          textAnchor='middle'
-          fontSize='10'
-          fontFamily='Arial'
-          fill='black'
-        >
-          {getNote(string, fret, tuning)}
-        </text>
-      </g>
-    ));
-
   const renderGuessedNotes = () =>
     guessedPositions.map(({ string, fret }) => (
       <g key={`guessed-note-${string}-${fret}`}>
@@ -219,7 +193,6 @@ const FretboardSVG: React.FC<FretboardSVGProps> = ({
       {renderFretNumbers()}
       {renderClickableAreas()}
       {showNext && renderCurrentNote()}
-      {chordPositions && renderChordNotes()}
       {renderGuessedNotes()}
     </svg>
   );

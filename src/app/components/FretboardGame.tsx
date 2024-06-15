@@ -10,8 +10,7 @@ import {
   dropDTuning,
   generateRandomNote,
   getAllNotePositions,
-  getChordPositions,
-  chords,
+  getNote,
   Note,
   Tuning,
   NotePosition,
@@ -34,30 +33,6 @@ const TuningSelector = ({
       <option value='standard'>Standard</option>
       <option value='halfStepDown'>Half Step Down</option>
       <option value='dropD'>Drop D</option>
-    </select>
-  </div>
-);
-
-const ChordSelector = ({
-  onChange,
-}: {
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
-}) => (
-  <div className='mb-4'>
-    <label htmlFor='chord' className='mr-2'>
-      Select Chord:
-    </label>
-    <select
-      id='chord'
-      onChange={onChange}
-      className='border border-gray-400 p-2'
-    >
-      <option value=''>None</option>
-      {Object.keys(chords).map((chord) => (
-        <option key={chord} value={chord}>
-          {chord}
-        </option>
-      ))}
     </select>
   </div>
 );
@@ -127,7 +102,8 @@ const FretboardGame: React.FC = () => {
     );
 
     if (isCorrect) {
-      setGuessedPositions((prev) => [...prev, { string, fret }]);
+      const note = getNote(string, fret, tuning);
+      setGuessedPositions((prev) => [...prev, { string, fret, note }]);
       setPoints((prev) => prev + 1);
       setFeedback('Correct!');
 
@@ -205,16 +181,10 @@ const FretboardGame: React.FC = () => {
     setStartTime(Date.now());
   };
 
-  const chordPositions = useMemo(
-    () => (selectedChord ? getChordPositions(selectedChord, tuning) : []),
-    [selectedChord, tuning]
-  );
-
   return (
     <div className='container mx-auto p-4'>
       <h1 className='text-2xl font-bold mb-4'>Fretboard Guessing Game</h1>
       <TuningSelector onChange={handleTuningChange} />
-      <ChordSelector onChange={handleChordChange} />
       <ModeToggle
         label='newbieMode'
         checked={newbieMode}
@@ -285,7 +255,6 @@ const FretboardGame: React.FC = () => {
               showNext={showNext}
               currentNote={currentNote}
               guessedPositions={guessedPositions}
-              chordPositions={chordPositions}
               easyMode={newbieMode}
             />
           </>

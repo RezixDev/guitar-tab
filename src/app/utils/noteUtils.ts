@@ -64,17 +64,6 @@ export const getAllNotePositions = (
   return positions;
 };
 
-export const getChordPositions = (
-  chord: string,
-  tuning: Tuning
-): NotePosition[] => {
-  const positions: NotePosition[] = [];
-  chords[chord].forEach((note) => {
-    positions.push(...getAllNotePositions(note, tuning));
-  });
-  return positions;
-};
-
 export const majorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 export const minorScale = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 export const majorPentatonicScale = ['C', 'D', 'E', 'G', 'A'];

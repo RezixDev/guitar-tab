@@ -21,7 +21,7 @@ interface ScaleViewerProps {
   height: number;
 }
 
-const scales = {
+const scales: { [key: string]: string[] } = {
   Major: majorScale,
   Minor: minorScale,
   'Major Pentatonic': majorPentatonicScale,
@@ -51,7 +51,7 @@ const ScaleViewer: React.FC<ScaleViewerProps> = ({
     setGroundNote(note);
   };
 
-  const calculateScaleNotes = () => {
+  const calculateScaleNotes = (): string[] => {
     const scale = scales[selectedScale];
     const rootIndex = fretNotes[0].indexOf(groundNote);
     return scale.map((note) => {
