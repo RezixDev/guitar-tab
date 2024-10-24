@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Guitar Learning Tools 🎸
+
+A comprehensive web application for guitar players featuring chord visualization, scale learning, and fretboard mastery tools. Built with Next.js and React.
+
+## Features
+
+### 🎵 Guitar Chord Tool
+- Interactive chord diagram viewer
+- Searchable chord library (Standard & Extended chords)
+- Customizable chord positions and fingerings
+- Modal view for enlarged chord diagrams
+- Responsive design for all devices
+
+### 📊 Scale Viewer
+- Visual representation of guitar scales
+- Interactive scale pattern display
+- Major scale patterns built-in
+- Clean, intuitive interface
+- Gradient background design for better visibility
+
+### 🎯 Fretboard Learning Game
+- Interactive fretboard note recognition game
+- Practice mode for learning note positions
+- Clean card-based interface
+- Progress tracking capabilities
+
+## Technology Stack
+
+- **Framework**: Next.js
+- **UI Library**: React
+- **Styling**: Tailwind CSS
+- **Components**: shadcn/ui
+- **State Management**: Custom React Hooks
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/RezixDev/guitar-tab
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Open [http://localhost:3000](http://localhost:3000) to view the application
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+components/
+├── chords/
+│   ├── ChordSearch.tsx
+│   ├── ChordList.tsx
+│   ├── ChordDetails.tsx
+│   ├── ChordModal.tsx
+│   ├── ChordSVG.tsx
+│   └── useChordState.ts
+├── fretboard/
+│   └── FretboardGame.tsx
+└── ScaleViewer.tsx
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+app/
+├── page.tsx
+├── fretboard/
+│   └── page.tsx
+└── utils/
+    └── noteUtils.ts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Key Components
 
-## Deploy on Vercel
+### Chord Tool
+- `ChordSearch`: Searchable interface for finding chords
+- `ChordList`: Displays available chords in categories
+- `ChordDetails`: Shows detailed chord information
+- `ChordModal`: Popup view for enlarged chord diagrams
+- `ChordSVG`: SVG renderer for chord diagrams
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Scale Viewer
+- Interactive scale visualization
+- Support for various scale patterns
+- Visual fretboard representation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Fretboard Game
+- Interactive note recognition
+- Practice mode
+- Progress tracking
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
