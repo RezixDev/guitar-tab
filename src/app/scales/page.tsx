@@ -1,6 +1,6 @@
 import React from "react";
 import ScaleViewer from "@/components/ScaleViewer";
-import { majorScale } from "../../app/utils/noteUtils";
+import { majorScale } from "@/utils/noteUtils";
 
 export default function Page() {
 	return (

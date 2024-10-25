@@ -1,5 +1,5 @@
 import React from "react";
-import { Tuning, Note, NotePosition, getNote } from "../app/utils/noteUtils";
+import { Tuning, Note, NotePosition, getNote } from "@/utils/noteUtils";
 
 interface FretboardSVGProps {
 	tuning: Tuning;

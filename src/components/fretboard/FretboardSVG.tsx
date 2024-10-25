@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { Tuning, Note, NotePosition, getNote } from "../../app/utils/noteUtils";
+import { Tuning, Note, NotePosition, getNote } from "@/utils/noteUtils";
 
 interface FretboardSVGProps {
 	tuning: Tuning;
@@ -13,7 +13,7 @@ interface FretboardSVGProps {
 	highContrast?: boolean; // New prop for high contrast mode
 }
 
-const FretboardSVG: React.FC<FretboardSVGProps> = ({
+export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 	tuning,
 	width,
 	height,
@@ -337,4 +337,3 @@ const renderClickableAreas = () =>
 	);
 };
 
-export default FretboardSVG;

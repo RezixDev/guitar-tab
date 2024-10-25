@@ -24,7 +24,7 @@ interface CompletionModalProps {
 	};
 }
 
-const CompletionModal: React.FC<CompletionModalProps> = ({
+export const CompletionModal: React.FC<CompletionModalProps> = ({
 	isOpen,
 	onClose,
 	stats,
@@ -92,5 +92,3 @@ const CompletionModal: React.FC<CompletionModalProps> = ({
 		</Dialog>
 	);
 };
-
-export default CompletionModal;

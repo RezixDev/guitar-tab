@@ -1,4 +1,8 @@
 I am programming guitar Learning App, this is my Fretboard Game using Tailwind, React and Next.js
+Dont use default exports
+
+
+
 
 make it that after the succesfull completion of given questions there comes an modal like: "Congrats! You guesses X times right! in Time: 
 

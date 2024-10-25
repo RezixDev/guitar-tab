@@ -9,7 +9,7 @@ interface ModeToggleProps {
 	onChange: (checked: boolean) => void;
 }
 
-const ModeToggle: React.FC<ModeToggleProps> = ({
+export const ModeToggle: React.FC<ModeToggleProps> = ({
 	label,
 	checked,
 	onChange,
@@ -22,4 +22,3 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
 	);
 };
 
-export default ModeToggle;
