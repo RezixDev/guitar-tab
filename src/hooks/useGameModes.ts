@@ -1,21 +1,51 @@
 // hooks/useGameModes.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Define default modes as a constant
+const DEFAULT_MODES = {
+    showAllNotes: false,
+    newbieMode: false,
+    easyMode: false,
+    hardMode: false,
+    timeChallenge: true,
+};
 
 export const useGameModes = () => {
-    const [newbieMode, setNewbieMode] = useState(true);
-    const [easyMode, setEasyMode] = useState(false);
-    const [hardMode, setHardMode] = useState(false);
-    const [timeChallenge, setTimeChallenge] = useState(false);
+    const [modes, setModes] = useState({
+        ...DEFAULT_MODES,
+        easyMode: false,
+        hardMode: false,
+    });
 
-    const setMode = (mode: 'newbie' | 'easy' | 'hard', value: boolean) => {
-        setNewbieMode(mode === 'newbie' ? value : false);
-        setEasyMode(mode === 'easy' ? value : false);
-        setHardMode(mode === 'hard' ? value : false);
+    const setMode = (mode: keyof typeof modes) => {
+        // Prevent easyMode and hardMode from being changed
+        if (mode === 'easyMode' || mode === 'hardMode') return;
+        
+        setModes((prev) => ({
+            ...prev,
+            [mode]: !prev[mode],
+        }));
     };
 
-    return {
-        modes: { newbieMode, easyMode, hardMode, timeChallenge },
-        setMode,
-        setTimeChallenge
+    const setTimeChallenge = (value: boolean) => {
+        setModes((prev) => ({
+            ...prev,
+            timeChallenge: value,
+        }));
+    };
+
+    // Always ensure easyMode and hardMode are false
+    useEffect(() => {
+        setModes(prev => ({
+            ...prev,
+            easyMode: false,
+            hardMode: false
+        }));
+    }, []);
+
+    return { 
+        modes: { ...modes, easyMode: false, hardMode: false }, // Force them to be false in the returned object
+        setMode, 
+        setTimeChallenge 
     };
 };

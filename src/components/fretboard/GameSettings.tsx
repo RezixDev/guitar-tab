@@ -16,6 +16,7 @@ interface GameSettingsProps {
     };
     onModeChange: (mode: 'newbie' | 'easy' | 'hard', value: boolean) => void;
     onTimeChallengeChange: (value: boolean) => void;
+    disabled?: boolean;
 }
 
 export const GameSettings: React.FC<GameSettingsProps> = ({
