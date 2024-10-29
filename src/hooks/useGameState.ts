@@ -1,25 +1,43 @@
 import { useState, useCallback } from 'react';
-import type { Tuning } from '@/utils/noteUtils';
-
-interface Position {
-  string: number;
-  fret: number;
-}
+import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
 
 interface GameState {
-  currentNote: string;
+  currentNote: Note;
   points: number;
   targetPoints: number;
   streak: number;
   totalAttempts: number;
   feedback: string;
   showNext: boolean;
-  guessedPositions: Position[];
+  guessedPositions: NotePosition[];
 }
 
-const generateRandomNote = (tuning: Tuning): string => {
+const generateRandomNote = (tuning: Tuning): Note => {
   const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-  return notes[Math.floor(Math.random() * notes.length)];
+  const randomNote = notes[Math.floor(Math.random() * notes.length)];
+  
+  const validPositions: Array<{ string: number; fret: number }> = [];
+  
+  for (let string = 0; string < tuning.length; string++) {
+    for (let fret = 0; fret < 12; fret++) {
+      const stringNote = tuning[string];
+      const baseNoteIndex = notes.indexOf(stringNote);
+      const noteIndex = (baseNoteIndex + fret) % 12;
+      const noteAtPosition = notes[noteIndex];
+      
+      if (noteAtPosition === randomNote) {
+        validPositions.push({ string, fret });
+      }
+    }
+  }
+  
+  const randomPosition = validPositions[Math.floor(Math.random() * validPositions.length)];
+  
+  return {
+    note: randomNote,
+    string: randomPosition.string,
+    fret: randomPosition.fret
+  };
 };
 
 export const useGameState = (tuning: Tuning) => {
@@ -34,26 +52,34 @@ export const useGameState = (tuning: Tuning) => {
     guessedPositions: []
   });
 
+  // Move updateGameState declaration before other functions that use it
   const updateGameState = useCallback((updates: Partial<GameState>) => {
     setGameState(prev => ({ ...prev, ...updates }));
   }, []);
 
   const checkNoteAtPosition = useCallback((string: number, fret: number): boolean => {
-    // Get the base note of the string from tuning
-    const stringNote = tuning[string - 1];
+    const stringNote = tuning[string];
     const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-    
-    // Calculate the note at the given fret
     const baseNoteIndex = notes.indexOf(stringNote);
     const noteIndex = (baseNoteIndex + fret) % 12;
     const noteAtPosition = notes[noteIndex];
     
-    return noteAtPosition === gameState.currentNote;
-  }, [gameState.currentNote, tuning]);
+    return noteAtPosition === gameState.currentNote.note;
+  }, [gameState.currentNote.note, tuning]);
 
   const handleGuess = useCallback((string: number, fret: number) => {
     const isCorrect = checkNoteAtPosition(string, fret);
-    const position = { string, fret };
+    const stringNote = tuning[string];
+    const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+    const baseNoteIndex = notes.indexOf(stringNote);
+    const noteIndex = (baseNoteIndex + fret) % 12;
+    const noteAtPosition = notes[noteIndex];
+
+    const position: NotePosition = {
+      string,
+      fret,
+      note: noteAtPosition
+    };
 
     if (isCorrect && !gameState.showNext) {
       const newPoints = gameState.points + 1;
@@ -75,7 +101,7 @@ export const useGameState = (tuning: Tuning) => {
         guessedPositions: [...gameState.guessedPositions, position]
       });
     }
-  }, [gameState, checkNoteAtPosition, updateGameState]);
+  }, [gameState, checkNoteAtPosition, updateGameState, tuning]);
 
   const resetGame = useCallback(() => {
     setGameState({

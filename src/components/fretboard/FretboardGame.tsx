@@ -98,7 +98,7 @@ export const FretboardGame = () => {
 	const handleNextNote = () => {
 		const randomNote = generateRandomNote(tuning);
 		updateGameState({
-			currentNote: randomNote.note,
+			currentNote: randomNote,  // Pass the complete Note object
 			feedback: "",
 			showNext: false,
 			guessedPositions: [],
@@ -110,7 +110,7 @@ export const FretboardGame = () => {
 		setStartTime(Date.now());
 		const randomNote = generateRandomNote(tuning);
 		updateGameState({
-			currentNote: randomNote.note,
+			currentNote: randomNote,  // Pass the complete Note object
 			points: 0,
 			feedback: "",
 			showNext: false,
@@ -154,13 +154,20 @@ export const FretboardGame = () => {
 					}
 					modes={modes}
 					onModeChange={(mode: "newbie" | "easy" | "hard", value: boolean) => {
-						// Map the incoming mode names to your state's mode names
 						const modeMap = {
 							newbie: "newbieMode",
 							easy: "easyMode",
 							hard: "hardMode"
 						} as const;
-						setMode(modeMap[mode]);
+						
+						// Toggle the specific mode and disable others
+						Object.keys(modeMap).forEach(key => {
+							if (key === mode) {
+								setMode(modeMap[key as keyof typeof modeMap], value);
+							} else {
+								setMode(modeMap[key as keyof typeof modeMap], false);
+							}
+						});
 					}}
 					onTimeChallengeChange={setTimeChallenge}
 					disabled={isGameStarted}
@@ -183,18 +190,17 @@ export const FretboardGame = () => {
 				/>
 
 				{isGameStarted && (
-					<div className="relative overflow-x-auto">
-						<FretboardSVG
-							tuning={tuning}
-							width={900}
-							height={300}
-							onFretClick={handleFretClick}
-							showNext={gameState.showNext}
-							currentNote={gameState.currentNote}
-							guessedPositions={gameState.guessedPositions}
-							easyMode={modes.easyMode}
-						/>
-					</div>
+					 <FretboardSVG
+					 tuning={tuning}
+					 width={900}
+					 height={300}
+					 onFretClick={handleFretClick}
+					 showNext={gameState.showNext}
+					 currentNote={gameState.currentNote}
+					 guessedPositions={gameState.guessedPositions}
+					 easyMode={modes.easyMode}
+					 highContrast={false} // or pass your highContrast state/prop here
+				 />
 				)}
 
 				<KeyboardControls />

@@ -1,19 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Clock, Target, Music, Play } from "lucide-react";
+import type { Note } from "@/utils/noteUtils";
+
 
 interface GameControlsProps {
-	points: number;
-	targetPoints: number;
-	streak: number;
-	bestTime: number | null;
-	timeChallenge: boolean;
-	elapsedTime: number;
-	showNext: boolean;
-	currentNote: string;
-	isGameStarted: boolean;
-	onNextNote: () => void;
-	onStartGame: () => void;
+    points: number;
+    targetPoints: number;
+    streak: number;
+    bestTime: number | null;
+    timeChallenge: boolean;
+    elapsedTime: number;
+    showNext: boolean;
+    currentNote: Note;  // Changed from string to Note type
+    isGameStarted: boolean;
+    onNextNote: () => void;
+    onStartGame: () => void;
 }
 
 export const GameControls: React.FC<GameControlsProps> = ({
@@ -55,7 +57,9 @@ export const GameControls: React.FC<GameControlsProps> = ({
 					<Music className="w-4 h-4" />
 					Find this note on the fretboard:
 				</div>
-				<div className="text-5xl font-bold tracking-wider">{currentNote}</div>
+				<div className="text-5xl font-bold tracking-wider">{currentNote.note}</div>
+
+
 				{showNext && (
 					<div className="text-sm text-muted-foreground mt-2">
 						Great! Press Enter or click Next Note to continue
