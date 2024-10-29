@@ -43,12 +43,12 @@ export const GameSettings: React.FC<GameSettingsProps> = ({
                 <Label>Game Modes</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ModeToggle
-                        label="Show All Notes"
+                        label="Guess One Position"
                         checked={modes.newbieMode}
                         onChange={(checked) => onModeChange('newbie', checked)}
                     />
                     <ModeToggle
-                        label="Guess One Position"
+                        label="Show All Notes"
                         checked={modes.easyMode}
                         onChange={(checked) => onModeChange('easy', checked)}
                     />

@@ -323,11 +323,11 @@ const renderClickableAreas = () =>
 					<text
 						key={`string-name-${index}`}
 						x="20"
-						y={stringSpacing * (index + 1) + 5}
+						y={stringSpacing * (tuning.length - index)}
 						textAnchor="middle"
 						fontSize="12"
 						fontFamily="Arial"
-						fill={highContrast ? "white" : "black"}
+						fill="black"
 					>
 						{note}
 					</text>
