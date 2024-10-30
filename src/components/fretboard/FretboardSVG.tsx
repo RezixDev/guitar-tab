@@ -186,114 +186,113 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 			</text>
 		));
 
-// In FretboardSVG component
-const renderClickableAreas = () =>
-  [...Array(stringCount)].map((_, stringIndex) =>
-    [...Array(fretCount)].map((_, fretIndex) => {
-      const note = getNote(stringIndex, fretIndex, tuning);
-      const backgroundColor = easyMode && note ? noteColors[note] : "transparent";
-      const fontColor = backgroundColor ? getFontColor(backgroundColor) : "#000000";
-      const isFocused =
-        focusedPosition.string === stringIndex &&
-        focusedPosition.fret === fretIndex;
+	// In FretboardSVG component
+	const renderClickableAreas = () =>
+		[...Array(stringCount)].map((_, stringIndex) =>
+			[...Array(fretCount)].map((_, fretIndex) => {
+				// Adjust string index for display (5 - stringIndex)
+				const displayStringIndex = 5 - stringIndex;
+				const note = getNote(stringIndex, fretIndex, tuning);
+				const backgroundColor = easyMode && note ? noteColors[note] : "transparent";
+				const fontColor = backgroundColor ? getFontColor(backgroundColor) : "#000000";
+				const isFocused =
+					focusedPosition.string === stringIndex &&
+					focusedPosition.fret === fretIndex;
 
-      return (
-        <g
-          key={`fret-note-${stringIndex}-${fretIndex}`}
-          onClick={() => onFretClick(stringIndex, fretIndex)}
-          onFocus={() =>
-            setFocusedPosition({ string: stringIndex, fret: fretIndex })
-          }
-          style={{ cursor: "pointer" }}
-          role="button"
-          tabIndex={0}
-          aria-label={`String ${stringIndex + 1}, Fret ${
-            fretIndex + 1
-          }, Note ${note}`}
-        >
-          <circle
-            cx={fretSpacing * (fretIndex + 0.5)}
-            cy={stringSpacing * (stringIndex + 1)}
-            r={fretSpacing / 4}
-            fill={backgroundColor || "transparent"}
-            className={isFocused ? "ring-2 ring-blue-500" : ""}
-          />
-          {easyMode && note && (
-            <text
-              x={fretSpacing * (fretIndex + 0.5)}
-              y={stringSpacing * (stringIndex + 1) + 4}
-              textAnchor="middle"
-              fontSize="10"
-              fontFamily="Arial"
-              fill={fontColor}
-              style={{ pointerEvents: "none" }}
-            >
-              {note}
-            </text>
-          )}
-          {isFocused && (
-            <circle
-              cx={fretSpacing * (fretIndex + 0.5)}
-              cy={stringSpacing * (stringIndex + 1)}
-              r={fretSpacing / 3}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeDasharray="4"
-              className="focus-indicator"
-            />
-          )}
-        </g>
-      );
-    })
-  );
+				return (
+					<g
+						key={`fret-note-${stringIndex}-${fretIndex}`}
+						onClick={() => onFretClick(stringIndex, fretIndex)}
+						onFocus={() =>
+							setFocusedPosition({ string: stringIndex, fret: fretIndex })
+						}
+						style={{ cursor: "pointer" }}
+						role="button"
+						tabIndex={0}
+						aria-label={`String ${stringIndex + 1}, Fret ${
+							fretIndex + 1
+						}, Note ${note}`}
+					>
+						<circle
+							cx={fretSpacing * (fretIndex + 0.5)}
+							cy={stringSpacing * (displayStringIndex + 1)}
+							r={fretSpacing / 4}
+							fill={backgroundColor || "transparent"}
+							className={isFocused ? "ring-2 ring-blue-500" : ""}
+						/>
+						{easyMode && note && (
+							<text
+								x={fretSpacing * (fretIndex + 0.5)}
+								y={stringSpacing * (displayStringIndex + 1) + 4}
+								textAnchor="middle"
+								fontSize="10"
+								fontFamily="Arial"
+								fill={fontColor}
+								style={{ pointerEvents: "none" }}
+							>
+								{note}
+							</text>
+						)}
+					</g>
+				);
+			})
+		);
 
-	const renderCurrentNote = () => (
-		<>
-			<circle
-				cx={fretSpacing * (currentNote.fret + 0.5)} // Changed from (currentNote.fret + 1) - fretSpacing / 2
-				cy={stringSpacing * (currentNote.string + 1)}
-				r={12}
-				fill={highContrast ? "#ffffff" : "lightblue"}
-				stroke={highContrast ? "black" : "black"}
-				strokeWidth="1"
-			/>
-			<text
-				x={fretSpacing * (currentNote.fret + 0.5)} // Changed from (currentNote.fret + 1) - fretSpacing / 2
-				y={stringSpacing * (currentNote.string + 1) + 4}
-				textAnchor="middle"
-				fontSize="10"
-				fontFamily="Arial"
-				fill={highContrast ? "black" : "black"}
-			>
-				{currentNote.note}
-			</text>
-		</>
-	);
-
-	const renderGuessedNotes = () =>
-		guessedPositions.map(({ string, fret }) => (
-			<g key={`guessed-note-${string}-${fret}`}>
+	const renderCurrentNote = () => {
+		// Adjust string position for display (5 - string index)
+		const displayStringPosition = 5 - currentNote.string;
+		return (
+			<>
 				<circle
-					cx={fretSpacing * (fret + 0.5)}
-					cy={stringSpacing * (string + 1)}
+					cx={fretSpacing * (currentNote.fret + 0.5)}
+					cy={stringSpacing * (displayStringPosition + 1)}
 					r={12}
 					fill={highContrast ? "#ffffff" : "lightblue"}
 					stroke={highContrast ? "black" : "black"}
 					strokeWidth="1"
 				/>
 				<text
-					x={fretSpacing * (fret + 0.5)}
-					y={stringSpacing * (string + 1) + 4}
+					x={fretSpacing * (currentNote.fret + 0.5)}
+					y={stringSpacing * (displayStringPosition + 1) + 4}
 					textAnchor="middle"
 					fontSize="10"
 					fontFamily="Arial"
 					fill={highContrast ? "black" : "black"}
+					style={{ pointerEvents: "none" }}
 				>
-					{getNote(string, fret, tuning)}
+					{currentNote.note}
 				</text>
-			</g>
-		));
+			</>
+		);
+	};
+
+	const renderGuessedNotes = () =>
+		guessedPositions.map(({ string, fret }) => {
+			// Adjust string position for display (5 - string index)
+			const displayStringPosition = 5 - string;
+			return (
+				<g key={`guessed-note-${string}-${fret}`}>
+					<circle
+						cx={fretSpacing * (fret + 0.5)}
+						cy={stringSpacing * (displayStringPosition + 1)}
+						r={12}
+						fill={highContrast ? "#ffffff" : "lightblue"}
+						stroke={highContrast ? "black" : "black"}
+						strokeWidth="1"
+					/>
+					<text
+						x={fretSpacing * (fret + 0.5)}
+						y={stringSpacing * (displayStringPosition + 1) + 4}
+						textAnchor="middle"
+						fontSize="10"
+						fontFamily="Arial"
+						fill={highContrast ? "black" : "black"}
+					>
+						{getNote(string, fret, tuning)}
+					</text>
+				</g>
+			);
+		});
 
 	return (
 		<svg
@@ -327,7 +326,7 @@ const renderClickableAreas = () =>
 						textAnchor="middle"
 						fontSize="12"
 						fontFamily="Arial"
-						fill="black"
+						fill={highContrast ? "white" : "black"}
 					>
 						{note}
 					</text>

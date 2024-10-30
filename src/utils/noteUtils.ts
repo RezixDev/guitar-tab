@@ -44,18 +44,16 @@ export const getNoteIndex = (note: string): number => {
 
 
 export const getNote = (string: number, fret: number, tuning: Tuning): string => {
-  // Adjust the string index to match tuning
-  const adjustedStringIndex = tuning.length - 1 - string;
-
-  // Get the open note for this string
-  const openNote = tuning[adjustedStringIndex];
-  const startIndex = getNoteIndex(openNote);
-
-  if (startIndex === -1) return notes[0];
-
-  let noteIndex = (startIndex + fret + 1) % notes.length;
-
-  return notes[noteIndex];
+    // Get the open note for this string
+    const openNote = tuning[string];
+    const startIndex = notes.indexOf(openNote);
+    
+    if (startIndex === -1) return notes[0];
+    
+    // Calculate the note index by moving forward from the open note
+    let noteIndex = (startIndex + fret + 1) % notes.length;
+    
+    return notes[noteIndex];
 };
 
 export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePosition[] => {

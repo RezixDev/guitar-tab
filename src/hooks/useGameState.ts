@@ -61,18 +61,21 @@ export const useGameState = (tuning: Tuning) => {
     const stringNote = tuning[string];
     const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
     const baseNoteIndex = notes.indexOf(stringNote);
-    const noteIndex = (baseNoteIndex + fret) % 12;
+    const noteIndex = (baseNoteIndex + fret + 1) % 12;
     const noteAtPosition = notes[noteIndex];
     
     return noteAtPosition === gameState.currentNote.note;
   }, [gameState.currentNote.note, tuning]);
 
   const handleGuess = useCallback((string: number, fret: number) => {
+    const isCorrectPosition = string === gameState.currentNote.string && 
+                            fret === gameState.currentNote.fret;
     const isCorrect = checkNoteAtPosition(string, fret);
+    
     const stringNote = tuning[string];
     const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
     const baseNoteIndex = notes.indexOf(stringNote);
-    const noteIndex = (baseNoteIndex + fret) % 12;
+    const noteIndex = (baseNoteIndex + fret + 1) % 12;
     const noteAtPosition = notes[noteIndex];
 
     const position: NotePosition = {
@@ -81,7 +84,7 @@ export const useGameState = (tuning: Tuning) => {
       note: noteAtPosition
     };
 
-    if (isCorrect && !gameState.showNext) {
+    if ((isCorrect || isCorrectPosition) && !gameState.showNext) {
       const newPoints = gameState.points + 1;
       const newStreak = gameState.streak + 1;
       
