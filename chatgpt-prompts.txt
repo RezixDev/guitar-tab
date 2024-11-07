@@ -1,6 +1,6 @@
-I am programming guitar Learning App, this is my Fretboard Game using Tailwind, React and Next.js
+ am programming guitar Learning App, this is my Fretboard Game and Scale Viewer using Tailwind, React and Next.js 
 Dont use default exports
-Dont re-imagine new components if you want to know whats inside in a given component just ask.
+
 
 
 

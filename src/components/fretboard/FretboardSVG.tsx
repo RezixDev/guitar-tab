@@ -13,6 +13,11 @@ interface FretboardSVGProps {
 	highContrast?: boolean; // New prop for high contrast mode
 }
 
+export const convertStringPosition = (stringIndex: number, total: number = 6): number => {
+	// Convert from logical (0 = low E) to visual (0 = high E) position or vice versa
+	return total - 1 - stringIndex;
+  };
+  
 export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 	tuning,
 	width,
@@ -86,6 +91,26 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 			return 0; // Return default on error
 		}
 	};
+
+	const renderTuningLabels = () => {
+		return tuning.map((note, index) => {
+		  // Convert logical string index to visual position
+		  const visualIndex = convertStringPosition(index);
+		  return (
+			<text
+			  key={`string-name-${index}`}
+			  x="20"
+			  y={stringSpacing * (visualIndex + 1) + 5}
+			  textAnchor="middle"
+			  fontSize="12"
+			  fontFamily="Arial"
+			  fill="black"
+			>
+			  {note}
+			</text>
+		  );
+		});
+	  };
 
 	const getFontColor = (hexColor: string): string =>
 		getLuminance(hexColor) > 0.5 ? "#000000" : "#FFFFFF";
@@ -318,20 +343,21 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 				{renderGuessedNotes()}
 			</g>
 			<g>
-				{tuning.map((note, index) => (
-					<text
-						key={`string-name-${index}`}
-						x="20"
-						y={stringSpacing * (tuning.length - index)}
-						textAnchor="middle"
-						fontSize="12"
-						fontFamily="Arial"
-						fill={highContrast ? "white" : "black"}
-					>
-						{note}
-					</text>
-				))}
-			</g>
+    {tuning.map((note, index) => (
+        <text
+            key={`string-name-${index}`}
+            x="20"
+            y={stringSpacing * (index + 1)} // Changed from (tuning.length - index)
+            textAnchor="middle"
+            fontSize="12"
+            fontFamily="Arial"
+            fill={highContrast ? "white" : "black"}
+        >
+            {note}
+        </text>
+    ))}
+</g>
+
 		</svg>
 	);
 };

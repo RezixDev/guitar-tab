@@ -4,6 +4,12 @@ export type Note = {
   fret: number;
 };
 
+export const majorScale = [0, 2, 4, 5, 7, 9, 11];
+export const minorScale = [0, 2, 3, 5, 7, 8, 10];
+export const majorPentatonicScale = [0, 2, 4, 7, 9];
+export const minorPentatonicScale = [0, 3, 5, 7, 10];
+export const bluesScale = [0, 3, 5, 6, 7, 10];
+
 export type Tuning = string[];
 
 export type NotePosition = {
@@ -15,12 +21,16 @@ export type NotePosition = {
 // The chromatic scale starting from C
 const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
+// Reversed tuning order to match visual representation (high E to low E)
+export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'] as const;
+export const halfStepDownTuning: Tuning = ['Eb', 'Bb', 'Gb', 'Db', 'Ab', 'Eb'];
+export const dropDTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'D'];
+export const convertStringPosition = (stringIndex: number, total: number = 6): number => {
+  // Convert from logical (0 = low E) to visual (0 = high E) position or vice versa
+  return total - 1 - stringIndex;
+};
 
-export const standardTuning: Tuning = ['E', 'A', 'D', 'G', 'B', 'E'];
-export const halfStepDownTuning: Tuning = ['Eb', 'Ab', 'Db', 'Gb', 'Bb', 'Eb'];
-export const dropDTuning: Tuning = ['D', 'A', 'D', 'G', 'B', 'E'];
 
-// Helper function to get the index of a note in the chromatic scale
 // Helper function to get the index of a note in the chromatic scale
 export const getNoteIndex = (note: string): number => {
   // Map flats to their enharmonic sharps
@@ -35,41 +45,57 @@ export const getNoteIndex = (note: string): number => {
   };
 
   const normalizedNote = flatToSharpMap[note] || note;
-
-  // Now find the index in the notes array
-  const index = notes.indexOf(normalizedNote);
-
-  return index;
+  return notes.indexOf(normalizedNote);
 };
 
-
+// Get note at a specific fret position
 export const getNote = (string: number, fret: number, tuning: Tuning): string => {
-    // Get the open note for this string
-    const openNote = tuning[string];
-    const startIndex = notes.indexOf(openNote);
-    
-    if (startIndex === -1) return notes[0];
-    
-    // Calculate the note index by moving forward from the open note
-    let noteIndex = (startIndex + fret + 1) % notes.length;
-    
-    return notes[noteIndex];
+  // Convert visual string position back to logical for tuning array access
+  const logicalString = convertStringPosition(string);
+  const openNote = tuning[logicalString];
+  const startIndex = getNoteIndex(openNote);
+  
+  if (startIndex === -1) return notes[0];
+  
+  const noteIndex = (startIndex + 1  + fret) % 12;
+  return notes[noteIndex];
 };
 
+
+// Get all positions of a specific note on the fretboard
 export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePosition[] => {
   const positions: NotePosition[] = [];
-
-  // Check each string and fret combination
+  
+  // Iterate through strings in visual order (top to bottom)
   for (let string = 0; string < tuning.length; string++) {
     for (let fret = 0; fret <= 12; fret++) {
       const currentNote = getNote(string, fret, tuning);
       if (currentNote === noteToFind) {
-        positions.push({ string, fret, note: currentNote });
+        // Convert string position to visual representation
+        const visualString = convertStringPosition(string);
+        positions.push({ string: visualString, fret, note: currentNote });
       }
     }
   }
-
+  
   return positions;
+};
+
+// Get notes in a scale starting from a root note
+export const getScaleNotes = (rootNote: string, scaleIntervals: number[]): string[] => {
+  const rootIndex = getNoteIndex(rootNote);
+  if (rootIndex === -1) return [];
+  
+  return scaleIntervals.map(interval => {
+    const noteIndex = (rootIndex + interval) % 12;
+    return notes[noteIndex];
+  });
+};
+
+// Get all positions for a complete scale
+export const getScalePositions = (rootNote: string, scaleIntervals: number[], tuning: Tuning): NotePosition[] => {
+  const scaleNotes = getScaleNotes(rootNote, scaleIntervals);
+  return scaleNotes.flatMap(note => getAllNotePositions(note, tuning));
 };
 
 export const generateRandomNote = (tuning: Tuning): Note => {

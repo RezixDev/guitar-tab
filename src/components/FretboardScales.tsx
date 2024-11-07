@@ -18,9 +18,6 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 	width,
 	height,
 	onFretClick,
-	showNext,
-	currentNote,
-	guessedPositions,
 	chordPositions,
 	easyMode,
 }) => {
@@ -44,6 +41,44 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 		"G#": "#1767FC",
 	};
 
+	const convertStringPosition = (pos: number) => pos;
+
+	const renderNotes = (stringSpacing: number, fretSpacing: number) => {
+	  return chordPositions.map(({ string, fret, note }) => {
+		const adjustedString = convertStringPosition(string);
+		const backgroundColor = easyMode ? noteColors[note] : "transparent";
+		const fontColor = getFontColor(backgroundColor);
+  
+		return (
+		  <g
+			key={`fret-note-${string}-${fret}`}
+			onClick={() => onFretClick(string, fret)}
+			style={{ cursor: "pointer" }}
+		  >
+			<circle
+			  cx={fretSpacing * (fret + 0.5)}
+			  cy={stringSpacing * (adjustedString + 1)}
+			  r={fretSpacing / 4}
+			  fill={backgroundColor}
+			/>
+			{easyMode && (
+			  <text
+				x={fretSpacing * (fret + 0.5)}
+				y={stringSpacing * (adjustedString + 1) + 4}
+				textAnchor="middle"
+				fontSize="10"
+				fontFamily="Arial"
+				fill={fontColor}
+				style={{ pointerEvents: "none" }}
+			  >
+				{note}
+			  </text>
+			)}
+		  </g>
+		);
+	  });
+	};
+	
 	const getLuminance = (hexColor: string): number => {
 		const r = parseInt(hexColor.substr(1, 2), 16) / 255;
 		const g = parseInt(hexColor.substr(3, 2), 16) / 255;
