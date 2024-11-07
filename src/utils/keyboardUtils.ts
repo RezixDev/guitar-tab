@@ -1,13 +1,15 @@
-3
+import React, { useEffect } from 'react';
 // utils/keyboardUtils.ts
 export const useKeyboardNavigation = (
     fretboardRef: React.RefObject<HTMLDivElement>,
     handleFretClick: (string: number, fret: number) => void
   ) => {
+
+    const currentString = React.useRef(0);
+    const currentFret = React.useRef(0);
+
     useEffect(() => {
-      const currentString = React.useRef(0);
-      const currentFret = React.useRef(0);
-  
+
       const handleKeyDown = (e: KeyboardEvent) => {
         switch (e.key) {
           case 'ArrowUp':

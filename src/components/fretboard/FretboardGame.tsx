@@ -41,6 +41,16 @@ export const FretboardGame = () => {
   const { audioManager, isAudioLoaded } = useAudioManager();
   const { modes, setMode, setTimeChallenge } = useGameModes();
 
+  const handleNextNote = () => {
+    const randomNote = generateRandomNote(tuning);
+    updateGameState({
+      currentNote: randomNote,
+      feedback: "",
+      showNext: false,
+      guessedPositions: [],
+    });
+  };
+  
   // Timer effect
   useEffect(() => {
     if (!modes.timeChallenge || gameState.showNext || !isGameStarted) return;
@@ -74,7 +84,7 @@ export const FretboardGame = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [gameState.showNext]);
+  }, [gameState.showNext, handleNextNote]);
 
   // Game actions
   const handleTuningChange = (newTuning: string) => {
@@ -92,15 +102,7 @@ export const FretboardGame = () => {
 	}
   };
 
-  const handleNextNote = () => {
-    const randomNote = generateRandomNote(tuning);
-    updateGameState({
-      currentNote: randomNote,
-      feedback: "",
-      showNext: false,
-      guessedPositions: [],
-    });
-  };
+
 
   const handleStartGame = () => {
     setIsGameStarted(true);

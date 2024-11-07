@@ -18,7 +18,7 @@ export const useAudioManager = () => {
         };
 
         loadAudio();
-    }, []);
+    }, [audioManager]);
 
     return { audioManager, isAudioLoaded };
 };
