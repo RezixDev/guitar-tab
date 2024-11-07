@@ -40,9 +40,12 @@ interface ScaleSelectorProps {
 }
 
 interface GroundNoteSelectorProps {
-  groundNote: string;
-  handleGroundNoteChange: (note: string) => void;
+  groundNote: Note;
+  handleGroundNoteChange: (note: Note) => void;
 }
+
+// Add type for NOTES
+export type Note = (typeof NOTES)[number];
 
 const ScaleSelector = ({
   selectedScale,
@@ -111,7 +114,7 @@ export const ScaleViewer = ({
 }) => {
   const [guessedPositions, setGuessedPositions] = useState<NotePosition[]>([]);
   const [selectedScale, setSelectedScale] = useState<string>('Major');
-  const [groundNote, setGroundNote] = useState<string>('C');
+  const [groundNote, setGroundNote] = useState<Note>('C');
   const { theme } = useTheme();
 
   // Hilfsfunktion zum Finden aller Positionen einer Note auf dem Griffbrett
@@ -161,7 +164,7 @@ export const ScaleViewer = ({
     setGuessedPositions([]);
   };
 
-  const handleGroundNoteChange = (note: string) => {
+  const handleGroundNoteChange = (note: Note) => {
     setGroundNote(note);
     setGuessedPositions([]);
   };
