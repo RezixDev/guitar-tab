@@ -1,10 +1,14 @@
 'use client';
 import { useState, ChangeEvent } from 'react';
-import { standardChords, extendedChords, Chord, Note } from './chords';
+import { standardChords, extendedChords } from '@/data/chords';
+import type { Chord, Note } from '@/components/chords/types';
 
-const useChordState = () => {
-  const [currentChord, setCurrentChord] = useState<Chord>(standardChords.length > 0 ? standardChords[0] : { name: '', startingFret: 1, notes: [] });
-
+export function useChordState() {
+  const [currentChord, setCurrentChord] = useState<Chord>(
+    standardChords.length > 0 
+      ? standardChords[0] 
+      : { name: '', startingFret: 1, notes: [] }
+  );
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleChordChange = (chord: Chord) => {
@@ -16,19 +20,20 @@ const useChordState = () => {
     field: keyof Note,
     value: string
   ) => {
-    const newChord = { ...currentChord };
-    newChord.notes[index][field] = parseInt(value, 10);
-    setCurrentChord(newChord);
+    setCurrentChord(prev => ({
+      ...prev,
+      notes: prev.notes.map((note, i) =>
+        i === index ? { ...note, [field]: parseInt(value, 10) } : note
+      )
+    }));
   };
 
   const handleNameChange = (value: string) => {
-    const newChord = { ...currentChord, name: value };
-    setCurrentChord(newChord);
+    setCurrentChord(prev => ({ ...prev, name: value }));
   };
 
   const handleStartingFretChange = (value: string) => {
-    const newChord = { ...currentChord, startingFret: parseInt(value, 10) };
-    setCurrentChord(newChord);
+    setCurrentChord(prev => ({ ...prev, startingFret: parseInt(value, 10) }));
   };
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +43,7 @@ const useChordState = () => {
   const filteredStandardChords = standardChords.filter((chord) =>
     chord.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
   const filteredExtendedChords = extendedChords.filter((chord) =>
     chord.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -53,6 +59,4 @@ const useChordState = () => {
     handleStartingFretChange,
     handleSearchChange,
   };
-};
-
-export default useChordState;
+}

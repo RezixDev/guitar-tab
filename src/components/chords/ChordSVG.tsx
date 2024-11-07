@@ -165,7 +165,7 @@ const generateChordSVG = (
   );
 };
 
-const ChordSVG: React.FC<ChordSVGProps> = ({
+export const ChordSVG: React.FC<ChordSVGProps> = ({
   chord,
   chordName,
   startingFret,
@@ -187,4 +187,3 @@ const ChordSVG: React.FC<ChordSVGProps> = ({
   );
 };
 
-export default ChordSVG;

@@ -1,5 +1,4 @@
-import React from 'react';
-import { Chord } from './chords';
+import type { Chord } from './types';
 
 interface ChordModalProps {
   chord: Chord;
@@ -12,7 +11,12 @@ interface ChordModalProps {
   }>;
 }
 
-const ChordModal: React.FC<ChordModalProps> = ({ chord, isOpen, onClose, ChordSVGComponent }) => {
+export function ChordModal({ 
+  chord, 
+  isOpen, 
+  onClose, 
+  ChordSVGComponent 
+}: ChordModalProps) {
   if (!isOpen) return null;
 
   const chordNotes = chord.notes
@@ -21,7 +25,7 @@ const ChordModal: React.FC<ChordModalProps> = ({ chord, isOpen, onClose, ChordSV
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 transform transition-all duration-300 ease-in-out">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">{chord.name} Chord</h2>
           <button
@@ -48,6 +52,4 @@ const ChordModal: React.FC<ChordModalProps> = ({ chord, isOpen, onClose, ChordSV
       </div>
     </div>
   );
-};
-
-export default ChordModal;
+}
