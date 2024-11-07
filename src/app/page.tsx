@@ -6,7 +6,6 @@ import ChordList from '@/components/chords/ChordList';
 import ChordDetails from '@/components/chords/ChordDetails';
 import ChordModal from '@/components/chords/ChordModal';
 import useChordState from '@/components/chords/useChordState';
-import SkipLink from '@/components/chords/SkipLink';
 import ChordSVG from '@/components/chords/ChordSVG';
 
 export default function Page() {
@@ -29,7 +28,7 @@ export default function Page() {
 
   return (
     <>
-      <SkipLink />
+   
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-center">Guitar Chord Tool</h1>
 
