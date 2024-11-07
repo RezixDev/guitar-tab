@@ -10,7 +10,8 @@ interface FretboardSVGProps {
 	currentNote: Note;
 	guessedPositions: NotePosition[];
 	easyMode: boolean;
-	highContrast?: boolean; // New prop for high contrast mode
+	highContrast?: boolean; 
+	isFlipped: boolean;
 }
 
 export const convertStringPosition = (stringIndex: number, total: number = 6): number => {

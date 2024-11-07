@@ -3,8 +3,13 @@ import { Label } from "@/components/ui/label";
 import { TuningSelector } from './TuningSelector';
 import { PointsSelector } from './PointsSelector';
 import { ModeToggle } from './ModeToggle';
-import { Tuning } from '@/types/tuning'; 
 
+import {
+
+    type Tuning, 
+  } from "@/utils/noteUtils";
+
+  
 interface GameSettingsProps {
     onTuningChange: (value: string) => void;
     targetPoints: number;

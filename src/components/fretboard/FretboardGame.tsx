@@ -19,14 +19,9 @@ import {
   generateRandomNote,
   type Tuning,
   type Note,
+  type TuningNotes, 
 } from "@/utils/noteUtils";
 
-type Position = {
-  string: number;
-  fret: number;
-};
-
-type NotePosition = Position & { note: Note };
 
 // Remove the string conversion function as we'll handle the flip differently
 export const FretboardGame = () => {
@@ -172,7 +167,7 @@ export const FretboardGame = () => {
           }}
           onTimeChallengeChange={setTimeChallenge}
           disabled={isGameStarted}
-          displayTuning={tuning} // Pass the original tuning for display
+          displayTuning={tuning}
         />
 
         <Separator />
