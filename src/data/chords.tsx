@@ -1,3 +1,13 @@
+interface Chord {
+  name: string;
+  startingFret: number;
+  notes: {
+    string: number;
+    fret: number;
+    finger: number;
+  }[];
+}
+
 export const standardChords: Chord[] = [
   {
     name: 'A Major',

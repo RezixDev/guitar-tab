@@ -1,4 +1,8 @@
 import type { Chord, Note } from './types';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ChordDetailsProps {
   chord: Chord;
@@ -14,60 +18,64 @@ export function ChordDetails({
   onNoteChange,
 }: ChordDetailsProps) {
   return (
-    <div>
-      <div className="mb-4">
-        <label htmlFor="chord-name" className="block text-sm font-medium mb-1">
-          Chord Name
-        </label>
-        <input
-          type="text"
-          id="chord-name"
-          value={chord.name}
-          onChange={(e) => onNameChange(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="starting-fret" className="block text-sm font-medium mb-1">
-          Starting Fret
-        </label>
-        <input
-          type="number"
-          id="starting-fret"
-          value={chord.startingFret}
-          onChange={(e) => onStartingFretChange(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-      </div>
-      <h3 className="text-lg font-semibold mb-2">String Details</h3>
-      {chord.notes.map((note, index) => (
-        <div key={`string-${index}`} className="grid grid-cols-2 gap-4 mb-2">
-          <div>
-            <label htmlFor={`string-${6-index}-fret`} className="block text-sm font-medium mb-1">
-              String {6-index} Fret
-            </label>
-            <input
-              type="number"
-              id={`string-${6-index}-fret`}
-              value={note.fret}
-              onChange={(e) => onNoteChange(index, 'fret', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor={`string-${6-index}-finger`} className="block text-sm font-medium mb-1">
-              String {6-index} Finger
-            </label>
-            <input
-              type="number"
-              id={`string-${6-index}-finger`}
-              value={note.finger}
-              onChange={(e) => onNoteChange(index, 'finger', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="chord-name">Chord Name</Label>
+          <Input
+            id="chord-name"
+            value={chord.name}
+            onChange={(e) => onNameChange(e.target.value)}
+          />
         </div>
-      ))}
+        <div className="space-y-2">
+          <Label htmlFor="starting-fret">Starting Fret</Label>
+          <Input
+            type="number"
+            id="starting-fret"
+            value={chord.startingFret}
+            onChange={(e) => onStartingFretChange(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">String Configuration</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {chord.notes.map((note, index) => (
+            <Card key={`string-${index}`}>
+              <CardContent className="pt-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`string-${6-index}-fret`}>
+                      String {6-index} Fret
+                    </Label>
+                    <Input
+                      type="number"
+                      id={`string-${6-index}-fret`}
+                      value={note.fret}
+                      onChange={(e) => onNoteChange(index, 'fret', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`string-${6-index}-finger`}>
+                      String {6-index} Finger
+                    </Label>
+                    <Input
+                      type="number"
+                      id={`string-${6-index}-finger`}
+                      value={note.finger}
+                      onChange={(e) => onNoteChange(index, 'finger', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

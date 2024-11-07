@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { TuningSelector } from './TuningSelector';
 import { PointsSelector } from './PointsSelector';
 import { ModeToggle } from './ModeToggle';
+import { Tuning } from '@/types/tuning'; 
 
 interface GameSettingsProps {
     onTuningChange: (value: string) => void;
@@ -17,6 +18,7 @@ interface GameSettingsProps {
     onModeChange: (mode: 'newbie' | 'easy' | 'hard', value: boolean) => void;
     onTimeChallengeChange: (value: boolean) => void;
     disabled?: boolean;
+    displayTuning: Tuning; 
 }
 
 export const GameSettings: React.FC<GameSettingsProps> = ({

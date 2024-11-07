@@ -18,17 +18,31 @@ const generateRandomNote = (tuning: Tuning): Note => {
   
   const validPositions: Array<{ string: number; fret: number }> = [];
   
+  // Find all valid positions for the note
   for (let string = 0; string < tuning.length; string++) {
-    for (let fret = 0; fret < 12; fret++) {
+    for (let fret = 0; fret <= 12; fret++) { // Changed to <= 12 to include the 12th fret
       const stringNote = tuning[string];
       const baseNoteIndex = notes.indexOf(stringNote);
-      const noteIndex = (baseNoteIndex + fret) % 12;
+      if (baseNoteIndex === -1) continue; // Skip if the note isn't found
+      
+      const noteIndex = (baseNoteIndex + fret + 1) % 12;
       const noteAtPosition = notes[noteIndex];
       
       if (noteAtPosition === randomNote) {
         validPositions.push({ string, fret });
       }
     }
+  }
+  
+  // If no valid positions found, try another random note
+  if (validPositions.length === 0) {
+    // Fallback to first string, first fret with the open string note
+    const firstStringNote = tuning[0];
+    return {
+      note: firstStringNote,
+      string: 0,
+      fret: 0
+    };
   }
   
   const randomPosition = validPositions[Math.floor(Math.random() * validPositions.length)];
@@ -52,7 +66,6 @@ export const useGameState = (tuning: Tuning) => {
     guessedPositions: []
   });
 
-  // Move updateGameState declaration before other functions that use it
   const updateGameState = useCallback((updates: Partial<GameState>) => {
     setGameState(prev => ({ ...prev, ...updates }));
   }, []);
@@ -61,6 +74,8 @@ export const useGameState = (tuning: Tuning) => {
     const stringNote = tuning[string];
     const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
     const baseNoteIndex = notes.indexOf(stringNote);
+    if (baseNoteIndex === -1) return false;
+    
     const noteIndex = (baseNoteIndex + fret + 1) % 12;
     const noteAtPosition = notes[noteIndex];
     
@@ -75,6 +90,8 @@ export const useGameState = (tuning: Tuning) => {
     const stringNote = tuning[string];
     const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
     const baseNoteIndex = notes.indexOf(stringNote);
+    if (baseNoteIndex === -1) return;
+    
     const noteIndex = (baseNoteIndex + fret + 1) % 12;
     const noteAtPosition = notes[noteIndex];
 

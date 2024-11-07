@@ -22,9 +22,10 @@ export type NotePosition = {
 const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 // Reversed tuning order to match visual representation (high E to low E)
-export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'] as const;
+export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'];
 export const halfStepDownTuning: Tuning = ['Eb', 'Bb', 'Gb', 'Db', 'Ab', 'Eb'];
 export const dropDTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'D'];
+
 export const convertStringPosition = (stringIndex: number, total: number = 6): number => {
   // Convert from logical (0 = low E) to visual (0 = high E) position or vice versa
   return total - 1 - stringIndex;
