@@ -1,0 +1,213 @@
+import React, { useState, useEffect } from 'react';
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+// types.ts
+export interface Note {
+	fret: number;
+	finger: number;
+  }
+  
+  export interface Chord {
+	name: string;
+	startingFret: number;
+	notes: Note[];
+  }
+  
+  export interface StringConfigurationProps {
+	chord: Chord;
+	onNoteChange: (stringIndex: number, field: keyof Note, value: string) => void;
+  }
+
+export function StringConfiguration({
+  chord,
+  onNoteChange
+}: StringConfigurationProps) {
+  const strings = ['E', 'A', 'D', 'G', 'B', 'e'] as const;
+  const [activeFinger, setActiveFinger] = useState(1);
+  const [windowStart, setWindowStart] = useState(0);
+  const FRETS_IN_WINDOW = 8;
+  const MAX_FRET = 24;
+
+  // Update finger for existing notes when active finger changes
+  useEffect(() => {
+    chord.notes.forEach((note, index) => {
+      if (note.fret > 0) {
+        onNoteChange(index, 'finger', activeFinger.toString());
+      }
+    });
+  }, [activeFinger]);
+
+  const handleFretClick = (stringIndex: number, event: React.MouseEvent<HTMLDivElement>) => {
+    const fretBar = event.currentTarget;
+    const rect = fretBar.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const width = rect.width;
+    
+    // Calculate fret position within window
+    const relativePosition = Math.round((x / width) * (FRETS_IN_WINDOW - 1));
+    const absoluteFret = windowStart + relativePosition;
+    
+    onNoteChange(stringIndex, 'fret', absoluteFret.toString());
+    onNoteChange(stringIndex, 'finger', activeFinger.toString());
+  };
+
+  const handleTouchMove = (stringIndex: number, event: React.TouchEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const fretBar = event.currentTarget;
+    const rect = fretBar.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const width = rect.width;
+    
+    const relativePosition = Math.round((x / width) * (FRETS_IN_WINDOW - 1));
+    const absoluteFret = windowStart + relativePosition;
+    
+    if (absoluteFret >= 0 && absoluteFret <= MAX_FRET) {
+      onNoteChange(stringIndex, 'fret', absoluteFret.toString());
+      onNoteChange(stringIndex, 'finger', activeFinger.toString());
+    }
+  };
+
+  const shiftWindow = (direction: 'left' | 'right') => {
+    const shift = direction === 'left' ? -FRETS_IN_WINDOW : FRETS_IN_WINDOW;
+    const newStart = Math.max(0, Math.min(MAX_FRET - FRETS_IN_WINDOW, windowStart + shift));
+    setWindowStart(newStart);
+  };
+
+  const getPositionInWindow = (fret: number): number => {
+    if (fret < windowStart || fret > windowStart + FRETS_IN_WINDOW) return -1;
+    return ((fret - windowStart) / (FRETS_IN_WINDOW - 1)) * 100;
+  };
+
+  return (
+    <TooltipProvider>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">String Configuration</h3>
+          <div className="flex space-x-2 items-center">
+            <span className="text-sm text-gray-500">Finger:</span>
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4].map((finger) => (
+                <button
+                  key={finger}
+                  onClick={() => setActiveFinger(finger)}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
+                    ${activeFinger === finger 
+                      ? 'bg-blue-500 text-white border-blue-600' 
+                      : 'bg-gray-100 border-gray-300 hover:bg-gray-200'
+                    }`}
+                >
+                  {finger}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <Card className="p-6">
+          <CardContent className="p-0">
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => shiftWindow('left')}
+                disabled={windowStart === 0}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm font-medium">
+                Frets {windowStart} - {windowStart + FRETS_IN_WINDOW - 1}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => shiftWindow('right')}
+                disabled={windowStart >= MAX_FRET - FRETS_IN_WINDOW}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="flex flex-col space-y-8">
+              {chord.notes.map((note, index) => (
+                <div key={`string-${index}`} className="flex items-center space-x-4">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold">
+                        {strings[index]}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>String {6-index} ({strings[index]})</TooltipContent>
+                  </Tooltip>
+                  
+                  <div className="flex-1 relative h-12 group">
+                    <div
+                      className="absolute top-1/2 w-full h-8 -translate-y-1/2 cursor-pointer"
+                      onClick={(e) => handleFretClick(index, e)}
+                      onTouchMove={(e) => handleTouchMove(index, e)}
+                      onTouchStart={(e) => e.preventDefault()}
+                    >
+                      {/* Fret markers */}
+                      <div className="w-full h-1 bg-gray-300 dark:bg-gray-600">
+                        {Array.from({ length: FRETS_IN_WINDOW }, (_, i) => (
+                          <div
+                            key={i}
+                            className="absolute h-3 w-0.5 bg-gray-400 dark:bg-gray-500"
+                            style={{ left: `${(i / (FRETS_IN_WINDOW - 1)) * 100}%` }}
+                          >
+                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs">
+                              {windowStart + i}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Note marker */}
+                      {note.fret >= windowStart && 
+                       note.fret < windowStart + FRETS_IN_WINDOW && (
+                        <div 
+                          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 shadow-lg transition-all"
+                          style={{ 
+                            left: `${getPositionInWindow(note.fret)}%`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                        >
+                          <span className="absolute inset-0 flex items-center justify-center text-white text-sm">
+                            {note.finger}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Input
+                        type="number"
+                        value={note.fret}
+                        onChange={(e) => {
+                          onNoteChange(index, 'fret', e.target.value);
+                          if (parseInt(e.target.value) > 0) {
+                            onNoteChange(index, 'finger', activeFinger.toString());
+                          }
+                        }}
+                        className="w-16 text-center"
+                        min="0"
+                        max={MAX_FRET}
+                        placeholder="-"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>Fret number</TooltipContent>
+                  </Tooltip>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </TooltipProvider>
+  );
+}
