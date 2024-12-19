@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Guitar } from 'lucide-react';
 import { ChordModal } from '@/components/chords/ChordModal';
-import { type Chord } from './types';
+import { type Chord, type Note } from './types';
 import {
   Tooltip,
   TooltipContent,

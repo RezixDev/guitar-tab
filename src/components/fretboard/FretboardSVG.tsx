@@ -9,16 +9,20 @@ interface FretboardSVGProps {
 	showNext: boolean;
 	currentNote: Note;
 	guessedPositions: NotePosition[];
-	easyMode: boolean;
-	highContrast?: boolean; 
+	highContrast?: boolean;
 	isFlipped: boolean;
+	isNewbieMode: boolean;
+	isEasyMode: boolean;
 }
 
-export const convertStringPosition = (stringIndex: number, total: number = 6): number => {
+export const convertStringPosition = (
+	stringIndex: number,
+	total: number = 6
+): number => {
 	// Convert from logical (0 = low E) to visual (0 = high E) position or vice versa
 	return total - 1 - stringIndex;
-  };
-  
+};
+
 export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 	tuning,
 	width,
@@ -27,8 +31,9 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 	showNext,
 	currentNote,
 	guessedPositions,
-	easyMode,
+	isEasyMode,
 	highContrast = false,
+	isNewbieMode,
 }) => {
 	const fretboardRef = useRef<SVGSVGElement>(null);
 	const [focusedPosition, setFocusedPosition] = React.useState<{
@@ -95,23 +100,23 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 
 	const renderTuningLabels = () => {
 		return tuning.map((note, index) => {
-		  // Convert logical string index to visual position
-		  const visualIndex = convertStringPosition(index);
-		  return (
-			<text
-			  key={`string-name-${index}`}
-			  x="20"
-			  y={stringSpacing * (visualIndex + 1) + 5}
-			  textAnchor="middle"
-			  fontSize="12"
-			  fontFamily="Arial"
-			  fill="black"
-			>
-			  {note}
-			</text>
-		  );
+			// Convert logical string index to visual position
+			const visualIndex = convertStringPosition(index);
+			return (
+				<text
+					key={`string-name-${index}`}
+					x="20"
+					y={stringSpacing * (visualIndex + 1) + 5}
+					textAnchor="middle"
+					fontSize="12"
+					fontFamily="Arial"
+					fill="black"
+				>
+					{note}
+				</text>
+			);
 		});
-	  };
+	};
 
 	const getFontColor = (hexColor: string): string =>
 		getLuminance(hexColor) > 0.5 ? "#000000" : "#FFFFFF";
@@ -219,8 +224,16 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 				// Adjust string index for display (5 - stringIndex)
 				const displayStringIndex = 5 - stringIndex;
 				const note = getNote(stringIndex, fretIndex, tuning);
-				const backgroundColor = easyMode && note ? noteColors[note] : "transparent";
-				const fontColor = backgroundColor ? getFontColor(backgroundColor) : "#000000";
+				const shouldShowNotes = isNewbieMode;
+
+				const backgroundColor = shouldShowNotes
+					? noteColors[note]
+					: "transparent";
+
+				const fontColor = backgroundColor
+					? getFontColor(backgroundColor)
+					: "#000000";
+
 				const isFocused =
 					focusedPosition.string === stringIndex &&
 					focusedPosition.fret === fretIndex;
@@ -246,7 +259,7 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 							fill={backgroundColor || "transparent"}
 							className={isFocused ? "ring-2 ring-blue-500" : ""}
 						/>
-						{easyMode && note && (
+						{isEasyMode && note && (
 							<text
 								x={fretSpacing * (fretIndex + 0.5)}
 								y={stringSpacing * (displayStringIndex + 1) + 4}
@@ -344,22 +357,20 @@ export const FretboardSVG: React.FC<FretboardSVGProps> = ({
 				{renderGuessedNotes()}
 			</g>
 			<g>
-    {tuning.map((note, index) => (
-        <text
-            key={`string-name-${index}`}
-            x="20"
-            y={stringSpacing * (index + 1)} // Changed from (tuning.length - index)
-            textAnchor="middle"
-            fontSize="12"
-            fontFamily="Arial"
-            fill={highContrast ? "white" : "black"}
-        >
-            {note}
-        </text>
-    ))}
-</g>
-
+				{tuning.map((note, index) => (
+					<text
+						key={`string-name-${index}`}
+						x="20"
+						y={stringSpacing * (index + 1)} // Changed from (tuning.length - index)
+						textAnchor="middle"
+						fontSize="12"
+						fontFamily="Arial"
+						fill={highContrast ? "white" : "black"}
+					>
+						{note}
+					</text>
+				))}
+			</g>
 		</svg>
 	);
 };
-

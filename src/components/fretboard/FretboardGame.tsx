@@ -7,12 +7,16 @@ import { Button } from "@/components/ui/button";
 import { useGameState } from "@/hooks/useGameState";
 import { useAudioManager } from "@/hooks/useAudioManager";
 import { useGameModes } from "@/hooks/useGameModes";
+import { useBestTime } from "@/hooks/useBestTime";
+
 import { GameControls } from "./GameControls";
 import { GameSettings } from "./GameSettings";
 import { FretboardSVG } from "./FretboardSVG";
 import { CompletionModal } from "./CompletionModal";
 import { TutorialDialog } from "./TutorialDialog";
 import { KeyboardControls } from "./KeyboardControls";
+
+import { PositionTracker } from "./PositionTracker";
 
 import {
 	standardTuning,
@@ -31,7 +35,8 @@ export const FretboardGame = () => {
 	const [showCompletionModal, setShowCompletionModal] = useState(false);
 
 	// Time tracking
-	const [bestTime, setBestTime] = useState<number | null>(null);
+	const { bestTime, updateBestTime } = useBestTime();
+
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [startTime, setStartTime] = useState(Date.now());
 
@@ -39,7 +44,14 @@ export const FretboardGame = () => {
 	const { gameState, handleGuess, resetGame, updateGameState } =
 		useGameState(tuning);
 	const { audioManager, isAudioLoaded } = useAudioManager();
-	const { modes, setMode, setTimeChallenge } = useGameModes();
+	const {
+		gameMode,
+		setGameMode,
+		isNewbieMode,
+		isEasyMode,
+		isHardMode,
+		isTimeChallenge,
+	} = useGameModes();
 
 	const handleNextNote = useCallback(() => {
 		const randomNote = generateRandomNote(tuning);
@@ -48,30 +60,38 @@ export const FretboardGame = () => {
 			feedback: "",
 			showNext: false,
 			guessedPositions: [],
+			correctPositionsCount: 0,
+			foundPositions: new Set(),
 		});
 	}, [tuning, updateGameState]);
 
 	// Timer effect
 	useEffect(() => {
-		if (!modes.timeChallenge || gameState.showNext || !isGameStarted) return;
+		if (!isTimeChallenge || gameState.showNext || !isGameStarted) return;
 
 		const timer = setInterval(() => {
 			setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
 		}, 1000);
 
 		return () => clearInterval(timer);
-	}, [modes.timeChallenge, gameState.showNext, startTime, isGameStarted]);
+	}, [isTimeChallenge, gameState.showNext, startTime, isGameStarted]);
 
 	// Game completion effect
 	useEffect(() => {
 		if (gameState.points >= gameState.targetPoints) {
 			const finalTime = elapsedTime;
-			if (bestTime === null || finalTime < bestTime) {
-				setBestTime(finalTime);
+			if (isTimeChallenge) {
+				updateBestTime(finalTime);
 			}
 			setShowCompletionModal(true);
 		}
-	}, [gameState.points, gameState.targetPoints, elapsedTime, bestTime]);
+	}, [
+		gameState.points,
+		gameState.targetPoints,
+		elapsedTime,
+		isTimeChallenge,
+		updateBestTime,
+	]);
 
 	// Keyboard controls
 	useEffect(() => {
@@ -95,7 +115,7 @@ export const FretboardGame = () => {
 
 	const handleFretClick = (visualString: number, fret: number) => {
 		if (!gameState.showNext && isGameStarted) {
-			handleGuess(visualString, fret);
+			handleGuess(visualString, fret, isNewbieMode, isHardMode);
 			if (audioManager && isAudioLoaded) {
 				audioManager.playNote(visualString.toString(), fret);
 			}
@@ -120,6 +140,7 @@ export const FretboardGame = () => {
 		resetGame();
 		setElapsedTime(0);
 		setStartTime(Date.now());
+		setGameMode("newbie");
 	};
 
 	return (
@@ -149,23 +170,8 @@ export const FretboardGame = () => {
 					onTargetPointsChange={(value) =>
 						updateGameState({ targetPoints: value })
 					}
-					modes={modes}
-					onModeChange={(mode: "newbie" | "easy" | "hard", value: boolean) => {
-						const modeMap = {
-							newbie: "newbieMode",
-							easy: "easyMode",
-							hard: "hardMode",
-						} as const;
-
-						Object.keys(modeMap).forEach((key) => {
-							if (key === mode) {
-								setMode(modeMap[key as keyof typeof modeMap], value);
-							} else {
-								setMode(modeMap[key as keyof typeof modeMap], false);
-							}
-						});
-					}}
-					onTimeChallengeChange={setTimeChallenge}
+					gameMode={gameMode}
+					onGameModeChange={setGameMode}
 					disabled={isGameStarted}
 					displayTuning={tuning}
 				/>
@@ -177,14 +183,26 @@ export const FretboardGame = () => {
 					targetPoints={gameState.targetPoints}
 					streak={gameState.streak}
 					bestTime={bestTime}
-					timeChallenge={modes.timeChallenge}
+					timeChallenge={isTimeChallenge}
 					elapsedTime={elapsedTime}
 					showNext={gameState.showNext}
 					currentNote={gameState.currentNote}
 					isGameStarted={isGameStarted}
+					feedback={gameState.feedback}
 					onNextNote={handleNextNote}
 					onStartGame={handleStartGame}
+					onReset={handleReset}
 				/>
+
+				{isGameStarted && isHardMode && (
+					<PositionTracker
+						currentNote={gameState.currentNote}
+						tuning={tuning}
+						foundPositions={gameState.foundPositions}
+						showNext={gameState.showNext}
+						isHardMode={isHardMode}
+					/>
+				)}
 
 				{isGameStarted && (
 					<FretboardSVG
@@ -195,7 +213,8 @@ export const FretboardGame = () => {
 						showNext={gameState.showNext}
 						currentNote={gameState.currentNote}
 						guessedPositions={gameState.guessedPositions}
-						easyMode={modes.easyMode}
+						isEasyMode={isEasyMode}
+						isNewbieMode={isNewbieMode}
 						highContrast={false}
 						isFlipped={true}
 					/>

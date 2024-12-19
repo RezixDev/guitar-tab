@@ -71,14 +71,25 @@ export const getNote = (string: number, fret: number, tuning: Tuning): string =>
 export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePosition[] => {
   const positions: NotePosition[] = [];
   
-  // Iterate through strings in visual order (top to bottom)
+  const maxFret = 12;
+  const usedPositions = new Set<string>();
+
+
   for (let string = 0; string < tuning.length; string++) {
-    for (let fret = 0; fret <= 12; fret++) {
+    for (let fret = 0; fret <= maxFret; fret++) {
       const currentNote = getNote(string, fret, tuning);
       if (currentNote === noteToFind) {
-        // Convert string position to visual representation
-        const visualString = convertStringPosition(string);
-        positions.push({ string: visualString, fret, note: currentNote });
+        const positionKey = `${string}-${fret}`;
+        
+        if (!usedPositions.has(positionKey)) {
+          usedPositions.add(positionKey);
+          const visualString = convertStringPosition(string);
+          positions.push({ 
+            string: visualString, 
+            fret, 
+            note: currentNote 
+          });
+        }
       }
     }
   }

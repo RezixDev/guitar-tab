@@ -1,0 +1,67 @@
+{
+    "home": {
+      "hero": {
+        "title": "Master the Guitar",
+        "subtitle": "Learn, practice, and improve your guitar playing with our interactive tools",
+        "getStarted": "Get Started",
+        "exploreTools": "Explore Tools"
+      },
+      "tools": {
+        "title": "Useful Tools",
+        "launchTool": "Launch Tool",
+        "fretboard": {
+          "title": "Fretboard Trainer",
+          "description": "Learn notes across the fretboard"
+        },
+        "scales": {
+          "title": "Scales",
+          "description": "Discover and practice different scales"
+        },
+        "chords": {
+          "title": "Chords",
+          "description": "Learn and practice chord shapes"
+        },
+        "tuner": {
+          "title": "Tuner",
+          "description": "Tune your guitar accurately"
+        }
+      },
+      "learning": {
+        "title": "Learning Paths",
+        "explore": "Explore",
+        "paths": {
+          "learn": {
+            "title": "Learn",
+            "description": "Structured guitar lessons for all levels",
+            "features": {
+              "beginner": "Beginner Fundamentals",
+              "intermediate": "Intermediate Techniques",
+              "advanced": "Advanced Concepts",
+              "songs": "Practice-Based Learning"
+            }
+          },
+          "practice": {
+            "title": "Practice",
+            "description": "Improve your skills with focused practice",
+            "features": {
+              "exercises": "Technical Exercises",
+              "routines": "Practice Routines",
+              "sessions": "Guided Sessions",
+              "progress": "Progress Tracking"
+            }
+          },
+          "theory": {
+            "title": "Music Theory",
+            "description": "Understand the foundations of music theory",
+            "features": {
+              "circle": "Circle of Fifths",
+              "keys": "Understanding Keys",
+              "chords": "Chord Construction",
+              "harmony": "Harmony Concepts"
+            }
+          }
+        }
+      }
+    }
+  }
+  

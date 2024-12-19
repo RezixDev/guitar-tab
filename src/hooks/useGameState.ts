@@ -1,5 +1,8 @@
 import { useState, useCallback } from 'react';
-import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
+import type { Tuning, Note, NotePosition} from '@/utils/noteUtils';
+
+ import { generateRandomNote, getNote, getAllNotePositions } from '@/utils/noteUtils';
+
 
 interface GameState {
   currentNote: Note;
@@ -9,50 +12,12 @@ interface GameState {
   totalAttempts: number;
   feedback: string;
   showNext: boolean;
+  foundPositions: Set<string>;
   guessedPositions: NotePosition[];
+  correctPositionsCount: number; 
+  isPositionLocked: boolean; 
+  totalPositions: number; 
 }
-
-const generateRandomNote = (tuning: Tuning): Note => {
-  const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-  const randomNote = notes[Math.floor(Math.random() * notes.length)];
-  
-  const validPositions: Array<{ string: number; fret: number }> = [];
-  
-  // Find all valid positions for the note
-  for (let string = 0; string < tuning.length; string++) {
-    for (let fret = 0; fret <= 12; fret++) { // Changed to <= 12 to include the 12th fret
-      const stringNote = tuning[string];
-      const baseNoteIndex = notes.indexOf(stringNote);
-      if (baseNoteIndex === -1) continue; // Skip if the note isn't found
-      
-      const noteIndex = (baseNoteIndex + fret + 1) % 12;
-      const noteAtPosition = notes[noteIndex];
-      
-      if (noteAtPosition === randomNote) {
-        validPositions.push({ string, fret });
-      }
-    }
-  }
-  
-  // If no valid positions found, try another random note
-  if (validPositions.length === 0) {
-    // Fallback to first string, first fret with the open string note
-    const firstStringNote = tuning[0];
-    return {
-      note: firstStringNote,
-      string: 0,
-      fret: 0
-    };
-  }
-  
-  const randomPosition = validPositions[Math.floor(Math.random() * validPositions.length)];
-  
-  return {
-    note: randomNote,
-    string: randomPosition.string,
-    fret: randomPosition.fret
-  };
-};
 
 export const useGameState = (tuning: Tuning) => {
   const [gameState, setGameState] = useState<GameState>({
@@ -63,7 +28,10 @@ export const useGameState = (tuning: Tuning) => {
     totalAttempts: 0,
     feedback: '',
     showNext: false,
-    guessedPositions: []
+    guessedPositions: [],
+    foundPositions: new Set<string>(),
+    correctPositionsCount: 0,
+    isPositionLocked: false
   });
 
   const updateGameState = useCallback((updates: Partial<GameState>) => {
@@ -71,43 +39,133 @@ export const useGameState = (tuning: Tuning) => {
   }, []);
 
   const checkNoteAtPosition = useCallback((string: number, fret: number): boolean => {
-    const stringNote = tuning[string];
-    const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-    const baseNoteIndex = notes.indexOf(stringNote);
-    if (baseNoteIndex === -1) return false;
-    
-    const noteIndex = (baseNoteIndex + fret + 1) % 12;
-    const noteAtPosition = notes[noteIndex];
-    
+    // Check if the note at this position matches the current note
+    const noteAtPosition = getNote(string, fret, tuning);
     return noteAtPosition === gameState.currentNote.note;
   }, [gameState.currentNote.note, tuning]);
 
-  const handleGuess = useCallback((string: number, fret: number) => {
-    const isCorrectPosition = string === gameState.currentNote.string && 
-                            fret === gameState.currentNote.fret;
+  const handleGuess = useCallback((
+    string: number, 
+    fret: number, 
+    isNewbieMode: boolean = false,
+    isHardMode: boolean = false
+  ) => {
+
+    if (gameState.isPositionLocked && isNewbieMode) return;
+    
     const isCorrect = checkNoteAtPosition(string, fret);
     
-    const stringNote = tuning[string];
-    const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-    const baseNoteIndex = notes.indexOf(stringNote);
-    if (baseNoteIndex === -1) return;
-    
-    const noteIndex = (baseNoteIndex + fret + 1) % 12;
-    const noteAtPosition = notes[noteIndex];
+    const isAlreadyGuessed = gameState.guessedPositions.some(
+      pos => pos.string === string && pos.fret === fret
+    );
+    if (isAlreadyGuessed) return;
 
     const position: NotePosition = {
       string,
       fret,
-      note: noteAtPosition
+      note: getNote(string, fret, tuning)
     };
 
-    if ((isCorrect || isCorrectPosition) && !gameState.showNext) {
-      const newPoints = gameState.points + 1;
-      const newStreak = gameState.streak + 1;
-      
+    if (!isNewbieMode && !isHardMode) {
+      if (isCorrect) {
+          updateGameState({
+              points: gameState.points + 1,
+              streak: gameState.streak + 1,
+              totalAttempts: gameState.totalAttempts + 1,
+              feedback: 'Perfect! You found the exact position!',
+              showNext: true,
+              guessedPositions: [...gameState.guessedPositions, position]
+          });
+      } else {
+          updateGameState({
+              streak: 0,
+              totalAttempts: gameState.totalAttempts + 1,
+              feedback: 'Try again! Find any position of this note.',
+              guessedPositions: [...gameState.guessedPositions, position]
+          });
+      }
+      return;
+  }
+
+  
+    // Newbie mode logic
+    if (isNewbieMode) {
+      if (isCorrect && !gameState.showNext) {
+        updateGameState({
+          points: gameState.points + 1,
+          streak: gameState.streak + 1,
+          totalAttempts: gameState.totalAttempts + 1,
+          feedback: 'You found one correct position!',
+          showNext: true,
+          guessedPositions: [...gameState.guessedPositions, position]
+        });
+      } else if (!isCorrect && !gameState.showNext) {
+        updateGameState({
+          streak: 0,
+          totalAttempts: gameState.totalAttempts + 1,
+          feedback: 'Try again!',
+          guessedPositions: [...gameState.guessedPositions, position]
+        });
+      }
+      return;
+    }
+
+    if (isHardMode) {
+      if (isCorrect && !isAlreadyGuessed) {
+        const allPositions = getAllNotePositions(gameState.currentNote.note, tuning);
+        const positionKey = `${string}-${fret}`;
+        const newFoundPositions = new Set(gameState.foundPositions);
+        newFoundPositions.add(positionKey);
+
+        const totalPositions = allPositions.length;
+        const foundCount = newFoundPositions.size;
+        const remainingPositions = totalPositions - foundCount;
+
+        // Check if we've found all positions, regardless of wrong guesses
+        const allPositionsFound = foundCount >= totalPositions;
+
+        updateGameState({
+          foundPositions: newFoundPositions,
+          correctPositionsCount: foundCount,
+          guessedPositions: [...gameState.guessedPositions, position],
+          // Always set showNext to true if all positions are found
+          showNext: allPositionsFound,
+          feedback: allPositionsFound 
+            ? 'Excellent! You found all positions!' 
+            : `Correct! ${remainingPositions} position${remainingPositions === 1 ? '' : 's'} remaining.`,
+          points: allPositionsFound ? gameState.points + 1 : gameState.points,
+          streak: allPositionsFound ? gameState.streak + 1 : gameState.streak
+        });
+
+        // If we just found the last position, ensure the next button shows up
+        if (allPositionsFound && !gameState.showNext) {
+          updateGameState({
+            showNext: true,
+            feedback: 'Excellent! You found all positions!'
+          });
+        }
+      } else {
+        // For incorrect guesses, don't change showNext state if all positions are found
+        const allPositions = getAllNotePositions(gameState.currentNote.note, tuning);
+        const allPositionsFound = gameState.foundPositions.size >= allPositions.length;
+
+        updateGameState({
+          streak: 0,
+          totalAttempts: gameState.totalAttempts + 1,
+          feedback: 'Try again! Find all positions of this note.',
+          guessedPositions: [...gameState.guessedPositions, position],
+          // Keep showNext true if we already found all positions
+          showNext: allPositionsFound ? true : false
+        });
+      }
+      return;
+    }
+
+    // Normal mode logic
+    if (isCorrect && !gameState.showNext) {
       updateGameState({
-        points: newPoints,
-        streak: newStreak,
+        points: gameState.points + 1,
+        streak: gameState.streak + 1,
         totalAttempts: gameState.totalAttempts + 1,
         feedback: 'Correct!',
         showNext: true,
@@ -132,7 +190,10 @@ export const useGameState = (tuning: Tuning) => {
       totalAttempts: 0,
       feedback: '',
       showNext: false,
-      guessedPositions: []
+      guessedPositions: [],
+      foundPositions: new Set<string>(),
+      correctPositionsCount: 0,
+      isPositionLocked: false
     });
   }, [tuning, gameState.targetPoints]);
 

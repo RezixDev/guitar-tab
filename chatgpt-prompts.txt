@@ -1,4 +1,4 @@
-I am programming guitar Learning App using TypeScript, Tailwind, React and Next.js For UI i am using Shadcn/UI
+I am programming guitar Learning App using TypeScript, Tailwind, React and Next.js with App Router approach. For UI i am using Shadcn/UI
 Dont use default exports, Use Mobile First Design
 
 

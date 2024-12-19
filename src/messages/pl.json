@@ -1,0 +1,66 @@
+{
+    "home": {
+      "hero": {
+        "title": "Opanuj gitarę",
+        "subtitle": "Ucz się, ćwicz i rozwijaj swoją grę na gitarze z naszymi interaktywnymi narzędziami",
+        "getStarted": "Rozpocznij",
+        "exploreTools": "Przeglądaj narzędzia"
+      },
+      "tools": {
+        "title": "Przydatne narzędzia",
+        "launchTool": "Uruchom narzędzie",
+        "fretboard": {
+          "title": "Trener progów",
+          "description": "Poznaj nuty na gryfie"
+        },
+        "scales": {
+          "title": "Skale",
+          "description": "Odkryj i ćwicz różne skale"
+        },
+        "chords": {
+          "title": "Akordy",
+          "description": "Ucz się i ćwicz układy akordów"
+        },
+        "tuner": {
+          "title": "Tuner",
+          "description": "Nastraj gitarę precyzyjnie"
+        }
+      },
+      "learning": {
+        "title": "Ścieżki nauki",
+        "explore": "Odkrywaj",
+        "paths": {
+          "learn": {
+            "title": "Nauka",
+            "description": "Ustrukturyzowane lekcje gitary dla wszystkich poziomów",
+            "features": {
+              "beginner": "Podstawy dla początkujących",
+              "intermediate": "Techniki średniozaawansowane",
+              "advanced": "Koncepcje zaawansowane",
+              "songs": "Nauka przez praktykę"
+            }
+          },
+          "practice": {
+            "title": "Ćwiczenia",
+            "description": "Rozwijaj swoje umiejętności poprzez ukierunkowane ćwiczenia",
+            "features": {
+              "exercises": "Ćwiczenia techniczne",
+              "routines": "Rutyny ćwiczeń",
+              "sessions": "Sesje z przewodnikiem",
+              "progress": "Śledzenie postępów"
+            }
+          },
+          "theory": {
+            "title": "Teoria muzyki",
+            "description": "Zrozum podstawy teorii muzycznej",
+            "features": {
+              "circle": "Koło kwintowe",
+              "keys": "Zrozumienie tonacji",
+              "chords": "Konstrukcja akordów",
+              "harmony": "Koncepcje harmonii"
+            }
+          }
+        }
+      }
+    }
+  }

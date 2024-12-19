@@ -1,0 +1,66 @@
+{
+    "home": {
+      "hero": {
+        "title": "Meistere die Gitarre",
+        "subtitle": "Lerne, übe und verbessere dein Gitarrenspiel mit unseren interaktiven Tools",
+        "getStarted": "Jetzt beginnen",
+        "exploreTools": "Tools erkunden"
+      },
+      "tools": {
+        "title": "Nützliche Tools",
+        "launchTool": "Tool starten",
+        "fretboard": {
+          "title": "Griffbrett-Trainer",
+          "description": "Lerne die Noten auf dem Griffbrett kennen"
+        },
+        "scales": {
+          "title": "Tonleitern",
+          "description": "Entdecke und übe verschiedene Tonleitern"
+        },
+        "chords": {
+          "title": "Akkorde",
+          "description": "Lerne und übe Akkordformen"
+        },
+        "tuner": {
+          "title": "Stimmgerät",
+          "description": "Stimme deine Gitarre präzise"
+        }
+      },
+      "learning": {
+        "title": "Lernpfade",
+        "explore": "Erkunde",
+        "paths": {
+          "learn": {
+            "title": "Lernen",
+            "description": "Strukturierte Gitarrenlektionen für alle Levels",
+            "features": {
+              "beginner": "Anfänger-Grundlagen",
+              "intermediate": "Mittelstufen-Techniken",
+              "advanced": "Fortgeschrittene Konzepte",
+              "songs": "Praxisorientiertes Lernen"
+            }
+          },
+          "practice": {
+            "title": "Üben",
+            "description": "Verbessere deine Fähigkeiten mit gezieltem Üben",
+            "features": {
+              "exercises": "Technische Übungen",
+              "routines": "Übungsroutinen",
+              "sessions": "Geführte Sessions",
+              "progress": "Fortschrittsverfolgung"
+            }
+          },
+          "theory": {
+            "title": "Musiktheorie",
+            "description": "Verstehe die Grundlagen der Musiktheorie",
+            "features": {
+              "circle": "Quintenzirkel",
+              "keys": "Tonarten verstehen",
+              "chords": "Akkordaufbau",
+              "harmony": "Harmonielehre"
+            }
+          }
+        }
+      }
+    }
+  }
