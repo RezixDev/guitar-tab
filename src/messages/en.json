@@ -62,6 +62,51 @@
           }
         }
       }
+    },
+    "learn": {
+      "title": "Guitar Learning Paths",
+      "levels": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+      },
+      "learn": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "practice": "Practice"
+      },
+      "paths": {
+        "fundamentals": {
+          "title": "Fundamentals",
+          "description": "Master the basics of guitar playing"
+        },
+        "basic-chords": {
+          "title": "Basic Chords",
+          "description": "Learn essential open chords and transitions"
+        },
+        "barre-chords": {
+          "title": "Barre Chords",
+          "description": "Master barre chord shapes and transitions"
+        },
+        "advanced-techniques": {
+          "title": "Advanced Techniques",
+          "description": "Learn advanced guitar techniques"
+        }
+      },
+      "common": {
+        "estimatedTime": "Estimated time: {{hours}} hours",
+        "totalLessons": "{{count}} lessons",
+        "prerequisites": "Prerequisites",
+        "progress": "Progress",
+        "complete": "Complete"
+      },
+      "back": "Back to Learning Path",
+      "lesson": "Lesson",
+      "practice": "Practice Exercises",
+      "complete": "Mark as Complete",
+      "next": "Next Lesson"
     }
   }
+  
   

@@ -1,7 +1,21 @@
-I am programming guitar Learning App using TypeScript, Tailwind, React and Next.js with App Router approach. For UI i am using Shadcn/UI
-Dont use default exports, Use Mobile First Design
+I am programming:
+# Guitar Learning App - Learning Paths Module Implementation
 
+## Project Stack
+- TypeScript
+- React
+- Next.js (App Router)
+- Tailwind CSS
+- Shadcn/UI Components
+- next-intl for translations
+- Mobile First Design
+- No default exports
 
+I already have:
+1. "Fretboard Trainer" which helps to Learn notes across the fretboard.
+2. Scales Viewer. which enables to Discover and practice different scales
+3. Chords Tool which shows all possible Chords 
+4. Tuner which enables to Tune your guitar accurately
 
 
 
