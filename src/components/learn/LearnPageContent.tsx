@@ -19,6 +19,7 @@ type LearnPageContentProps = {
 	};
 };
 
+// Alternative version that keeps the tab structure
 export const LearnPageContent = ({ translations }: LearnPageContentProps) => {
 	const router = useRouter();
 
@@ -31,10 +32,10 @@ export const LearnPageContent = ({ translations }: LearnPageContentProps) => {
 					<TabsTrigger value="beginner">
 						{translations.learn.beginner}
 					</TabsTrigger>
-					<TabsTrigger value="intermediate">
+					<TabsTrigger value="intermediate" disabled>
 						{translations.learn.intermediate}
 					</TabsTrigger>
-					<TabsTrigger value="advanced">
+					<TabsTrigger value="advanced" disabled>
 						{translations.learn.advanced}
 					</TabsTrigger>
 				</TabsList>
@@ -53,28 +54,14 @@ export const LearnPageContent = ({ translations }: LearnPageContentProps) => {
 				</TabsContent>
 
 				<TabsContent value="intermediate" className="mt-6">
-					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-						{LEARNING_PATHS.intermediate.map((path) => (
-							<LearningPathCard
-								key={path.id}
-								path={path}
-								progress={getUserProgress(path.id)}
-								onSelect={(pathId) => router.push(`/learn/${pathId}`)}
-							/>
-						))}
+					<div className="text-center py-8 text-muted-foreground">
+						Coming soon...
 					</div>
 				</TabsContent>
 
 				<TabsContent value="advanced" className="mt-6">
-					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-						{LEARNING_PATHS.advanced.map((path) => (
-							<LearningPathCard
-								key={path.id}
-								path={path}
-								progress={getUserProgress(path.id)}
-								onSelect={(pathId) => router.push(`/learn/${pathId}`)}
-							/>
-						))}
+					<div className="text-center py-8 text-muted-foreground">
+						Coming soon...
 					</div>
 				</TabsContent>
 			</Tabs>
