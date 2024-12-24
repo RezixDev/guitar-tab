@@ -1,5 +1,3 @@
-// types/learn.ts
-
 export interface Module {
   id: string;
   pathId: string;
@@ -46,7 +44,25 @@ export interface LearningPath {
   title: string;
   description: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  estimatedHours: number;
   totalLessons: number;
-  modules: Module[];
+  estimatedHours: number;
+  prerequisites?: string[]; // Added this line to fix the TypeScript error
+  modules?: Module[];
+}
+
+export interface UserProgress {
+  userId: string;
+  pathId: string;
+  completedLessons: string[];
+  currentLessonId: string;
+  exerciseScores: Record<string, number>;
+}
+
+// Adding QuizQuestion interface since it was referenced but not defined
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
 }

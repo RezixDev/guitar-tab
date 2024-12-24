@@ -19,8 +19,7 @@ export async function generateMetadata({
 		.flat()
 		.find((p) => p.id === level);
 
-	const lessonData = path?.modules
-		.flatMap((module) => module.lessons)
+  const lessonData = path?.modules?.flatMap((module) => module.lessons)
 		.find((l) => l.id === lesson);
 
 	return {
@@ -37,11 +36,15 @@ export default async function LessonPage({
 		.flat()
 		.find((p) => p.id === level);
 
-	const lessonData = path?.modules
+  if (!path || !path.modules) {
+    return notFound();
+  }
+
+  const lessonData = path.modules
 		.flatMap((module) => module.lessons)
 		.find((l) => l.id === lesson);
 
-	if (!lessonData || !path) {
+  if (!lessonData) {
 		return notFound();
 	}
 

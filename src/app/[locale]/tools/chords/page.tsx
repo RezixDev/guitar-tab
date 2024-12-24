@@ -10,12 +10,13 @@ import { ChordSVG } from "@/components/chords/ChordSVG";
 import { ChordTabs } from "@/components/chords/ChordTabs";
 import { FloatingChordViewer } from "@/components/chords/FloatingChordViewer";
 import { useChordState } from "@/hooks/useChordState";
+import { Chord } from "@/types/chord";
 
-interface GuitarPageProps {
-	initialChord?: ChordType; // Add proper type
+interface PageProps {
+  initialChord?: Chord;
 }
 
-export default function Page({ initialChord }: PageProps) {
+export default function Page({ initialChord = undefined }: PageProps) {
 	const {
 		currentChord,
 		searchTerm,
