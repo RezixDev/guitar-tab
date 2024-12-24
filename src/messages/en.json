@@ -94,13 +94,13 @@
           "description": "Learn advanced guitar techniques"
         }
       },
-      "common": {
-        "estimatedTime": "Estimated time: {{hours}} hours",
-        "totalLessons": "{{count}} lessons",
-        "prerequisites": "Prerequisites",
-        "progress": "Progress",
-        "complete": "Complete"
-      },
+    "common": {
+      "estimatedTime": "{hours}h",
+      "totalLessons": "{count} lessons",
+      "prerequisites": "Prerequisites",
+      "progress": "Progress",
+      "complete": "complete"
+    },
       "back": "Back to Learning Path",
       "lesson": "Lesson",
       "practice": "Practice Exercises",
@@ -108,5 +108,5 @@
       "next": "Next Lesson"
     }
   }
-  
+
   

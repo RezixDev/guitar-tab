@@ -62,5 +62,91 @@
           }
         }
       }
-    }
+    },
+
+
+  "learn": {
+    "title": "Ścieżki Nauki Gitary",
+    "levels": {
+      "beginner": "Początkujący",
+      "intermediate": "Średniozaawansowany",
+      "advanced": "Zaawansowany"
+    },
+    "learn": {
+      "beginner": "Początkujący",
+      "intermediate": "Średniozaawansowany",
+      "advanced": "Zaawansowany",
+      "practice": "Ćwiczenia"
+    },
+    "paths": {
+      "fundamentals": {
+        "title": "Podstawy",
+        "description": "Opanuj podstawy gry na gitarze"
+      },
+      "basic-chords": {
+        "title": "Podstawowe Akordy",
+        "description": "Naucz się podstawowych akordów otwartych i przejść między nimi"
+      },
+      "barre-chords": {
+        "title": "Akordy Barowe",
+        "description": "Opanuj akordy barowe i ich układy na gryfie"
+      },
+      "advanced-techniques": {
+        "title": "Zaawansowane Techniki",
+        "description": "Poznaj zaawansowane techniki gry na gitarze"
+      },
+      "rhythm-strumming": {
+        "title": "Rytm i Techniki Gry",
+        "description": "Rozwiń swoje wyczucie rytmu i poznaj wzory rytmiczne"
+      },
+      "song-structure": {
+        "title": "Struktura Utworów",
+        "description": "Poznaj podstawowe formy i struktury piosenek"
+      },
+      "performance-basics": {
+        "title": "Podstawy Występów",
+        "description": "Naucz się podstawowych umiejętności występowania"
+      },
+      "scales-modes": {
+        "title": "Skale i Tryby",
+        "description": "Poznaj podstawowe skale i tryby gitarowe"
+      },
+      "lead-techniques": {
+        "title": "Techniki Gry Solowej",
+        "description": "Rozwiń umiejętności gry solowej"
+      },
+      "improvisation": {
+        "title": "Podstawy Improwizacji",
+        "description": "Naucz się improwizować i tworzyć własne solówki"
+      },
+      "advanced-theory": {
+        "title": "Zaawansowana Teoria Muzyki",
+        "description": "Opanuj złożone koncepcje teorii muzycznej"
+      },
+      "composition": {
+        "title": "Kompozycja i Pisanie Piosenek",
+        "description": "Naucz się pisać i aranżować własną muzykę"
+      },
+      "advanced-styles": {
+        "title": "Zaawansowane Style i Gatunki",
+        "description": "Opanuj różne style muzyczne i gatunki"
+      },
+      "performance-mastery": {
+        "title": "Mistrzostwo Sceniczne",
+        "description": "Rozwiń profesjonalne umiejętności występowania"
+      }
+    },
+    "common": {
+      "estimatedTime": "{hours} godz.",
+      "totalLessons": "{count} lekcji",
+      "prerequisites": "Wymagania wstępne",
+      "progress": "Postęp",
+      "complete": "ukończone"
+    },
+    "back": "Powrót do ścieżki nauki",
+    "lesson": "Lekcja",
+    "practice": "Ćwiczenia praktyczne",
+    "next": "Następna lekcja"
+  
+}
   }

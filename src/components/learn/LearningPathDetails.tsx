@@ -1,11 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Clock, BookOpen, ArrowLeft } from "lucide-react";
-import { type LearningPath } from "@/types/learn";
+import { type LearningPath, type Module } from "@/types/learn";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getUserProgress } from "@/lib/learn/utils";
-import { FUNDAMENTALS_LESSONS } from "@/lib/learn/lessons";
 
 interface LearningPathDetailsProps {
 	path: LearningPath;
@@ -78,38 +77,6 @@ export const LearningPathDetails = ({
 				</div>
 			</div>
 
-			{path.prerequisites && path.prerequisites.length > 0 && (
-				<div className="mb-8">
-					<h2 className="text-xl font-semibold mb-4">
-						{translations.common.prerequisites}
-					</h2>
-					<div className="space-y-2">
-						{path.prerequisites.map((prereqId) => {
-							const prerequisite = Object.values(LEARNING_PATHS)
-								.flat()
-								.find((p) => p.id === prereqId);
-							return (
-								<div
-									key={prereqId}
-									className="flex items-center justify-between p-4 rounded-lg border"
-								>
-									<div>
-										<h3 className="font-medium">{prerequisite?.title}</h3>
-										<p className="text-sm text-muted-foreground">
-											{prerequisite?.description}
-										</p>
-									</div>
-									<Progress
-										value={getUserProgress(prereqId)}
-										className="w-24 h-2"
-									/>
-								</div>
-							);
-						})}
-					</div>
-				</div>
-			)}
-
 			<div className="mb-8">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-semibold">
@@ -122,24 +89,39 @@ export const LearningPathDetails = ({
 				<Progress value={progress} className="h-2" />
 			</div>
 
-			<div className="space-y-4">
-				<h2 className="text-xl font-semibold mb-4">Lessons</h2>
-				{FUNDAMENTALS_LESSONS.map((lesson) => (
-					<Link
-						key={lesson.id}
-						href={`/learn/${path.id}/${lesson.id}`}
-						className="block p-4 rounded-lg border hover:shadow-md transition-shadow"
-					>
-						<div className="flex justify-between items-start">
-							<div>
-								<h3 className="font-medium">{lesson.title}</h3>
-								<p className="text-sm text-muted-foreground">
-									{lesson.description}
-								</p>
+			<div className="space-y-8">
+				{path.modules.map((module) => (
+					<div key={module.id} className="border rounded-lg p-6">
+						<div className="mb-4">
+							<h2 className="text-xl font-semibold">{module.title}</h2>
+							<p className="text-muted-foreground">{module.description}</p>
+							<div className="mt-2 text-sm text-muted-foreground">
+								Estimated: {module.estimatedWeeks} weeks
 							</div>
-							{/* Add lesson completion status indicator here */}
 						</div>
-					</Link>
+
+						<div className="space-y-3">
+							{module.lessons.map((lesson) => (
+								<Link
+									key={lesson.id}
+									href={`/learn/${path.id}/${lesson.id}`}
+									className="block p-4 rounded-lg border hover:shadow-md transition-shadow"
+								>
+									<div className="flex justify-between items-start">
+										<div>
+											<h3 className="font-medium">{lesson.title}</h3>
+											<p className="text-sm text-muted-foreground">
+												{lesson.description}
+											</p>
+										</div>
+										{getUserProgress(lesson.id) > 0 && (
+											<Badge variant="secondary">Completed</Badge>
+										)}
+									</div>
+								</Link>
+							))}
+						</div>
+					</div>
 				))}
 			</div>
 		</div>

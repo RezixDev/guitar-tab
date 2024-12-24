@@ -145,38 +145,67 @@ e|--0--1--2--3--2--1--0--|
   }
 ];
 
+
 const ESSENTIAL_CHORDS_LESSONS: Lesson[] = [
   {
     id: 'first-chords',
     moduleId: 'essential-chords',
     title: 'First Chords',
-    description: 'Learn your first two-finger chords',
+    description: 'Learn your first two-finger chords: Em and Am',
     order: 1,
     content: {
       theory: `
 # Your First Chords
 
 1. Em and Am Chords
-- Finger placement for Em
-- Finger placement for Am
-- Common challenges and solutions
-- Checking each string rings clearly
+- The Em chord uses two fingers on the second fret
+- Finger 2: Second fret of the A string (5th string)
+- Finger 3: Second fret of the D string (4th string)
+- All strings should ring clearly when strummed
+- The Am chord also uses two fingers
+- Finger 1: First fret of the B string (2nd string)
+- Finger 2: Second fret of the G string (3rd string)
+- Strum from the A string (5th string) down
 
 2. Clean Transitions
-- Lifting and placing fingers efficiently
-- Maintaining hand position
-- Practice techniques for smooth changes
+- Keep fingers close to the fretboard
+- Practice lifting all fingers together
+- Land all fingers together for cleaner changes
+- Start slowly and build speed gradually
+- Use minimal finger movement when switching
+
+3. Common Problems to Avoid
+- Muted strings or buzzing sounds
+- Fingers too far from frets
+- Pressing too hard or too softly
+- Poor thumb position behind neck
+- Strumming wrong strings
       `,
       videoUrl: '/videos/first-chords.mp4',
       images: ['/images/em-chord.png', '/images/am-chord.png']
     },
     practiceExercises: [
       {
+        id: 'em-practice',
+        title: 'Em Chord Practice',
+        description: 'Practice forming and strumming the Em chord cleanly',
+        difficulty: 'beginner',
+        estimatedMinutes: 10
+      },
+      {
+        id: 'am-practice',
+        title: 'Am Chord Practice',
+        description: 'Practice forming and strumming the Am chord cleanly',
+        difficulty: 'beginner',
+        estimatedMinutes: 10
+      },
+      {
         id: 'two-chord-songs',
         title: '2-Chord Song Practice',
-        description: 'Practice switching between Em and Am chords',
+        description: 'Practice switching between Em and Am chords with a metronome',
         difficulty: 'beginner',
-        estimatedMinutes: 15
+        estimatedMinutes: 15,
+        requiredTools: ['metronome']
       }
     ]
   },
@@ -184,36 +213,62 @@ const ESSENTIAL_CHORDS_LESSONS: Lesson[] = [
     id: 'major-chords',
     moduleId: 'essential-chords',
     title: 'Major Chords',
-    description: 'Master essential major chords',
+    description: 'Master essential major chords: A, D, G, and C',
     order: 2,
     content: {
       theory: `
 # Major Chord Basics
 
 1. A, D, and G Major
-- Finger placement for each chord
-- Common fingering patterns
-- Troubleshooting muted strings
+- A Major: Three fingers on 2nd fret (strings 4, 3, and 2)
+- D Major: Three fingers in a triangle shape (strings 1, 2, and 3)
+- G Major: Fingers 1, 2, and 3 form a diagonal line
+- Pay attention to which strings to strum for each chord
+- Check that each string rings clearly
 
 2. C Major Introduction
-- The C major shape
-- Common challenges
-- Practice tips
+- C Major is slightly harder due to finger stretch
+- First finger on 1st fret of B string
+- Second finger on 2nd fret of D string
+- Third finger on 3rd fret of A string
+- Practice rolling your fingers for clean sound
 
 3. Reading Chord Diagrams
-- Understanding chord diagrams
-- Finger numbering system
-- Reading chord charts
+- Vertical lines represent strings (E A D G B E)
+- Horizontal lines represent frets
+- Black dots show where to place fingers
+- O above string means play open
+- X above string means don't play
+
+4. Common Progressions
+- G-C-D (I-IV-V in G)
+- A-D-E (I-IV-V in A)
+- Em-C-G (vi-IV-I in G)
+- Practice these progressions slowly
       `,
-      videoUrl: '/videos/major-chords.mp4'
+      videoUrl: '/videos/major-chords.mp4',
+      images: [
+        '/images/a-major.png',
+        '/images/d-major.png',
+        '/images/g-major.png',
+        '/images/c-major.png'
+      ]
     },
     practiceExercises: [
       {
+        id: 'major-chord-practice',
+        title: 'Individual Chord Practice',
+        description: 'Practice forming each major chord and checking string clarity',
+        difficulty: 'beginner',
+        estimatedMinutes: 15
+      },
+      {
         id: 'chord-progressions',
         title: 'Basic Chord Progressions',
-        description: 'Practice common chord progressions',
+        description: 'Practice G-C-D and A-D-E progressions slowly',
         difficulty: 'beginner',
-        estimatedMinutes: 20
+        estimatedMinutes: 20,
+        requiredTools: ['metronome']
       }
     ]
   },
@@ -221,35 +276,65 @@ const ESSENTIAL_CHORDS_LESSONS: Lesson[] = [
     id: 'strumming-basics',
     moduleId: 'essential-chords',
     title: 'Strumming Basics',
-    description: 'Learn fundamental strumming patterns',
+    description: 'Learn fundamental strumming patterns and timing',
     order: 3,
     content: {
       theory: `
 # Basic Strumming
 
 1. Down Strums
-- Basic down strum technique
-- Rhythm and timing
-- Using a metronome
+- Hold pick with firm but relaxed grip
+- Strum from elbow, not just wrist
+- Keep consistent downward pressure
+- Practice with single chords first
+- Count "1-2-3-4" while strumming
 
 2. Down-Up Patterns
-- Adding upstrums
-- Common patterns
-- Building speed and consistency
+- Start with "Down Down Down Down"
+- Progress to "Down-Up-Down-Up"
+- Focus on steady, even timing
+- Keep arm moving constantly
+- Don't stop between strums
 
 3. Basic Timing
-- Quarter note strumming
-- Eighth note patterns
-- Common timing mistakes
+- Quarter notes: Down strums on 1-2-3-4
+- Eighth notes: Down-Up on each beat
+- Use metronome starting at 60 BPM
+- Gradually increase speed
+- Practice transitions while strumming
       `,
       videoUrl: '/videos/strumming-basics.mp4',
-      tools: ['metronome']
+      tools: ['metronome'],
+      tablature: `
+Basic Patterns:
+Quarter Notes:    ↓     ↓     ↓     ↓
+                 1     2     3     4
+
+Eighth Notes:     ↓  ↑  ↓  ↑  ↓  ↑  ↓  ↑
+                 1  +  2  +  3  +  4  +
+      `
     },
     practiceExercises: [
       {
+        id: 'down-strums',
+        title: 'Down Strum Practice',
+        description: 'Practice quarter note down strums with the metronome',
+        difficulty: 'beginner',
+        estimatedMinutes: 10,
+        requiredTools: ['metronome']
+      },
+      {
+        id: 'down-up-pattern',
+        title: 'Down-Up Pattern Practice',
+        description: 'Practice eighth note down-up patterns',
+        difficulty: 'beginner',
+        estimatedMinutes: 15,
+        requiredTools: ['metronome']
+      },
+      {
         id: 'metronome-practice',
-        title: 'Strumming with Metronome',
-        description: 'Practice basic strumming patterns with a metronome',
+        title: 'Strumming with Chord Changes',
+        description: 'Practice strumming patterns while changing chords',
         difficulty: 'beginner',
         estimatedMinutes: 15,
         requiredTools: ['metronome']

@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { type Lesson, type LearningPath } from "@/types/learn";
-import { getNextLesson } from "@/lib/learn/lessons";
+import { getModule } from "@/lib/learn/constants";
 
 interface LessonDetailsProps {
 	lesson: Lesson;
@@ -27,7 +27,34 @@ export const LessonDetails = ({
 	path,
 	translations,
 }: LessonDetailsProps) => {
-	const nextLesson = getNextLesson(lesson.id);
+	const currentModule = path.modules.find((m) =>
+		m.lessons.some((l) => l.id === lesson.id)
+	);
+
+	const currentLessonIndex =
+		currentModule?.lessons.findIndex((l) => l.id === lesson.id) ?? -1;
+
+	const nextLesson = currentModule?.lessons[currentLessonIndex + 1];
+	const nextModule = path.modules[currentModule?.order ?? 1];
+	const firstLessonOfNextModule = nextModule?.lessons[0];
+
+	const getNextLessonLink = () => {
+		if (nextLesson) {
+			return `/learn/${path.id}/${nextLesson.id}`;
+		}
+		if (firstLessonOfNextModule) {
+			return `/learn/${path.id}/${firstLessonOfNextModule.id}`;
+		}
+		return null;
+	};
+
+	const handleLessonComplete = () => {
+		// TODO: Implement lesson completion logic
+		const nextPath = getNextLessonLink();
+		if (nextPath) {
+			window.location.href = nextPath;
+		}
+	};
 
 	return (
 		<div className="max-w-4xl mx-auto">
@@ -42,11 +69,11 @@ export const LessonDetails = ({
 
 			<div className="mb-8">
 				<div className="flex items-center gap-2 text-muted-foreground mb-2">
-					<span>
-						{translations.lesson} {lesson.order}
-					</span>
+					<span>{currentModule?.title}</span>
 					<span>•</span>
-					<span>{path.title}</span>
+					<span>
+						{translations.lesson} {currentLessonIndex + 1}
+					</span>
 				</div>
 				<h1 className="text-3xl font-bold mb-4">{lesson.title}</h1>
 				<p className="text-lg text-muted-foreground">{lesson.description}</p>
@@ -65,7 +92,9 @@ export const LessonDetails = ({
 			<Card className="mb-8">
 				<CardContent className="p-6 prose prose-slate max-w-none">
 					{lesson.content.theory.split("\n").map((paragraph, index) => (
-						<p key={index}>{paragraph}</p>
+						<React.Fragment key={index}>
+							{paragraph.trim() && <p>{paragraph}</p>}
+						</React.Fragment>
 					))}
 
 					{lesson.content.tablature && (
@@ -100,6 +129,11 @@ export const LessonDetails = ({
 											{exercise.tabs}
 										</pre>
 									)}
+									{exercise.requiredTools?.map((tool) => (
+										<Badge key={tool} variant="outline" className="mr-2">
+											{tool}
+										</Badge>
+									))}
 								</CardContent>
 							</Card>
 						))}
@@ -108,19 +142,12 @@ export const LessonDetails = ({
 			)}
 
 			<div className="flex justify-between items-center">
-				<Button
-					variant="default"
-					size="lg"
-					onClick={() => {
-						// Implement lesson completion logic
-						console.log("Lesson completed");
-					}}
-				>
+				<Button variant="default" size="lg" onClick={handleLessonComplete}>
 					{translations.complete}
 				</Button>
 
-				{nextLesson && (
-					<Link href={`/learn/${path.id}/${nextLesson.id}`}>
+				{getNextLessonLink() && (
+					<Link href={getNextLessonLink()!}>
 						<Button variant="ghost" size="lg">
 							{translations.next}
 							<ArrowRight className="ml-2 h-4 w-4" />

@@ -18,9 +18,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
 
 export const AppSidebar = () => {
 	const pathname = usePathname();
+  const locale = useLocale();
 	const { isMobile, openMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = React.useState(() => {
 		if (typeof window !== "undefined") {
@@ -35,20 +37,20 @@ export const AppSidebar = () => {
 	}, [isOpen]);
 
 	const menuItems = [
-		{ icon: Home, label: "Home", href: "/" },
+    { icon: Home, label: "Home", href: `/${locale}` },
 		{
 			icon: Guitar,
 			label: "Guitar Tools",
 			href: "#",
 			subItems: [
-				{ label: "Fretboard Game", href: "/fretboard" },
-				{ label: "Scale Viewer", href: "/scales" },
-				{ label: "Chord Library", href: "/chord-library" },
-				{ label: "Guitar Tuner", href: "/tuner" },
+        { label: "Fretboard Game", href: `/${locale}/tools/fretboard` },
+        { label: "Scale Viewer", href: `/${locale}/tools/scales` },
+        { label: "Chord Library", href: `/${locale}/tools/chords` },
+        { label: "Guitar Tuner", href: `/${locale}/tools/tuner` },
 			],
 		},
-		{ icon: Book, label: "Lessons", href: "/lessons" },
-		{ icon: Settings, label: "Settings", href: "/settings" },
+    { icon: Book, label: "Lessons", href: `/${locale}/learn` },
+    { icon: Settings, label: "Settings", href: `/${locale}/settings` },
 	];
 
 	return (

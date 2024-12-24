@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LessonDetails } from "@/components/learn/LessonDetails";
-import { FUNDAMENTALS_LESSONS } from "@/lib/learn/lessons";
 import { LEARNING_PATHS } from "@/lib/learn/constants";
+import { notFound } from "next/navigation";
 
 interface LessonPageProps {
 	params: {
@@ -15,7 +15,13 @@ interface LessonPageProps {
 export async function generateMetadata({
 	params: { locale, level, lesson },
 }: LessonPageProps): Promise<Metadata> {
-	const lessonData = FUNDAMENTALS_LESSONS.find((l) => l.id === lesson);
+	const path = Object.values(LEARNING_PATHS)
+		.flat()
+		.find((p) => p.id === level);
+
+	const lessonData = path?.modules
+		.flatMap((module) => module.lessons)
+		.find((l) => l.id === lesson);
 
 	return {
 		title: lessonData?.title || "Lesson",
@@ -27,14 +33,16 @@ export default async function LessonPage({
 }: LessonPageProps) {
 	const t = await getTranslations("learn");
 
-	const lessonData = FUNDAMENTALS_LESSONS.find((l) => l.id === lesson);
 	const path = Object.values(LEARNING_PATHS)
 		.flat()
 		.find((p) => p.id === level);
 
+	const lessonData = path?.modules
+		.flatMap((module) => module.lessons)
+		.find((l) => l.id === lesson);
+
 	if (!lessonData || !path) {
-		// You might want to handle this differently, maybe redirect to 404
-		return <div>Lesson not found</div>;
+		return notFound();
 	}
 
 	return (
