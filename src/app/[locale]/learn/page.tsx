@@ -1,12 +1,12 @@
-// app/[locale]/learn/page.tsx
 import { getTranslations } from "next-intl/server";
 import { LearnPageContent } from "@/components/learn/LearnPageContent";
 
-export default async function LearnPage({
-	params: { locale },
-}: {
-	params: { locale: string };
-}) {
+// Define the params type as a Promise
+type Params = Promise<{ locale: string }>;
+
+export default async function LearnPage(props: { params: Params }) {
+	// Await the params Promise
+	const { locale } = await props.params;
 	const t = await getTranslations("home.learning");
 
 	return (

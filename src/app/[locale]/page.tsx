@@ -1,13 +1,11 @@
-// app/[locale]/page.tsx
 import { getTranslations } from "next-intl/server";
 import { HomePage } from "@/components/HomePage";
 import { NextIntlClientProvider } from "@/components/providers/NextIntlClientProvider";
 
-export default async function Page({
-	params: { locale },
-}: {
-	params: { locale: string };
-}) {
+type Params = Promise<{ locale: string }>;
+
+export default async function Page(props: { params: Params }) {
+	const { locale } = await props.params;
 	const messages = (await import(`@/messages/${locale}.json`)).default;
 
 	return (
