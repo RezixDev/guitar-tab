@@ -10,13 +10,9 @@ import { ChordSVG } from "@/components/chords/ChordSVG";
 import { ChordTabs } from "@/components/chords/ChordTabs";
 import { FloatingChordViewer } from "@/components/chords/FloatingChordViewer";
 import { useChordState } from "@/hooks/useChordState";
-import { Chord } from "@/types/chord";
+import { Chord, Note } from "@/types/chord";
 
-interface PageProps {
-  initialChord?: Chord;
-}
-
-export default function Page({ initialChord = undefined }: PageProps) {
+export default function Page() {
 	const {
 		currentChord,
 		searchTerm,
@@ -27,9 +23,20 @@ export default function Page({ initialChord = undefined }: PageProps) {
 		handleNameChange,
 		handleStartingFretChange,
 		handleSearchChange,
-	} = useChordState(initialChord);
+	} = useChordState();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleNoteChange = (
+		index: number,
+		field: keyof Note,
+		value: string
+	) => {
+		const numValue = value === "" ? null : parseInt(value, 10);
+		if (field === "fret" || field === "finger") {
+			handleInputChange(index, numValue);
+		}
+	};
 
 	return (
 		<main className="min-h-screen bg-background">
@@ -86,7 +93,7 @@ export default function Page({ initialChord = undefined }: PageProps) {
 								chord={currentChord}
 								onNameChange={handleNameChange}
 								onStartingFretChange={handleStartingFretChange}
-								onNoteChange={handleInputChange}
+								onNoteChange={handleNoteChange}
 							/>
 						</CardContent>
 					</Card>

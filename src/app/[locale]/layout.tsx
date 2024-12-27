@@ -21,19 +21,26 @@ export const metadata: Metadata = {
 
 type RootLayoutProps = {
 	children: React.ReactNode;
-	params: { locale: string };
+	params: Promise<{ locale: string }>;
 };
 
-export default async function Layout({
-	children,
-	params: { locale },
-}: RootLayoutProps) {
-	unstable_setRequestLocale(locale);
+export default async function Layout(props: RootLayoutProps) {
+    const params = await props.params;
 
-	// Lade die Übersetzungen
-	const messages = (await import(`@/messages/${locale}.json`)).default;
+    const {
+        locale
+    } = params;
 
-	return (
+    const {
+        children
+    } = props;
+
+    unstable_setRequestLocale(locale);
+
+    // Lade die Übersetzungen
+    const messages = (await import(`@/messages/${locale}.json`)).default;
+
+    return (
 		<html lang={locale} suppressHydrationWarning>
 			<body className={inter.className}>
 				<RootLayout locale={locale} messages={messages}>

@@ -1,39 +1,51 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import { standardChords, extendedChords } from "@/data/chords";
-import type { Chord, Note } from "@/components/chords/types";
+import type { Chord, ChordState } from "@/types/chord";
 
-export function useChordState() {
-	const [currentChord, setCurrentChord] = useState<Chord>(
-		standardChords.length > 0
-			? standardChords[0]
-			: { name: "", startingFret: 1, notes: [] }
+const DEFAULT_CHORD: ChordState = {
+	name: "",
+	notes: Array(6).fill(null),
+	startingFret: 1,
+};
+
+export function useChordState(initialChord?: Chord) {
+	const [currentChord, setCurrentChord] = useState<ChordState>(
+		initialChord ? convertChordToState(initialChord) : DEFAULT_CHORD
 	);
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const handleChordChange = (chord: Chord) => {
-		setCurrentChord(chord);
-	};
+	function convertChordToState(chord: Chord): ChordState {
+		return {
+			name: chord.name,
+			notes: chord.notes.map((note) => note.fret),
+			startingFret: chord.startingFret,
+		};
+	}
 
-	const handleInputChange = (
-		index: number,
-		field: keyof Note,
-		value: string
-	) => {
+	const handleInputChange = (index: number, value: number | null) => {
 		setCurrentChord((prev) => ({
 			...prev,
-			notes: prev.notes.map((note, i) =>
-				i === index ? { ...note, [field]: parseInt(value, 10) } : note
-			),
+			notes: prev.notes.map((note, i) => (i === index ? value : note)),
 		}));
 	};
 
-	const handleNameChange = (value: string) => {
-		setCurrentChord((prev) => ({ ...prev, name: value }));
+	const handleStartingFretChange = (value: string) => {
+		const fret = parseInt(value, 10);
+		if (!isNaN(fret)) {
+			setCurrentChord((prev) => ({
+				...prev,
+				startingFret: fret,
+			}));
+		}
 	};
 
-	const handleStartingFretChange = (value: string) => {
-		setCurrentChord((prev) => ({ ...prev, startingFret: parseInt(value, 10) }));
+	const handleChordChange = (chord: Chord) => {
+		setCurrentChord(convertChordToState(chord));
+	};
+
+	const handleNameChange = (name: string) => {
+		setCurrentChord((prev) => ({ ...prev, name }));
 	};
 
 	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getUserProgress } from "@/lib/learn/utils";
 
 interface LearningPathDetailsProps {
-	path: LearningPath;
+	path: LearningPath & { modules: Module[] }; // Ensure modules is required
 	translations: {
 		title: string;
 		common: {
@@ -25,6 +25,7 @@ export const LearningPathDetails = ({
 	translations,
 }: LearningPathDetailsProps) => {
 	const progress = getUserProgress(path.id);
+	const modules = path.modules;
 
 	return (
 		<div className="max-w-4xl mx-auto">
@@ -47,8 +48,8 @@ export const LearningPathDetails = ({
 						path.difficulty === "beginner"
 							? "default"
 							: path.difficulty === "intermediate"
-							? "secondary"
-							: "destructive"
+								? "secondary"
+								: "destructive"
 					}
 					className="text-sm"
 				>
@@ -90,7 +91,7 @@ export const LearningPathDetails = ({
 			</div>
 
 			<div className="space-y-8">
-				{path.modules.map((module) => (
+				{modules.map((module) => (
 					<div key={module.id} className="border rounded-lg p-6">
 						<div className="mb-4">
 							<h2 className="text-xl font-semibold">{module.title}</h2>

@@ -100,11 +100,6 @@ export function GuitarTuner() {
 				console.error("Error initializing AudioContext:", error);
 			}
 		}
-
-		// Resume AudioContext if it's in suspended state
-		if (audioContextRef.current.state === "suspended") {
-			audioContextRef.current.resume();
-		}
 	};
 
 	useEffect(() => {

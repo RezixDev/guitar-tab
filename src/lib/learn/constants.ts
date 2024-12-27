@@ -1,7 +1,13 @@
 // lib/learn/constants.ts
-import { LearningPath } from '@/types/learn';
+import type { LearningPath } from '@/types/learn';
 
-export const LEARNING_PATHS: Record<string, LearningPath[]> = {
+type LearningPathsByDifficulty = {
+  beginner: LearningPath[];
+  intermediate: LearningPath[];
+  advanced: LearningPath[];
+};
+
+export const LEARNING_PATHS: LearningPathsByDifficulty = {
   beginner: [
     {
       id: 'fundamentals',
@@ -19,7 +25,6 @@ export const LEARNING_PATHS: Record<string, LearningPath[]> = {
           description: 'Learn proper guitar setup and positioning',
           order: 1,
           estimatedWeeks: 1,
-          skills: ['Guitar Setup', 'Proper Posture', 'Hand Positioning'],
           lessons: []
         }
       ]
@@ -40,49 +45,6 @@ export const LEARNING_PATHS: Record<string, LearningPath[]> = {
           description: 'Master all essential open chords',
           order: 1,
           estimatedWeeks: 4,
-          skills: ['Major Chords', 'Minor Chords', 'Dominant Chords'],
-          lessons: []
-        }
-      ]
-    },
-    {
-      id: 'barre-chords',
-      title: 'paths.barre-chords.title',
-      description: 'paths.barre-chords.description',
-      difficulty: 'intermediate',
-      totalLessons: 12,
-      estimatedHours: 15,
-      prerequisites: ['basic-chords'],
-      modules: [
-        {
-          id: 'barre-fundamentals',
-          pathId: 'barre-chords',
-          title: 'Barre Chord Fundamentals',
-          description: 'Learn essential barre chord techniques',
-          order: 1,
-          estimatedWeeks: 4,
-          skills: ['Basic Barre Technique', 'Major Barre Shapes', 'Minor Barre Shapes'],
-          lessons: []
-        }
-      ]
-    },
-    {
-      id: 'advanced-techniques',
-      title: 'paths.advanced-techniques.title',
-      description: 'paths.advanced-techniques.description',
-      difficulty: 'advanced',
-      totalLessons: 12,
-      estimatedHours: 20,
-      prerequisites: ['barre-chords'],
-      modules: [
-        {
-          id: 'advanced-lead',
-          pathId: 'advanced-techniques',
-          title: 'Advanced Lead Techniques',
-          description: 'Master complex lead guitar techniques',
-          order: 1,
-          estimatedWeeks: 4,
-          skills: ['Sweep Picking', 'Tapping', 'Advanced Legato'],
           lessons: []
         }
       ]
@@ -105,7 +67,6 @@ export const LEARNING_PATHS: Record<string, LearningPath[]> = {
           description: 'Learn essential barre chord techniques',
           order: 1,
           estimatedWeeks: 4,
-          skills: ['Basic Barre Technique', 'Major Barre Shapes', 'Minor Barre Shapes'],
           lessons: []
         }
       ]
@@ -128,7 +89,6 @@ export const LEARNING_PATHS: Record<string, LearningPath[]> = {
           description: 'Master complex lead guitar techniques',
           order: 1,
           estimatedWeeks: 4,
-          skills: ['Sweep Picking', 'Tapping', 'Advanced Legato'],
           lessons: []
         }
       ]

@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "@/components/providers/NextIntlClientPro
 
 type Params = Promise<{ locale: string }>;
 
-export default async function Page(props: { params: Params }) {
+export default async function Page(props: { params: Promise<Params> }) {
 	const { locale } = await props.params;
 	const messages = (await import(`@/messages/${locale}.json`)).default;
 

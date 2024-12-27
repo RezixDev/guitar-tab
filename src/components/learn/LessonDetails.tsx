@@ -7,12 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { type Lesson, type LearningPath } from "@/types/learn";
-import { getModule } from "@/lib/learn/constants";
+import { type Lesson, type LearningPath, type Module } from "@/types/learn";
 
 interface LessonDetailsProps {
 	lesson: Lesson;
-	path: LearningPath;
+	path: LearningPath & { modules: Module[] }; // Ensure modules is required
 	translations: {
 		back: string;
 		lesson: string;
@@ -27,7 +26,9 @@ export const LessonDetails = ({
 	path,
 	translations,
 }: LessonDetailsProps) => {
-	const currentModule = path.modules.find((m) =>
+	const modules = path.modules;
+
+	const currentModule = modules.find((m) =>
 		m.lessons.some((l) => l.id === lesson.id)
 	);
 
@@ -35,7 +36,7 @@ export const LessonDetails = ({
 		currentModule?.lessons.findIndex((l) => l.id === lesson.id) ?? -1;
 
 	const nextLesson = currentModule?.lessons[currentLessonIndex + 1];
-	const nextModule = path.modules[currentModule?.order ?? 1];
+	const nextModule = modules[currentModule?.order ?? 1];
 	const firstLessonOfNextModule = nextModule?.lessons[0];
 
 	const getNextLessonLink = () => {
