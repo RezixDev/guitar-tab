@@ -170,6 +170,17 @@
       "selectNote": "Note auswählen",
       "nextNote": "Nächste Note"
     }
+  },
+  "feedback": {
+    "perfect": "Perfekt! Du hast die exakte Position gefunden!",
+    "tryAgainAny": "Versuch es noch einmal! Finde eine beliebige Position dieser Note.",
+    "foundOne": "Du hast eine richtige Position gefunden!",
+    "tryAgain": "Versuch es noch einmal!",
+    "excellent": "Ausgezeichnet! Du hast alle Positionen gefunden!",
+    "remainingPositions": "Richtig! Noch {count} Positionen übrig.",
+    "remainingPosition": "Richtig! Noch 1 Position übrig.",
+    "tryAgainAll": "Versuch es noch einmal! Finde alle Positionen dieser Note.",
+    "correct": "Richtig!"
   }
   }
 }

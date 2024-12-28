@@ -40,9 +40,26 @@ export const FretboardGame = () => {
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [startTime, setStartTime] = useState(Date.now());
 
+	const feedbackTranslations = {
+		feedback: {
+			perfect: t("feedback.perfect"),
+			tryAgainAny: t("feedback.tryAgainAny"),
+			foundOne: t("feedback.foundOne"),
+			tryAgain: t("feedback.tryAgain"),
+			excellent: t("feedback.excellent"),
+			remainingPositions: (count: number) =>
+				t("feedback.remainingPositions", { count }),
+			remainingPosition: t("feedback.remainingPosition"),
+			tryAgainAll: t("feedback.tryAgainAll"),
+			correct: t("feedback.correct"),
+		},
+	};
+
 	// Custom hooks
-	const { gameState, handleGuess, resetGame, updateGameState } =
-		useGameState(tuning);
+	const { gameState, handleGuess, resetGame, updateGameState } = useGameState(
+		tuning,
+		feedbackTranslations
+	);
 	const { audioManager, isAudioLoaded } = useAudioManager();
 	const {
 		gameMode,
@@ -206,6 +223,7 @@ export const FretboardGame = () => {
 			nextNote: t("keyboard.shortcuts.nextNote"),
 		},
 	};
+
 	return (
 		<Card className="w-full">
 			<CardHeader>

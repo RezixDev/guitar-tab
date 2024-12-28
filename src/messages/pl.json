@@ -211,6 +211,17 @@
     "selectNote": "Wybierz nutę",
     "nextNote": "Następna nuta"
   }
-}
+},
+"feedback": {
+    "perfect": "Perfekcyjnie! Znalazłeś dokładną pozycję!",
+    "tryAgainAny": "Spróbuj ponownie! Znajdź dowolną pozycję tej nuty.",
+    "foundOne": "Znalazłeś jedną prawidłową pozycję!",
+    "tryAgain": "Spróbuj ponownie!",
+    "excellent": "Znakomicie! Znalazłeś wszystkie pozycje!",
+    "remainingPositions": "Prawidłowo! Pozostało {count} pozycji.",
+    "remainingPosition": "Prawidłowo! Pozostała 1 pozycja.",
+    "tryAgainAll": "Spróbuj ponownie! Znajdź wszystkie pozycje tej nuty.",
+    "correct": "Prawidłowo!"
+  }
 }
   }

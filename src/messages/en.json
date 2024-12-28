@@ -172,6 +172,17 @@
             "selectNote": "Select Note",
             "nextNote": "Next Note"
           }
+        },
+        "feedback": {
+          "perfect": "Perfect! You found the exact position!",
+          "tryAgainAny": "Try again! Find any position of this note.",
+          "foundOne": "You found one correct position!",
+          "tryAgain": "Try again!",
+          "excellent": "Excellent! You found all positions!",
+          "remainingPositions": "Correct! {count} positions remaining.",
+          "remainingPosition": "Correct! 1 position remaining.",
+          "tryAgainAll": "Try again! Find all positions of this note.",
+          "correct": "Correct!"
         }
       }
     

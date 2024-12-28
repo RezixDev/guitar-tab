@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Tuning, Note, NotePosition} from '@/utils/noteUtils';
+import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
 import { generateRandomNote, getNote, getAllNotePositions } from '@/utils/noteUtils';
 
 interface GameState {
@@ -17,7 +17,22 @@ interface GameState {
   totalPositions: number;
 }
 
-export const useGameState = (tuning: Tuning) => {
+interface GameTranslations {
+  feedback: {
+    perfect: string;
+    tryAgainAny: string;
+    foundOne: string;
+    tryAgain: string;
+    excellent: string;
+    remainingPositions: (count: number) => string;
+
+    remainingPosition: string;
+    tryAgainAll: string;
+    correct: string;
+  };
+}
+
+export const useGameState = (tuning: Tuning, translations: GameTranslations) => {
   const initialNote = generateRandomNote(tuning);
   const initialTotalPositions = getAllNotePositions(initialNote.note, tuning).length;
 
@@ -72,7 +87,7 @@ export const useGameState = (tuning: Tuning) => {
           points: gameState.points + 1,
           streak: gameState.streak + 1,
           totalAttempts: gameState.totalAttempts + 1,
-          feedback: 'Perfect! You found the exact position!',
+          feedback: translations.feedback.perfect,
           showNext: true,
           guessedPositions: [...gameState.guessedPositions, position]
         });
@@ -80,7 +95,7 @@ export const useGameState = (tuning: Tuning) => {
         updateGameState({
           streak: 0,
           totalAttempts: gameState.totalAttempts + 1,
-          feedback: 'Try again! Find any position of this note.',
+          feedback: translations.feedback.tryAgainAny,
           guessedPositions: [...gameState.guessedPositions, position]
         });
       }
@@ -93,7 +108,7 @@ export const useGameState = (tuning: Tuning) => {
           points: gameState.points + 1,
           streak: gameState.streak + 1,
           totalAttempts: gameState.totalAttempts + 1,
-          feedback: 'You found one correct position!',
+          feedback: translations.feedback.foundOne,
           showNext: true,
           guessedPositions: [...gameState.guessedPositions, position]
         });
@@ -101,7 +116,7 @@ export const useGameState = (tuning: Tuning) => {
         updateGameState({
           streak: 0,
           totalAttempts: gameState.totalAttempts + 1,
-          feedback: 'Try again!',
+          feedback: translations.feedback.tryAgain,
           guessedPositions: [...gameState.guessedPositions, position]
         });
       }
@@ -125,8 +140,8 @@ export const useGameState = (tuning: Tuning) => {
           guessedPositions: [...gameState.guessedPositions, position],
           showNext: allPositionsFound,
           feedback: allPositionsFound 
-            ? 'Excellent! You found all positions!' 
-            : `Correct! ${remainingPositions} position${remainingPositions === 1 ? '' : 's'} remaining.`,
+          ? translations.feedback.excellent 
+          : translations.feedback.remainingPositions(remainingPositions),
           points: allPositionsFound ? gameState.points + 1 : gameState.points,
           streak: allPositionsFound ? gameState.streak + 1 : gameState.streak
         });
@@ -134,7 +149,7 @@ export const useGameState = (tuning: Tuning) => {
         if (allPositionsFound && !gameState.showNext) {
           updateGameState({
             showNext: true,
-            feedback: 'Excellent! You found all positions!'
+            feedback: translations.feedback.excellent
           });
         }
       } else {
@@ -143,7 +158,7 @@ export const useGameState = (tuning: Tuning) => {
         updateGameState({
           streak: 0,
           totalAttempts: gameState.totalAttempts + 1,
-          feedback: 'Try again! Find all positions of this note.',
+          feedback: translations.feedback.tryAgainAll,
           guessedPositions: [...gameState.guessedPositions, position],
           showNext: allPositionsFound
         });
@@ -156,7 +171,7 @@ export const useGameState = (tuning: Tuning) => {
         points: gameState.points + 1,
         streak: gameState.streak + 1,
         totalAttempts: gameState.totalAttempts + 1,
-        feedback: 'Correct!',
+        feedback: translations.feedback.correct,
         showNext: true,
         guessedPositions: [...gameState.guessedPositions, position]
       });
@@ -164,11 +179,11 @@ export const useGameState = (tuning: Tuning) => {
       updateGameState({
         streak: 0,
         totalAttempts: gameState.totalAttempts + 1,
-        feedback: 'Try again!',
+        feedback: translations.feedback.tryAgain,
         guessedPositions: [...gameState.guessedPositions, position]
       });
     }
-  }, [gameState, checkNoteAtPosition, updateGameState, tuning]);
+  }, [gameState, checkNoteAtPosition, updateGameState, tuning, translations]);
 
   const resetGame = useCallback(() => {
     const newNote = generateRandomNote(tuning);
