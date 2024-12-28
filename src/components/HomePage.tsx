@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useParams } from "next/navigation";
 import {
 	Card,
@@ -26,8 +26,7 @@ import {
 
 export function HomePage() {
 	const t = useTranslations("home");
-	const params = useParams();
-	const locale = params.locale as string;
+	const locale = useLocale();
 
 	console.log("Current locale:", locale); // Debug log
 	console.log("Translation test:", t("hero.title")); // Debug log
