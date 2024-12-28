@@ -1,10 +1,8 @@
-// components/GameSettings.tsx
 import { Label } from "@/components/ui/label";
 import { TuningSelector } from "./TuningSelector";
 import { PointsSelector } from "./PointsSelector";
 import { GameModesDropdown, type GameMode } from "./GameModesDropdown";
 import { ModeToggle } from "./ModeToggle";
-
 import { type Tuning } from "@/utils/noteUtils";
 
 interface GameSettingsProps {
@@ -15,6 +13,11 @@ interface GameSettingsProps {
 	onGameModeChange: (mode: GameMode) => void;
 	disabled?: boolean;
 	displayTuning: Tuning;
+	translations: {
+		tuning: string;
+		targetScore: string;
+		gameMode: string;
+	};
 }
 
 export const GameSettings: React.FC<GameSettingsProps> = ({
@@ -25,16 +28,17 @@ export const GameSettings: React.FC<GameSettingsProps> = ({
 	onGameModeChange,
 	disabled = false,
 	displayTuning,
+	translations,
 }) => {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div className="space-y-4">
 				<div className="space-y-2">
-					<Label>Tuning</Label>
+					<Label>{translations.tuning}</Label>
 					<TuningSelector onChange={onTuningChange} disabled={disabled} />
 				</div>
 				<div className="space-y-2">
-					<Label>Target Score</Label>
+					<Label>{translations.targetScore}</Label>
 					<PointsSelector
 						value={targetPoints}
 						onChange={onTargetPointsChange}
@@ -43,7 +47,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({
 				</div>
 			</div>
 			<div className="space-y-4">
-				<Label>Game Mode</Label>
+				<Label>{translations.gameMode}</Label>
 				<GameModesDropdown
 					value={gameMode}
 					onChange={onGameModeChange}

@@ -106,7 +106,48 @@
       "practice": "Practice Exercises",
       "complete": "Mark as Complete",
       "next": "Next Lesson"
-    }
+    },
+
+    
+      "Fretboard": {
+        "title": "Fretboard Guessing Game",
+        "backToHome": "Back to Home",
+        "tutorial": {
+          "title": "How to Play",
+          "step1": "Find the requested note on the fretboard",
+          "step2": "Click on the correct position",
+          "step3": "Progress through all positions"
+        },
+        "game": {
+          "ready": "Ready to test your fretboard knowledge?",
+          "startGame": "Start Game",
+          "findNote": "Find this note on the fretboard:",
+          "pressEnter": "Press Enter or click Next Note to continue",
+          "nextNote": "Next Note",
+          "resetGame": "Reset Game",
+          "streak": "Streak: {count}",
+          "score": "{current} / {target}",
+          "time": "{seconds}s",
+          "best": "Best: {time}s"
+        },
+        "settings": {
+          "tuning": "Tuning",
+          "targetScore": "Target Score",
+          "gameMode": "Game Mode"
+        },
+        "completion": {
+          "title": "Congratulations!",
+          "subtitle": "You've completed the challenge!",
+          "correct": "Correct: {count}",
+          "time": "Time: {seconds}s",
+          "streak": "Streak: {count}",
+          "bestTime": "Best: {time}s",
+          "accuracy": "Accuracy",
+          "close": "Close",
+          "playAgain": "Play Again"
+        }
+      }
+    
   }
 
   

@@ -106,5 +106,43 @@
     "practice": "Übungsaufgaben",
     "complete": "Als abgeschlossen markieren",
     "next": "Nächste Lektion"
+  },
+  "Fretboard": {
+    "title": "Griffbrett-Ratespiel",
+    "backToHome": "Zurück zur Startseite",
+    "tutorial": {
+      "title": "Spielanleitung",
+      "step1": "Finde die angeforderte Note auf dem Griffbrett",
+      "step2": "Klicke auf die richtige Position",
+      "step3": "Gehe durch alle Positionen"
+    },
+    "game": {
+      "ready": "Bereit, dein Griffbrett-Wissen zu testen?",
+      "startGame": "Spiel Starten",
+      "findNote": "Finde diese Note auf dem Griffbrett:",
+      "pressEnter": "Drücke Enter oder klicke auf Nächste Note zum Fortfahren",
+      "nextNote": "Nächste Note",
+      "resetGame": "Spiel Zurücksetzen",
+      "streak": "Serie: {count}",
+      "score": "{current} / {target}",
+      "time": "{seconds}s",
+      "best": "Beste: {time}s"
+    },
+    "settings": {
+      "tuning": "Stimmung",
+      "targetScore": "Zielpunktzahl",
+      "gameMode": "Spielmodus"
+    },
+    "completion": {
+      "title": "Glückwunsch!",
+      "subtitle": "Du hast die Herausforderung gemeistert!",
+      "correct": "Korrekt: {count}",
+      "time": "Zeit: {seconds}s",
+      "streak": "Serie: {count}",
+      "bestTime": "Beste: {time}s",
+      "accuracy": "Genauigkeit",
+      "close": "Schließen",
+      "playAgain": "Nochmal Spielen"
+    }
   }
 }

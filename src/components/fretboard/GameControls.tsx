@@ -1,3 +1,4 @@
+// components/GameControls.tsx
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Clock, Target, Music, Play, RefreshCcw } from "lucide-react";
@@ -13,10 +14,22 @@ interface GameControlsProps {
 	showNext: boolean;
 	currentNote: Note;
 	isGameStarted: boolean;
-	feedback?: string; // Add feedback prop
+	feedback?: string;
 	onNextNote: () => void;
 	onStartGame: () => void;
 	onReset: () => void;
+	translations: {
+		ready: string;
+		startGame: string;
+		findNote: string;
+		pressEnter: string;
+		nextNote: string;
+		resetGame: string;
+		streak: string;
+		score: string;
+		time: string;
+		best: string;
+	};
 }
 
 export const GameControls: React.FC<GameControlsProps> = ({
@@ -29,24 +42,23 @@ export const GameControls: React.FC<GameControlsProps> = ({
 	showNext,
 	currentNote,
 	isGameStarted,
-	feedback = "", // Default to empty string
+	feedback = "",
 	onNextNote,
 	onStartGame,
 	onReset,
+	translations,
 }) => {
 	if (!isGameStarted) {
 		return (
 			<div className="flex flex-col items-center justify-center py-8 space-y-4">
-				<h2 className="text-2xl font-bold text-center">
-					Ready to test your fretboard knowledge?
-				</h2>
+				<h2 className="text-2xl font-bold text-center">{translations.ready}</h2>
 				<Button
 					size="lg"
 					onClick={onStartGame}
 					className="flex items-center gap-2"
 				>
 					<Play className="w-5 h-5" />
-					Start Game
+					{translations.startGame}
 				</Button>
 			</div>
 		);
@@ -54,17 +66,15 @@ export const GameControls: React.FC<GameControlsProps> = ({
 
 	return (
 		<div className="space-y-6">
-			{/* Current Note Display */}
 			<div className="flex flex-col items-center justify-center bg-muted p-6 rounded-lg">
 				<div className="text-sm text-muted-foreground mb-2 flex items-center gap-2">
 					<Music className="w-4 h-4" />
-					Find this note on the fretboard:
+					{translations.findNote}
 				</div>
 				<div className="text-5xl font-bold tracking-wider mb-2">
 					{currentNote.note}
 				</div>
 
-				{/* Feedback Message */}
 				{feedback && (
 					<div
 						className={`text-sm mt-2 ${
@@ -81,40 +91,35 @@ export const GameControls: React.FC<GameControlsProps> = ({
 
 				{showNext && (
 					<div className="text-sm text-muted-foreground mt-2">
-						Press Enter or click Next Note to continue
+						{translations.pressEnter}
 					</div>
 				)}
 			</div>
 
-			{/* Stats and Controls */}
 			<div className="space-y-4">
-				{/* Stats Row */}
 				<div className="flex items-center gap-4">
 					<Badge variant="outline" className="flex gap-1">
 						<Target className="w-4 h-4" />
-						<span>
-							{points} / {targetPoints}
-						</span>
+						<span>{translations.score}</span>
 					</Badge>
 					<Badge variant="secondary" className="flex gap-1">
 						<Trophy className="w-4 h-4" />
-						<span>Streak: {streak}</span>
+						<span>{translations.streak}</span>
 					</Badge>
 					{timeChallenge && (
 						<Badge variant="secondary" className="flex gap-1">
 							<Clock className="w-4 h-4" />
-							<span>{elapsedTime}s</span>
+							<span>{translations.time}</span>
 						</Badge>
 					)}
 					{bestTime && (
 						<Badge variant="outline" className="flex gap-1">
 							<Trophy className="w-4 h-4" />
-							<span>Best: {bestTime}s</span>
+							<span>{translations.best}</span>
 						</Badge>
 					)}
 				</div>
 
-				{/* Controls Row */}
 				<div className="flex justify-between gap-4">
 					<Button
 						variant="outline"
@@ -122,12 +127,12 @@ export const GameControls: React.FC<GameControlsProps> = ({
 						className="flex items-center gap-2"
 					>
 						<RefreshCcw className="w-4 h-4" />
-						Reset Game
+						{translations.resetGame}
 					</Button>
 
 					{showNext && (
 						<Button onClick={onNextNote} className="flex-1">
-							Next Note
+							{translations.nextNote}
 							<kbd className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
 								<span className="text-xs">⏎</span>
 								Enter

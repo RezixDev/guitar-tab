@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { HelpCircle } from "lucide-react";
@@ -15,7 +16,6 @@ import { FretboardSVG } from "./FretboardSVG";
 import { CompletionModal } from "./CompletionModal";
 import { TutorialDialog } from "./TutorialDialog";
 import { KeyboardControls } from "./KeyboardControls";
-
 import { PositionTracker } from "./PositionTracker";
 
 import {
@@ -26,8 +26,9 @@ import {
 	type TuningNotes,
 } from "@/utils/noteUtils";
 
-// Remove the string conversion function as we'll handle the flip differently
 export const FretboardGame = () => {
+	const t = useTranslations("Fretboard");
+
 	// Game state
 	const [tuning, setTuning] = useState<Tuning>(standardTuning);
 	const [isGameStarted, setIsGameStarted] = useState(false);
@@ -36,7 +37,6 @@ export const FretboardGame = () => {
 
 	// Time tracking
 	const { bestTime, updateBestTime } = useBestTime();
-
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [startTime, setStartTime] = useState(Date.now());
 
@@ -143,21 +143,47 @@ export const FretboardGame = () => {
 		setGameMode("newbie");
 	};
 
+	const formattedTranslations = {
+		ready: t("game.ready"),
+		startGame: t("game.startGame"),
+		findNote: t("game.findNote"),
+		pressEnter: t("game.pressEnter"),
+		nextNote: t("game.nextNote"),
+		resetGame: t("game.resetGame"),
+		streak: t("game.streak", { count: gameState.streak }),
+		score: t("game.score", {
+			current: gameState.points,
+			target: gameState.targetPoints,
+		}),
+		time: t("game.time", { seconds: elapsedTime }),
+		best: t("game.best", { time: bestTime || 0 }),
+	};
+
+	const completionTranslations = {
+		title: t("completion.title"),
+		subtitle: t("completion.subtitle"),
+		correct: t("completion.correct", { count: gameState.points }),
+		time: t("completion.time", { seconds: elapsedTime }),
+		streak: t("completion.streak", { count: gameState.streak }),
+		bestTime: t("completion.bestTime", { time: bestTime?.toFixed(1) || 0 }),
+		accuracy: t("completion.accuracy"),
+		close: t("completion.close"),
+		playAgain: t("completion.playAgain"),
+	};
+
 	return (
 		<Card className="w-full">
 			<CardHeader>
 				<div className="flex justify-between items-center">
 					<div className="flex items-center gap-4">
-						<CardTitle className="text-2xl font-bold">
-							Fretboard Master
-						</CardTitle>
+						<CardTitle className="text-2xl font-bold">{t("title")}</CardTitle>
 						<Button
 							variant="ghost"
 							size="sm"
 							onClick={() => setShowTutorial(true)}
 						>
 							<HelpCircle className="w-4 h-4 mr-2" />
-							Tutorial
+							{t("tutorial.title")}
 						</Button>
 					</div>
 				</div>
@@ -174,6 +200,11 @@ export const FretboardGame = () => {
 					onGameModeChange={setGameMode}
 					disabled={isGameStarted}
 					displayTuning={tuning}
+					translations={{
+						tuning: t("settings.tuning"),
+						targetScore: t("settings.targetScore"),
+						gameMode: t("settings.gameMode"),
+					}}
 				/>
 
 				<Separator />
@@ -192,6 +223,7 @@ export const FretboardGame = () => {
 					onNextNote={handleNextNote}
 					onStartGame={handleStartGame}
 					onReset={handleReset}
+					translations={formattedTranslations}
 				/>
 
 				{isGameStarted && isHardMode && (
@@ -235,11 +267,20 @@ export const FretboardGame = () => {
 						streak: gameState.streak,
 						bestTime: bestTime ?? undefined,
 					}}
+					translations={completionTranslations}
 				/>
 
 				<TutorialDialog
 					isOpen={showTutorial}
 					onClose={() => setShowTutorial(false)}
+					translations={{
+						title: t("tutorial.title"),
+						steps: [
+							t("tutorial.step1"),
+							t("tutorial.step2"),
+							t("tutorial.step3"),
+						],
+					}}
 				/>
 			</CardContent>
 		</Card>

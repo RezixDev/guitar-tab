@@ -147,6 +147,43 @@
     "lesson": "Lekcja",
     "practice": "Ćwiczenia praktyczne",
     "next": "Następna lekcja"
-  
+},
+"Fretboard": {
+  "title": "Gra w Zgadywanie Pozycji na Gryfie",
+  "backToHome": "Powrót do Strony Głównej",
+  "tutorial": {
+    "title": "Jak Grać",
+    "step1": "Znajdź wskazaną nutę na gryfie",
+    "step2": "Kliknij prawidłową pozycję",
+    "step3": "Przejdź przez wszystkie pozycje"
+  },
+  "game": {
+    "ready": "Gotowy do sprawdzenia swojej znajomości gryfu?",
+    "startGame": "Rozpocznij Grę",
+    "findNote": "Znajdź tę nutę na gryfie:",
+    "pressEnter": "Naciśnij Enter lub kliknij Następna Nuta aby kontynuować",
+    "nextNote": "Następna Nuta",
+    "resetGame": "Zresetuj Grę",
+    "streak": "Seria: {count}",
+    "score": "{current} / {target}",
+    "time": "{seconds}s",
+    "best": "Najlepszy: {time}s"
+  },
+  "settings": {
+    "tuning": "Strojenie",
+    "targetScore": "Cel Punktowy",
+    "gameMode": "Tryb Gry"
+  },
+  "completion": {
+    "title": "Gratulacje!",
+    "subtitle": "Ukończyłeś wyzwanie!",
+    "correct": "Poprawne: {count}",
+    "time": "Czas: {seconds}s",
+    "streak": "Seria: {count}",
+    "bestTime": "Najlepszy: {time}s",
+    "accuracy": "Dokładność",
+    "close": "Zamknij",
+    "playAgain": "Zagraj Ponownie"
+  }
 }
   }
