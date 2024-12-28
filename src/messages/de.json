@@ -143,6 +143,33 @@
       "accuracy": "Genauigkeit",
       "close": "Schließen",
       "playAgain": "Nochmal Spielen"
+    },
+   "gameModes": {
+  "placeholder": "Spielmodus auswählen",
+  "newbie": {
+    "label": "Anfänger-Modus",
+    "description": "Mehrere korrekte Positionen mit visueller Hilfe"
+  },
+  "easy": {
+    "label": "Einfacher Modus",
+    "description": "Einzelne Positionen raten mit grundlegendem Feedback"
+  },
+  "hard": {
+    "label": "Schwerer Modus",
+    "description": "Finde alle Positionen ohne visuelle Hilfen"
+  },
+  "time": {
+    "label": "Zeit-Challenge",
+    "description": "Wettkampf gegen die Zeit mit geschwindigkeitsbasierter Punktzahl"
+  }
+},
+"keyboard": {
+    "title": "Tastenkombinationen",
+    "shortcuts": {
+      "navigate": "Navigieren",
+      "selectNote": "Note auswählen",
+      "nextNote": "Nächste Note"
     }
+  }
   }
 }

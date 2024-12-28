@@ -145,6 +145,33 @@
           "accuracy": "Accuracy",
           "close": "Close",
           "playAgain": "Play Again"
+        },
+        "gameModes": {
+          "placeholder": "Select game mode",
+          "newbie": {
+            "label": "Newbie Mode",
+            "description": "Multiple correct positions with visual aids"
+          },
+          "easy": {
+            "label": "Easy Mode",
+            "description": "Single position guessing with basic feedback"
+          },
+          "hard": {
+            "label": "Hard Mode",
+            "description": "Find all positions without visual aids"
+          },
+          "time": {
+            "label": "Time Challenge",
+            "description": "Race against the clock with speed-based scoring"
+          }
+        },
+        "keyboard": {
+          "title": "Keyboard Shortcuts",
+          "shortcuts": {
+            "navigate": "Navigate",
+            "selectNote": "Select Note",
+            "nextNote": "Next Note"
+          }
         }
       }
     

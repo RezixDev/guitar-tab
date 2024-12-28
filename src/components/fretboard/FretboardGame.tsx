@@ -171,6 +171,41 @@ export const FretboardGame = () => {
 		playAgain: t("completion.playAgain"),
 	};
 
+	const settingsTranslations = {
+		tuning: t("settings.tuning"),
+		targetScore: t("settings.targetScore"),
+		gameMode: t("settings.gameMode"),
+		gameModes: {
+			placeholder: t("gameModes.placeholder"),
+			modes: {
+				newbie: {
+					label: t("gameModes.newbie.label"),
+					description: t("gameModes.newbie.description"),
+				},
+				easy: {
+					label: t("gameModes.easy.label"),
+					description: t("gameModes.easy.description"),
+				},
+				hard: {
+					label: t("gameModes.hard.label"),
+					description: t("gameModes.hard.description"),
+				},
+				time: {
+					label: t("gameModes.time.label"),
+					description: t("gameModes.time.description"),
+				},
+			},
+		},
+	};
+
+	const keyboardTranslations = {
+		title: t("keyboard.title"),
+		shortcuts: {
+			navigate: t("keyboard.shortcuts.navigate"),
+			selectNote: t("keyboard.shortcuts.selectNote"),
+			nextNote: t("keyboard.shortcuts.nextNote"),
+		},
+	};
 	return (
 		<Card className="w-full">
 			<CardHeader>
@@ -200,11 +235,7 @@ export const FretboardGame = () => {
 					onGameModeChange={setGameMode}
 					disabled={isGameStarted}
 					displayTuning={tuning}
-					translations={{
-						tuning: t("settings.tuning"),
-						targetScore: t("settings.targetScore"),
-						gameMode: t("settings.gameMode"),
-					}}
+					translations={settingsTranslations}
 				/>
 
 				<Separator />
@@ -252,7 +283,7 @@ export const FretboardGame = () => {
 					/>
 				)}
 
-				<KeyboardControls />
+				<KeyboardControls translations={keyboardTranslations} />
 
 				<CompletionModal
 					isOpen={showCompletionModal}

@@ -17,36 +17,36 @@ import {
 
 export type GameMode = "newbie" | "easy" | "hard" | "time";
 
+interface GameModeTranslations {
+	label: string;
+	description: string;
+}
+
 interface GameModesDropdownProps {
 	value: GameMode;
 	onChange: (mode: GameMode) => void;
 	disabled?: boolean;
+	translations: {
+		placeholder: string;
+		modes: {
+			[key in GameMode]: GameModeTranslations;
+		};
+	};
 }
-
-const GAME_MODES = {
-	newbie: {
-		label: "Newbie Mode",
-		description: "Multiple correct positions with visual aids",
-	},
-	easy: {
-		label: "Easy Mode",
-		description: "Single position guessing with basic feedback",
-	},
-	hard: {
-		label: "Hard Mode",
-		description: "Find all positions without visual aids",
-	},
-	time: {
-		label: "Time Challenge",
-		description: "Race against the clock with speed-based scoring",
-	},
-} as const;
 
 export const GameModesDropdown: React.FC<GameModesDropdownProps> = ({
 	value,
 	onChange,
 	disabled = false,
+	translations,
 }) => {
+	const gameModes: Record<GameMode, GameModeTranslations> = {
+		newbie: translations.modes.newbie,
+		easy: translations.modes.easy,
+		hard: translations.modes.hard,
+		time: translations.modes.time,
+	};
+
 	return (
 		<div className="flex items-center gap-2">
 			<Select
@@ -55,10 +55,10 @@ export const GameModesDropdown: React.FC<GameModesDropdownProps> = ({
 				disabled={disabled}
 			>
 				<SelectTrigger className="w-[200px]">
-					<SelectValue placeholder="Select game mode" />
+					<SelectValue placeholder={translations.placeholder} />
 				</SelectTrigger>
 				<SelectContent>
-					{Object.entries(GAME_MODES).map(([key, { label, description }]) => (
+					{Object.entries(gameModes).map(([key, { label, description }]) => (
 						<SelectItem
 							key={key}
 							value={key}

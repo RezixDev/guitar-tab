@@ -184,6 +184,33 @@
     "accuracy": "Dokładność",
     "close": "Zamknij",
     "playAgain": "Zagraj Ponownie"
+  },
+  "gameModes": {
+  "placeholder": "Wybierz tryb gry",
+  "newbie": {
+    "label": "Tryb początkujący",
+    "description": "Wiele prawidłowych pozycji z pomocą wizualną"
+  },
+  "easy": {
+    "label": "Tryb łatwy",
+    "description": "Zgadywanie pojedynczej pozycji z podstawową informacją zwrotną"
+  },
+  "hard": {
+    "label": "Tryb trudny",
+    "description": "Znajdź wszystkie pozycje bez pomocy wizualnej"
+  },
+  "time": {
+    "label": "Wyzwanie czasowe",
+    "description": "Wyścig z czasem z punktacją opartą na szybkości"
   }
+},
+"keyboard": {
+  "title": "Skróty klawiszowe",
+  "shortcuts": {
+    "navigate": "Nawigacja",
+    "selectNote": "Wybierz nutę",
+    "nextNote": "Następna nuta"
+  }
+}
 }
   }

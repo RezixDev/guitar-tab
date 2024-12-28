@@ -5,6 +5,8 @@ import { GameModesDropdown, type GameMode } from "./GameModesDropdown";
 import { ModeToggle } from "./ModeToggle";
 import { type Tuning } from "@/utils/noteUtils";
 
+import { useTranslations } from "next-intl";
+
 interface GameSettingsProps {
 	onTuningChange: (value: string) => void;
 	targetPoints: number;
@@ -17,6 +19,15 @@ interface GameSettingsProps {
 		tuning: string;
 		targetScore: string;
 		gameMode: string;
+		gameModes: {
+			placeholder: string;
+			modes: {
+				newbie: { label: string; description: string };
+				easy: { label: string; description: string };
+				hard: { label: string; description: string };
+				time: { label: string; description: string };
+			};
+		};
 	};
 }
 
@@ -52,6 +63,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({
 					value={gameMode}
 					onChange={onGameModeChange}
 					disabled={disabled}
+					translations={translations.gameModes}
 				/>
 			</div>
 		</div>
