@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Guitar } from "lucide-react";
-import { ChordModal } from "@/components/chords/ChordModal";
+import { ChordModal } from "@/components/chords/chordDetails/ChordModal";
 import { FloatingChordViewerProps } from "@/types/chord";
 import {
 	Tooltip,
@@ -9,7 +9,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function FloatingChordViewer({
+export function ViewDiagram({
 	chord,
 	ChordSVGComponent,
 	isOpen,

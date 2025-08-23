@@ -1,52 +1,52 @@
 // types/chord.ts
 
-export interface Note {
+export type Note = {
   fret: number | null;
   finger: number | null;
 }
 
 // For the data source (your chords.ts file)
-export interface Chord {
+export type Chord = {
   name: string;
   startingFret: number;
   notes: Note[];
 }
 
 // For state management
-export interface ChordState {
+export type ChordState = {
   name: string;
   startingFret: number;
   notes: (number | null)[];
 }
 
 // Component Props
-export interface ChordSVGProps {
+export type ChordSVGProps = {
   chord: (number | null)[];
   chordName: string;
   startingFret: number;
 }
 
-export interface ChordTabsProps {
+export type ChordTabsProps = {
   filteredStandardChords: Chord[];
   filteredExtendedChords: Chord[];
   handleChordChange: (chord: Chord) => void;
 }
 
-export interface ChordDetailsProps {
+export type ChordDetailsProps = {
   chord: ChordState;
   onNameChange: (value: string) => void;
   onStartingFretChange: (value: string) => void;
   onNoteChange: (index: number, field: keyof Note, value: string) => void;
 }
 
-export interface ChordModalProps {
+export type ChordModalProps = {
   chord: ChordState;
   isOpen: boolean;
   onClose: () => void;
   ChordSVGComponent: React.ComponentType<ChordSVGProps>;
 }
 
-export interface FloatingChordViewerProps {
+export type FloatingChordViewerProps = {
   chord: ChordState;
   ChordSVGComponent: React.ComponentType<ChordSVGProps>;
   isOpen: boolean;

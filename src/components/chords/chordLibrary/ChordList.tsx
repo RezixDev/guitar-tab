@@ -1,7 +1,7 @@
 import type { Chord } from "@/types/chord";
 import { Button } from "@/components/ui/button";
 
-interface ChordListProps {
+type ChordListProps = {
 	title: string;
 	chords: Chord[];
 	onChordSelect: (chord: Chord) => void;

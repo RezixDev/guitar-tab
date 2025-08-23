@@ -4,12 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { StringConfiguration } from "./StringConfiguration";
 
-export interface ChordDetailsProps {
+export type ChordDetailsProps = {
 	chord: ChordState;
 	onNameChange: (value: string) => void;
 	onStartingFretChange: (value: string) => void;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;
-}
+};
 
 export function ChordDetails({
 	chord,
@@ -38,9 +38,7 @@ export function ChordDetails({
 					/>
 				</div>
 			</div>
-
 			<Separator />
-
 			<StringConfiguration chord={chord} onNoteChange={onNoteChange} />
 		</div>
 	);

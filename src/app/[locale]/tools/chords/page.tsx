@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Guitar, Music, Settings2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChordSearch } from "@/components/chords/ChordSearch";
-import { ChordDetails } from "@/components/chords/ChordDetails";
-import { ChordModal } from "@/components/chords/ChordModal";
-import { ChordSVG } from "@/components/chords/ChordSVG";
-import { ChordTabs } from "@/components/chords/ChordTabs";
-import { FloatingChordViewer } from "@/components/chords/FloatingChordViewer";
+import { ChordSearch } from "@/components/chords/chordLibrary/ChordSearch";
+import { ChordDetails } from "@/components/chords/chordDetails/ChordDetails";
+import { ChordModal } from "@/components/chords/chordDetails/ChordModal";
+import { ChordSVG } from "@/components/chords/chordDetails/ChordSVG";
+import { ChordTabs } from "@/components/chords/chordLibrary/ChordTabs";
+import { ViewDiagram } from "@/components/chords/chordDetails/ViewDiagram";
 import { useChordState } from "@/hooks/useChordState";
 import { Chord, Note } from "@/types/chord";
 
@@ -78,9 +78,9 @@ export default function Page() {
 							<div className="flex items-center justify-between">
 								<CardTitle className="flex items-center gap-2 text-lg md:text-xl">
 									<Settings2 className="w-4 h-4 md:w-5 md:h-5" />
-									Chord Configuration
+									Chord Details
 								</CardTitle>
-								<FloatingChordViewer
+								<ViewDiagram
 									chord={currentChord}
 									ChordSVGComponent={ChordSVG}
 									isOpen={isModalOpen}

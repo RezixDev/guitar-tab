@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { ChordState, Note } from "@/types/chord";
 
-export interface StringConfigurationProps {
+export type StringConfigurationProps = {
 	chord: ChordState;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;
 }

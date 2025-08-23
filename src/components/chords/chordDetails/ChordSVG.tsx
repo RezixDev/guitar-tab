@@ -3,14 +3,7 @@
 import React from "react";
 import { ChordSVGProps } from "@/types/chord";
 
-interface NormalizedNote {
-	string: number;
-	fret: number;
-	finger: number;
-}
-
-// Ensure Note interface matches expected structure
-interface Note {
+type Note = {
 	string: number;
 	fret: number;
 	finger: number;
@@ -39,7 +32,7 @@ const isNoteArray = (chord: Note[] | (number | null)[]): chord is Note[] => {
 
 const normalizeChordData = (
 	chord: Note[] | (number | null)[]
-): NormalizedNote[] => {
+): Note[] => {
 	if (isNoteArray(chord)) {
 		return chord.map((note) => ({
 			string: note.string,
@@ -56,7 +49,7 @@ const normalizeChordData = (
 };
 
 const generateChordSVG = (
-	chord: NormalizedNote[],
+	chord: Note[],
 	chordName: string,
 	startingFret: number
 ) => {

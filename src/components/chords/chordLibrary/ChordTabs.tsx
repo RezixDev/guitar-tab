@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChordList } from "@/components/chords/ChordList";
-import type { Chord, ChordTabsProps } from "@/types/chord";
+import { ChordList } from "@/components/chords/chordLibrary/ChordList";
+import type { ChordTabsProps } from "@/types/chord";
 
 export function ChordTabs({
 	filteredStandardChords,
