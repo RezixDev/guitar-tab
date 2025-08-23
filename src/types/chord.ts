@@ -13,7 +13,7 @@ export type Chord = {
 
 // Component Props
 export type ChordSVGProps = {
-  chord: (number | null)[];
+  chord: Note[]
   chordName: string;
   startingFret: number;
 }

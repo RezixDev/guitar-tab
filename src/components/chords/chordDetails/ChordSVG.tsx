@@ -1,58 +1,66 @@
 "use client";
 
 import React from "react";
-import { ChordSVGProps } from "@/types/chord";
+import type { ChordSVGProps, Note } from "@/types/chord";
 
-type Note = {
-	string: number;
+// Internal type for normalized notes with string position
+type NormalizedNote = {
+	stringIndex: number;
 	fret: number;
 	finger: number;
-}
+};
 
-const stringNotes = ["E2", "A2", "D3", "G3", "B3", "E4"];
-const fretNotes = [
+const STRING_NOTES = ["E2", "A2", "D3", "G3", "B3", "E4"] as const;
+const FRET_NOTES = [
 	["E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2", "C3", "C#3", "D3", "D#3"],
 	["A2", "A#2", "B2", "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3"],
 	["D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3", "C4", "C#4"],
 	["G3", "G#3", "A3", "A#3", "B3", "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4"],
 	["B3", "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4"],
 	["E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5", "C#5", "D5", "D#5"],
-];
+] as const;
 
-const getNote = (string: number, fret: number): string => {
-	if (fret === 0) return stringNotes[string];
-	const noteIndex =
-		(fretNotes[string].indexOf(stringNotes[string]) + fret) % 12;
-	return fretNotes[string][noteIndex];
-};
-
-const isNoteArray = (chord: Note[] | (number | null)[]): chord is Note[] => {
-	return chord.length > 0 && typeof chord[0] === "object";
-};
-
-const normalizeChordData = (
-	chord: Note[] | (number | null)[]
-): Note[] => {
-	if (isNoteArray(chord)) {
-		return chord.map((note) => ({
-			string: note.string,
-			fret: note.fret,
-			finger: note.finger,
-		}));
+const getNoteName = (stringIndex: number, fret: number | null): string => {
+	// Validate inputs
+	if (fret === null || fret < 0) return "";
+	if (stringIndex < 0 || stringIndex >= STRING_NOTES.length) {
+		console.warn(`Invalid string index: ${stringIndex}`);
+		return "";
 	}
 
-	return chord.map((fret, index) => ({
-		string: index,
-		fret: fret ?? 0,
-		finger: 0,
+	// Open string
+	if (fret === 0) return STRING_NOTES[stringIndex];
+
+	// Calculate note based on fret position
+	const fretArray = FRET_NOTES[stringIndex];
+	if (!fretArray) {
+		console.warn(`No fret notes for string ${stringIndex}`);
+		return "";
+	}
+
+	// Use modulo to wrap around the chromatic scale
+	const noteIndex = fret % 12;
+	return fretArray[noteIndex] || "";
+};
+
+const normalizeChordData = (notes: Note[]): NormalizedNote[] => {
+	return notes.map((note, stringIndex) => ({
+		stringIndex,
+		fret: note.fret ?? 0,
+		finger: note.finger ?? 0,
 	}));
 };
 
-const generateChordSVG = (
-	chord: Note[],
-	chordName: string,
-	startingFret: number
-) => {
+const ChordDiagram = ({
+						  notes,
+						  chordName,
+						  startingFret,
+					  }: {
+	notes: NormalizedNote[];
+	chordName: string;
+	startingFret: number;
+}) => {
+	// SVG dimensions
 	const width = 300;
 	const height = 400;
 	const stringSpacing = width / 7;
@@ -81,6 +89,7 @@ const generateChordSVG = (
 				A visual representation of the {chordName} guitar chord fingering
 			</desc>
 
+			{/* Chord name */}
 			<text
 				x="50%"
 				y={textMargin / 2}
@@ -93,7 +102,8 @@ const generateChordSVG = (
 				{chordName}
 			</text>
 
-			{strings.map((string, i) => (
+			{/* String names */}
+			{strings.map((_, i) => (
 				<text
 					key={`string-name-${i}`}
 					x={stringSpacing * (i + 1) + leftMargin}
@@ -107,7 +117,8 @@ const generateChordSVG = (
 				</text>
 			))}
 
-			{strings.map((string, i) => (
+			{/* String lines */}
+			{strings.map((_, i) => (
 				<line
 					key={`string-${i}`}
 					x1={stringSpacing * (i + 1) + leftMargin}
@@ -119,23 +130,25 @@ const generateChordSVG = (
 				/>
 			))}
 
-			{frets.map((fret, i) => (
+			{/* Fret lines */}
+			{frets.map((_, i) => (
 				<line
 					key={`fret-${i}`}
 					x1={leftMargin + 20}
 					y1={fretSpacing * i + textMargin + topMargin}
 					x2={leftMargin + fretLineWidth + 20}
 					y2={fretSpacing * i + textMargin + topMargin}
-					stroke="black"
-					strokeWidth="2"
+					stroke={i === 0 ? "black" : "gray"}
+					strokeWidth={i === 0 ? "3" : "2"}
 				/>
 			))}
 
-			{frets.map((fret, i) => (
+			{/* Fret numbers */}
+			{frets.slice(1).map((_, i) => (
 				<text
 					key={`fret-number-${i}`}
 					x={width + leftMargin + 10}
-					y={fretSpacing * i + textMargin + topMargin + fretSpacing / 2 + 3}
+					y={fretSpacing * (i + 1) + textMargin + topMargin + fretSpacing / 2}
 					textAnchor="middle"
 					fontSize="16"
 					fontFamily="Arial"
@@ -145,14 +158,35 @@ const generateChordSVG = (
 				</text>
 			))}
 
-			{chord.map(
-				(note, i) =>
-					note.fret > 0 && (
-						<g key={`note-${i}`}>
+			{/* Note markers and open/muted strings */}
+			{notes.map((note) => {
+				const { stringIndex, fret, finger } = note;
+
+				if (fret === 0 || fret === null) {
+					return (
+						<text
+							key={`open-${stringIndex}`}
+							x={stringSpacing * (stringIndex + 1) + leftMargin}
+							y={textMargin + topMargin - 10}
+							textAnchor="middle"
+							fontSize="20"
+							fontFamily="Arial"
+							fill="black"
+						>
+							{fret === 0 ? "O" : "X"}
+						</text>
+					);
+				}
+
+				const visualFret = fret - startingFret + 1;
+
+				if (visualFret >= 1 && visualFret <= 5) {
+					return (
+						<g key={`note-${stringIndex}`}>
 							<circle
-								cx={stringSpacing * (note.string + 1) + leftMargin}
+								cx={stringSpacing * (stringIndex + 1) + leftMargin}
 								cy={
-									fretSpacing * (note.fret - startingFret + 1) +
+									fretSpacing * visualFret +
 									textMargin +
 									topMargin -
 									fretSpacing / 2
@@ -160,48 +194,60 @@ const generateChordSVG = (
 								r={12}
 								fill="blue"
 							/>
-							<text
-								x={stringSpacing * (note.string + 1) + leftMargin}
-								y={
-									fretSpacing * (note.fret - startingFret + 1) +
-									textMargin +
-									topMargin -
-									fretSpacing / 2 +
-									5
-								}
-								textAnchor="middle"
-								fontSize="14"
-								fontFamily="Arial"
-								fill="white"
-								fontWeight="bold"
-							>
-								{note.finger}
-							</text>
+							{finger > 0 && (
+								<text
+									x={stringSpacing * (stringIndex + 1) + leftMargin}
+									y={
+										fretSpacing * visualFret +
+										textMargin +
+										topMargin -
+										fretSpacing / 2 +
+										5
+									}
+									textAnchor="middle"
+									fontSize="14"
+									fontFamily="Arial"
+									fill="white"
+									fontWeight="bold"
+								>
+									{finger}
+								</text>
+							)}
 						</g>
-					)
-			)}
+					);
+				}
+
+				return null;
+			})}
 		</svg>
 	);
 };
 
-export const ChordSVG: React.FC<ChordSVGProps> = ({
-	chord,
-	chordName,
-	startingFret,
-}) => {
-	const normalizedChord = normalizeChordData(chord);
-	const chordNotes = normalizedChord
-		.map((note) => getNote(note.string, note.fret + (startingFret - 1)))
+export const ChordSVG = ({
+							 chord,
+							 chordName,
+							 startingFret,
+						 }: ChordSVGProps) => {
+
+	const normalizedNotes = normalizeChordData(chord);
+
+	const noteNames = normalizedNotes
+		.map((note) => getNoteName(note.stringIndex, note.fret))
+		.filter(Boolean)
 		.reverse();
 
 	return (
 		<div className="mb-6">
 			<div className="max-w-md mx-auto">
-				{generateChordSVG(normalizedChord, chordName, startingFret)}
+				<ChordDiagram
+					notes={normalizedNotes}
+					chordName={chordName}
+					startingFret={startingFret}
+				/>
 			</div>
 			<div className="mt-4 text-center">
 				<strong className="block mb-2">Notes:</strong>
-				<p className="text-lg">{chordNotes.join(", ")}</p>
+				<p className="text-lg">{noteNames.join(", ")}</p>
 			</div>
 		</div>
 	);

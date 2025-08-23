@@ -19,7 +19,7 @@ export default function Page() {
 		filteredStandardChords,
 		filteredExtendedChords,
 		handleChordChange,
-		handleInputChange,
+		handleNoteUpdate,
 		handleNameChange,
 		handleStartingFretChange,
 		handleSearchChange,
@@ -27,15 +27,14 @@ export default function Page() {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
+
 	const handleNoteChange = (
 		index: number,
 		field: keyof Note,
 		value: string
 	) => {
 		const numValue = value === "" ? null : parseInt(value, 10);
-		if (field === "fret" || field === "finger") {
-			handleInputChange(index, numValue);
-		}
+		handleNoteUpdate(index, { [field]: numValue });
 	};
 
 	return (

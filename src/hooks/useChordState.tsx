@@ -1,7 +1,7 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import { standardChords, extendedChords } from "@/data/chords";
-import type { Chord } from "@/types/chord";
+import {Chord, Note} from "@/types/chord";
 
 const DEFAULT_CHORD: Chord = {
 	name: "",
@@ -15,16 +15,17 @@ export function useChordState(initialChord?: Chord) {
 	);
 	const [searchTerm, setSearchTerm] = useState("");
 
-const handleInputChange = (index: number, fret: number | null, finger: number | null = null) => {
+	const handleNoteUpdate = (index: number, updates: Partial<Note>) => {
 		setCurrentChord((prev) => ({
 			...prev,
-        notes: prev.notes.map((note, i) =>
-            i === index
-                ? { fret, finger }
-                : note
-        ),
+			notes: prev.notes.map((note, i) =>
+				i === index
+					? { ...note, ...updates }  // Merge updates with existing note
+					: note
+			),
 		}));
 	};
+
 
 	const handleStartingFretChange = (value: string) => {
 		const fret = parseInt(value, 10);
@@ -62,7 +63,7 @@ const handleInputChange = (index: number, fret: number | null, finger: number | 
 		filteredStandardChords,
 		filteredExtendedChords,
 		handleChordChange,
-		handleInputChange,
+		handleNoteUpdate,
 		handleNameChange,
 		handleStartingFretChange,
 		handleSearchChange,
