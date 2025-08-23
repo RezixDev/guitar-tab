@@ -10,7 +10,7 @@ import { ChordSVG } from "@/components/chords/chordDetails/ChordSVG";
 import { ChordTabs } from "@/components/chords/chordLibrary/ChordTabs";
 import { ViewDiagram } from "@/components/chords/chordDetails/ViewDiagram";
 import { useChordState } from "@/hooks/useChordState";
-import { Chord, Note } from "@/types/chord";
+import { Note } from "@/types/chord";
 
 export default function Page() {
 	const {

@@ -1,32 +1,28 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import { standardChords, extendedChords } from "@/data/chords";
-import type { Chord, ChordState } from "@/types/chord";
+import type { Chord } from "@/types/chord";
 
-const DEFAULT_CHORD: ChordState = {
+const DEFAULT_CHORD: Chord = {
 	name: "",
-	notes: Array(6).fill(null),
+	notes: Array(6).fill(null).map(() => ({ fret: null, finger: null })),
 	startingFret: 1,
 };
 
 export function useChordState(initialChord?: Chord) {
-	const [currentChord, setCurrentChord] = useState<ChordState>(
-		initialChord ? convertChordToState(initialChord) : DEFAULT_CHORD
+	const [currentChord, setCurrentChord] = useState<Chord>(
+		initialChord || DEFAULT_CHORD  // ✅ No conversion needed!
 	);
 	const [searchTerm, setSearchTerm] = useState("");
 
-	function convertChordToState(chord: Chord): ChordState {
-		return {
-			name: chord.name,
-			notes: chord.notes.map((note) => note.fret),
-			startingFret: chord.startingFret,
-		};
-	}
-
-	const handleInputChange = (index: number, value: number | null) => {
+const handleInputChange = (index: number, fret: number | null, finger: number | null = null) => {
 		setCurrentChord((prev) => ({
 			...prev,
-			notes: prev.notes.map((note, i) => (i === index ? value : note)),
+        notes: prev.notes.map((note, i) =>
+            i === index
+                ? { fret, finger }
+                : note
+        ),
 		}));
 	};
 
@@ -41,7 +37,7 @@ export function useChordState(initialChord?: Chord) {
 	};
 
 	const handleChordChange = (chord: Chord) => {
-		setCurrentChord(convertChordToState(chord));
+		setCurrentChord(chord);
 	};
 
 	const handleNameChange = (name: string) => {

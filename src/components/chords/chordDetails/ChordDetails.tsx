@@ -1,11 +1,11 @@
-import type { ChordState, Note } from "@/types/chord";
+import type { Note, Chord } from "@/types/chord";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { StringConfiguration } from "./StringConfiguration";
 
 export type ChordDetailsProps = {
-	chord: ChordState;
+	chord: Chord;
 	onNameChange: (value: string) => void;
 	onStartingFretChange: (value: string) => void;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;

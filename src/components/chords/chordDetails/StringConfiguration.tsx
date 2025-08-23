@@ -9,10 +9,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { ChordState, Note } from "@/types/chord";
+import type { Chord, Note } from "@/types/chord";
 
 export type StringConfigurationProps = {
-	chord: ChordState;
+	chord: Chord;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;
 }
 
@@ -28,8 +28,8 @@ export function StringConfiguration({
 
 	// Update finger for existing notes when active finger changes
 	useEffect(() => {
-		chord.notes.forEach((fret, index) => {
-			if (fret !== null && fret > 0) {
+		chord.notes.forEach((note, index) => {
+			if (note.fret !== null && note.fret > 0) {
 				onNoteChange(index, "finger", activeFinger.toString());
 			}
 		});
@@ -141,7 +141,7 @@ export function StringConfiguration({
 						</div>
 
 						<div className="flex flex-col space-y-8">
-							{chord.notes.map((fret, index) => (
+							{chord.notes.map((note, index) => (
 								<div
 									key={`string-${index}`}
 									className="flex items-center space-x-4"
@@ -182,19 +182,19 @@ export function StringConfiguration({
 											</div>
 
 											{/* Note marker */}
-											{fret !== null &&
-												fret >= windowStart &&
-												fret < windowStart + FRETS_IN_WINDOW && (
+											{note.fret !== null &&
+												note.fret >= windowStart &&
+												note.fret < windowStart + FRETS_IN_WINDOW && (
 													<div
 														className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 shadow-lg transition-all"
 														style={{
-															left: `${getPositionInWindow(fret)}%`,
+															left: `${getPositionInWindow(note.fret)}%`,  // note.fret
 															transform: "translate(-50%, -50%)",
 														}}
 													>
-														<span className="absolute inset-0 flex items-center justify-center text-white text-sm">
-															{activeFinger}
-														</span>
+									<span className="absolute inset-0 flex items-center justify-center text-white text-sm">
+										{note.finger || activeFinger}
+									</span>
 													</div>
 												)}
 										</div>
@@ -204,7 +204,7 @@ export function StringConfiguration({
 										<TooltipTrigger>
 											<Input
 												type="number"
-												value={fret ?? ""}
+												value={note.fret ?? ""}
 												onChange={(e) => {
 													onNoteChange(index, "fret", e.target.value);
 													if (parseInt(e.target.value) > 0) {

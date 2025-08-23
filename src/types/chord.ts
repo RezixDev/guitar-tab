@@ -5,18 +5,10 @@ export type Note = {
   finger: number | null;
 }
 
-// For the data source (your chords.ts file)
 export type Chord = {
   name: string;
   startingFret: number;
   notes: Note[];
-}
-
-// For state management
-export type ChordState = {
-  name: string;
-  startingFret: number;
-  notes: (number | null)[];
 }
 
 // Component Props
@@ -32,22 +24,15 @@ export type ChordTabsProps = {
   handleChordChange: (chord: Chord) => void;
 }
 
-export type ChordDetailsProps = {
-  chord: ChordState;
-  onNameChange: (value: string) => void;
-  onStartingFretChange: (value: string) => void;
-  onNoteChange: (index: number, field: keyof Note, value: string) => void;
-}
-
 export type ChordModalProps = {
-  chord: ChordState;
+  chord: Chord;
   isOpen: boolean;
   onClose: () => void;
   ChordSVGComponent: React.ComponentType<ChordSVGProps>;
 }
 
 export type FloatingChordViewerProps = {
-  chord: ChordState;
+  chord: Chord;
   ChordSVGComponent: React.ComponentType<ChordSVGProps>;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
