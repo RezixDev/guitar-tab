@@ -197,7 +197,7 @@ const ChordDiagram = ({
 				<text
 					key={`string-name-${i}`}
 					x={stringSpacing * (i + 1) + leftMargin}
-					y={textMargin}
+					y={height + textMargin - 80}
 					textAnchor="middle"
 					fontSize="18"
 					fontFamily={theme.fontFamily}
@@ -214,9 +214,9 @@ const ChordDiagram = ({
 					x1={stringSpacing * (i + 1) + leftMargin}
 					y1={textMargin + topMargin}
 					x2={stringSpacing * (i + 1) + leftMargin}
-					y2={height + textMargin}
+					y2={height + textMargin  - 100}
 					stroke={theme.stringColor}
-					strokeWidth="2"
+					strokeWidth="1"
 				/>
 			))}
 
@@ -238,7 +238,7 @@ const ChordDiagram = ({
 				<text
 					key={`fret-number-${i}`}
 					x={width + leftMargin + 10}
-					y={fretSpacing * (i + 1) + textMargin + topMargin + fretSpacing / 2}
+					y={fretSpacing * (i + 0.5) + textMargin + topMargin}
 					textAnchor="middle"
 					fontSize="16"
 					fontFamily={theme.fontFamily}

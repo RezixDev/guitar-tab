@@ -116,16 +116,6 @@ export default function Page() {
 					</Card>
 				</div>
 			</section>
-
-			{/* Modal */}
-			<ChordModal
-				chord={currentChord}
-				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
-				ChordSVGComponent={ChordSVG}
-				selectedTheme={selectedTheme}  // PASS THEME
-				onThemeChange={handleThemeChange}  // PASS HANDLER
-			/>
 		</main>
 	);
 }
