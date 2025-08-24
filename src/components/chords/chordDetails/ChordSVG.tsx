@@ -166,7 +166,7 @@ const ChordDiagram = ({
 					return (
 						<text
 							key={`open-${stringIndex}`}
-							x={stringSpacing * (stringIndex + 1) + leftMargin}
+							x={stringSpacing * (6 - stringIndex) + leftMargin}
 							y={textMargin + topMargin - 10}
 							textAnchor="middle"
 							fontSize="20"
@@ -184,7 +184,7 @@ const ChordDiagram = ({
 					return (
 						<g key={`note-${stringIndex}`}>
 							<circle
-								cx={stringSpacing * (stringIndex + 1) + leftMargin}
+								cx={stringSpacing * (6 - stringIndex) + leftMargin}
 								cy={
 									fretSpacing * visualFret +
 									textMargin +
@@ -196,7 +196,7 @@ const ChordDiagram = ({
 							/>
 							{finger > 0 && (
 								<text
-									x={stringSpacing * (stringIndex + 1) + leftMargin}
+									x={stringSpacing * (6 - stringIndex) + leftMargin}
 									y={
 										fretSpacing * visualFret +
 										textMargin +
@@ -234,7 +234,6 @@ export const ChordSVG = ({
 	const noteNames = normalizedNotes
 		.map((note) => getNoteName(note.stringIndex, note.fret))
 		.filter(Boolean)
-		.reverse();
 
 	return (
 		<div className="mb-6">

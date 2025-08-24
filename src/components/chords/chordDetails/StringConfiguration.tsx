@@ -22,18 +22,23 @@ export function StringConfiguration({
 }: StringConfigurationProps) {
 	const strings = ["E", "A", "D", "G", "B", "e"] as const;
 	const [activeFinger, setActiveFinger] = useState(1);
+	const [lastActiveString, setLastActiveString] = useState<number | null>(null);
 	const [windowStart, setWindowStart] = useState(0);
 	const FRETS_IN_WINDOW = 8;
 	const MAX_FRET = 24;
 
-	// Update finger for existing notes when active finger changes
-	useEffect(() => {
-		chord.notes.forEach((note, index) => {
+	// Handle finger button click - update the active finger and apply to highlighted string
+	const handleFingerChange = (finger: number) => {
+		setActiveFinger(finger);
+
+		// If there's a highlighted string with a note on it, update its finger
+		if (lastActiveString !== null) {
+			const note = chord.notes[lastActiveString];
 			if (note.fret !== null && note.fret > 0) {
-				onNoteChange(index, "finger", activeFinger.toString());
+				onNoteChange(lastActiveString, "finger", finger.toString());
 			}
-		});
-	}, [activeFinger]);
+		}
+	};
 
 	const handleFretClick = (
 		stringIndex: number,
@@ -49,6 +54,7 @@ export function StringConfiguration({
 
 		onNoteChange(stringIndex, "fret", absoluteFret.toString());
 		onNoteChange(stringIndex, "finger", activeFinger.toString());
+		setLastActiveString(stringIndex);
 	};
 
 	const handleTouchMove = (
@@ -68,6 +74,7 @@ export function StringConfiguration({
 		if (absoluteFret >= 0 && absoluteFret <= MAX_FRET) {
 			onNoteChange(stringIndex, "fret", absoluteFret.toString());
 			onNoteChange(stringIndex, "finger", activeFinger.toString());
+			setLastActiveString(stringIndex);
 		}
 	};
 
@@ -101,7 +108,7 @@ export function StringConfiguration({
 							{[1, 2, 3, 4].map((finger) => (
 								<button
 									key={finger}
-									onClick={() => setActiveFinger(finger)}
+									onClick={() => handleFingerChange(finger)} // Use the new handler
 									className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
                     ${
 											activeFinger === finger
@@ -144,11 +151,19 @@ export function StringConfiguration({
 							{chord.notes.map((note, index) => (
 								<div
 									key={`string-${index}`}
-									className="flex items-center space-x-4"
+									className={`flex items-center space-x-4 p-2 rounded-lg transition-colors ${
+										lastActiveString === index 
+											? "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-500/20" 
+											: ""
+									}`}
 								>
 									<Tooltip>
 										<TooltipTrigger>
-											<div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold">
+											<div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+												lastActiveString === index
+													? "bg-blue-500 text-white"
+													: "bg-gray-200 dark:bg-gray-700"
+											}`}>
 												{strings[index]}
 											</div>
 										</TooltipTrigger>
@@ -214,7 +229,9 @@ export function StringConfiguration({
 															activeFinger.toString()
 														);
 													}
+													setLastActiveString(index);
 												}}
+												onFocus={() => setLastActiveString(index)}
 												className="w-16 text-center"
 												min="0"
 												max={MAX_FRET}
