@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import type { Chord, Note } from "@/types/chord";
 export type StringConfigurationProps = {
 	chord: Chord;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;
-}
+};
 
 export function StringConfiguration({
 	chord,
@@ -27,11 +27,8 @@ export function StringConfiguration({
 	const FRETS_IN_WINDOW = 8;
 	const MAX_FRET = 24;
 
-	// Handle finger button click - update the active finger and apply to highlighted string
 	const handleFingerChange = (finger: number) => {
 		setActiveFinger(finger);
-
-		// If there's a highlighted string with a note on it, update its finger
 		if (lastActiveString !== null) {
 			const note = chord.notes[lastActiveString];
 			if (note.fret !== null && note.fret > 0) {
@@ -97,6 +94,18 @@ export function StringConfiguration({
 		return ((fret - windowStart) / (FRETS_IN_WINDOW - 1)) * 100;
 	};
 
+  const handleMute = (i: number) => {
+    onNoteChange(i, "fret", "");
+    onNoteChange(i, "finger", "");
+    setLastActiveString(i);
+  };
+
+  const handleOpen = (i: number) => {
+    onNoteChange(i, "fret", "0");
+    onNoteChange(i, "finger", "");
+    setLastActiveString(i);
+  };
+
 	return (
 		<TooltipProvider>
 			<div className="space-y-6">
@@ -108,7 +117,7 @@ export function StringConfiguration({
 							{[1, 2, 3, 4].map((finger) => (
 								<button
 									key={finger}
-									onClick={() => handleFingerChange(finger)} // Use the new handler
+                  onClick={() => handleFingerChange(finger)}
 									className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
                     ${
 											activeFinger === finger
@@ -179,7 +188,6 @@ export function StringConfiguration({
 											onTouchMove={(e) => handleTouchMove(index, e)}
 											onTouchStart={(e) => e.preventDefault()}
 										>
-											{/* Fret markers */}
 											<div className="w-full h-1 bg-gray-300 dark:bg-gray-600">
 												{Array.from({ length: FRETS_IN_WINDOW }, (_, i) => (
 													<div
@@ -196,14 +204,13 @@ export function StringConfiguration({
 												))}
 											</div>
 
-											{/* Note marker */}
 											{note.fret !== null &&
 												note.fret >= windowStart &&
 												note.fret < windowStart + FRETS_IN_WINDOW && (
 													<div
 														className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 shadow-lg transition-all"
 														style={{
-															left: `${getPositionInWindow(note.fret)}%`,  // note.fret
+                              left: `${getPositionInWindow(note.fret)}%`,
 															transform: "translate(-50%, -50%)",
 														}}
 													>
@@ -215,31 +222,65 @@ export function StringConfiguration({
 										</div>
 									</div>
 
+                  <div className="flex items-center gap-2">
 									<Tooltip>
-										<TooltipTrigger>
+                      <TooltipTrigger asChild>
+                        <div className="relative">
 											<Input
 												type="number"
 												value={note.fret ?? ""}
 												onChange={(e) => {
 													onNoteChange(index, "fret", e.target.value);
-													if (parseInt(e.target.value) > 0) {
-														onNoteChange(
-															index,
-															"finger",
-															activeFinger.toString()
-														);
+                              if (e.target.value !== "" && parseInt(e.target.value) > 0) {
+                                onNoteChange(index, "finger", activeFinger.toString());
+                              }
+                              if (e.target.value === "" || e.target.value === "0") {
+                                onNoteChange(index, "finger", "");
 													}
 													setLastActiveString(index);
 												}}
 												onFocus={() => setLastActiveString(index)}
-												className="w-16 text-center"
+                            className={`w-16 text-center ${
+                              note.fret === null ? "opacity-60" : ""
+                            }`}
 												min="0"
 												max={MAX_FRET}
 												placeholder="-"
 											/>
+                          {note.fret === null && (
+                            <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm font-semibold">
+                              X
+                            </span>
+                          )}
+                        </div>
 										</TooltipTrigger>
 										<TooltipContent>Fret number</TooltipContent>
 									</Tooltip>
+
+                    <button
+                      aria-label="Mute string"
+                      onClick={() => handleMute(index)}
+                      className={`w-8 h-8 rounded-md border flex items-center justify-center text-sm font-semibold ${
+                        note.fret === null
+                          ? "bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-black"
+                          : "bg-gray-100 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700"
+                      }`}
+                    >
+                      X
+                    </button>
+
+                    <button
+                      aria-label="Open string"
+                      onClick={() => handleOpen(index)}
+                      className={`w-8 h-8 rounded-md border flex items-center justify-center text-sm font-semibold ${
+                        note.fret === 0
+                          ? "bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-black"
+                          : "bg-gray-100 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700"
+                      }`}
+                    >
+                      O
+                    </button>
+                  </div>
 								</div>
 							))}
 						</div>
