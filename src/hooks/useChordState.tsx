@@ -27,8 +27,8 @@ export function useChordState(initialChord?: Chord) {
 	};
 
 
-	const handleStartingFretChange = (value: string) => {
-		const fret = parseInt(value, 10);
+	const handleStartingFretChange = (value: number) => {
+		const fret = value
 		if (!isNaN(fret)) {
 			setCurrentChord((prev) => ({
 				...prev,

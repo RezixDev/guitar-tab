@@ -9,7 +9,7 @@ import { useState } from "react";
 export type ChordDetailsProps = {
 	chord: Chord;
 	onNameChange: (value: string) => void;
-	onStartingFretChange: (value: string) => void;
+	onStartingFretChange: (value: number) => void;
 	onNoteChange: (index: number, field: keyof Note, value: string) => void;
 };
 
@@ -40,8 +40,14 @@ export function ChordDetails({
 					<Input
 						type="number"
 						id="starting-fret"
+						min={1}
+						max={27}
 						value={chord.startingFret}
-						onChange={(e) => onStartingFretChange(e.target.value)}
+						onChange={(e) => {
+						  const val = Number(e.target.value);
+						  const clamped = Math.min(27, Math.max(1, val));
+						  onStartingFretChange(clamped);
+						}}
 					/>
 				</div>
 				<div className="space-y-2">

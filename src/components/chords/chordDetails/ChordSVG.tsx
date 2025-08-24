@@ -7,7 +7,7 @@ import { chordThemes } from "@/types/chord";
 // Internal type for normalized notes with string position
 type NormalizedNote = {
 	stringIndex: number;
-	fret: number;
+	fret: number | null;
 	finger: number;
 };
 
@@ -22,28 +22,16 @@ const FRET_NOTES = [
 ] as const;
 
 const getNoteName = (stringIndex: number, fret: number | null): string => {
-	if (fret === null || fret < 0) return "";
-	if (stringIndex < 0 || stringIndex >= STRING_NOTES.length) {
-		console.warn(`Invalid string index: ${stringIndex}`);
-		return "";
-	}
-
-	if (fret === 0) return STRING_NOTES[stringIndex];
-
-	const fretArray = FRET_NOTES[stringIndex];
-	if (!fretArray) {
-		console.warn(`No fret notes for string ${stringIndex}`);
-		return "";
-	}
-
-	const noteIndex = fret % 12;
-	return fretArray[noteIndex] || "";
+	if (fret == null || fret < 0) return "";
+	const idx = 5 - stringIndex;         // flip e..E -> E..e
+	if (fret === 0) return STRING_NOTES[idx];
+	return FRET_NOTES[idx][fret % 12] || "";
 };
 
 const normalizeChordData = (notes: Note[]): NormalizedNote[] => {
 	return notes.map((note, stringIndex) => ({
 		stringIndex,
-		fret: note.fret ?? 0,
+		fret: note.fret,  // Keep null as null, don't convert to 0
 		finger: note.finger ?? 0,
 	}));
 };
@@ -295,9 +283,10 @@ export const ChordSVG = ({
 
 	const normalizedNotes = normalizeChordData(chord);
 
-	const noteNames = normalizedNotes
-		.map((note) => getNoteName(note.stringIndex, note.fret))
-		.filter(Boolean);
+	const noteNames = [...normalizedNotes]
+		.reverse()
+		.map(n => (n.fret == null ? null : getNoteName(n.stringIndex, n.fret)))
+		.filter(Boolean) as string[];
 
 	return (
 		<div className="mb-6" style={{ backgroundColor: theme.backgroundColor, padding: '1rem', borderRadius: '0.5rem' }}>

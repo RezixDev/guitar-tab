@@ -5,7 +5,6 @@ import { Guitar, Music, Settings2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChordSearch } from "@/components/chords/chordLibrary/ChordSearch";
 import { ChordDetails } from "@/components/chords/chordDetails/ChordDetails";
-import { ChordModal } from "@/components/chords/chordDetails/ChordModal";
 import { ChordSVG } from "@/components/chords/chordDetails/ChordSVG";
 import { ChordTabs } from "@/components/chords/chordLibrary/ChordTabs";
 import { ViewDiagram } from "@/components/chords/chordDetails/ViewDiagram";
