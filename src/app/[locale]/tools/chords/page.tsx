@@ -27,6 +27,20 @@ export default function Page() {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // ADD THEME STATE HERE (in the parent)
+    const [selectedTheme, setSelectedTheme] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('chordTheme') || 'classic';
+        }
+        return 'classic';
+    });
+
+    const handleThemeChange = (theme: string) => {
+        setSelectedTheme(theme);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('chordTheme', theme);
+        }
+    };
 
 	const handleNoteChange = (
 		index: number,
@@ -84,6 +98,8 @@ export default function Page() {
 									ChordSVGComponent={ChordSVG}
 									isOpen={isModalOpen}
 									onOpenChange={setIsModalOpen}
+									selectedTheme={selectedTheme}  // PASS THEME
+									onThemeChange={handleThemeChange}  // PASS HANDLER
 								/>
 							</div>
 						</CardHeader>
@@ -93,6 +109,8 @@ export default function Page() {
 								onNameChange={handleNameChange}
 								onStartingFretChange={handleStartingFretChange}
 								onNoteChange={handleNoteChange}
+                         selectedTheme={selectedTheme}  // PASS THEME
+                         onThemeChange={handleThemeChange}  // PASS HANDLER
 							/>
 						</CardContent>
 					</Card>
@@ -105,6 +123,8 @@ export default function Page() {
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				ChordSVGComponent={ChordSVG}
+				selectedTheme={selectedTheme}  // PASS THEME
+				onThemeChange={handleThemeChange}  // PASS HANDLER
 			/>
 		</main>
 	);

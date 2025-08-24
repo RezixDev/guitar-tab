@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import type { ChordSVGProps, Note } from "@/types/chord";
+import type { ChordSVGProps, Note, ChordTheme } from "@/types/chord";
+import { chordThemes } from "@/types/chord";
 
 // Internal type for normalized notes with string position
 type NormalizedNote = {
@@ -21,24 +22,20 @@ const FRET_NOTES = [
 ] as const;
 
 const getNoteName = (stringIndex: number, fret: number | null): string => {
-	// Validate inputs
 	if (fret === null || fret < 0) return "";
 	if (stringIndex < 0 || stringIndex >= STRING_NOTES.length) {
 		console.warn(`Invalid string index: ${stringIndex}`);
 		return "";
 	}
 
-	// Open string
 	if (fret === 0) return STRING_NOTES[stringIndex];
 
-	// Calculate note based on fret position
 	const fretArray = FRET_NOTES[stringIndex];
 	if (!fretArray) {
 		console.warn(`No fret notes for string ${stringIndex}`);
 		return "";
 	}
 
-	// Use modulo to wrap around the chromatic scale
 	const noteIndex = fret % 12;
 	return fretArray[noteIndex] || "";
 };
@@ -51,21 +48,113 @@ const normalizeChordData = (notes: Note[]): NormalizedNote[] => {
 	}));
 };
 
+const renderMarker = (
+	cx: number,
+	cy: number,
+	theme: ChordTheme,
+	finger: number,
+	key: string
+) => {
+	const size = 12;
+
+	switch (theme.markerStyle) {
+		case 'square':
+			return (
+				<g key={key}>
+					<rect
+						x={cx - size}
+						y={cy - size}
+						width={size * 2}
+						height={size * 2}
+						fill={theme.markerColor}
+						stroke={theme.shadow ? "rgba(0,0,0,0.2)" : "none"}
+						strokeWidth={theme.shadow ? 2 : 0}
+					/>
+					{theme.showFingerNumbers && finger > 0 && (
+						<text
+							x={cx}
+							y={cy + 5}
+							textAnchor="middle"
+							fontSize="14"
+							fontFamily={theme.fontFamily}
+							fill={theme.markerTextColor}
+							fontWeight="bold"
+						>
+							{finger}
+						</text>
+					)}
+				</g>
+			);
+		case 'diamond':
+			return (
+				<g key={key}>
+					<path
+						d={`M ${cx} ${cy - size} L ${cx + size} ${cy} L ${cx} ${cy + size} L ${cx - size} ${cy} Z`}
+						fill={theme.markerColor}
+						stroke={theme.shadow ? "rgba(0,0,0,0.2)" : "none"}
+						strokeWidth={theme.shadow ? 2 : 0}
+					/>
+					{theme.showFingerNumbers && finger > 0 && (
+						<text
+							x={cx}
+							y={cy + 5}
+							textAnchor="middle"
+							fontSize="14"
+							fontFamily={theme.fontFamily}
+							fill={theme.markerTextColor}
+							fontWeight="bold"
+						>
+							{finger}
+						</text>
+					)}
+				</g>
+			);
+		default: // circle
+			return (
+				<g key={key}>
+					<circle
+						cx={cx}
+						cy={cy}
+						r={size}
+						fill={theme.markerColor}
+						stroke={theme.shadow ? "rgba(0,0,0,0.2)" : "none"}
+						strokeWidth={theme.shadow ? 2 : 0}
+					/>
+					{theme.showFingerNumbers && finger > 0 && (
+						<text
+							x={cx}
+							y={cy + 5}
+							textAnchor="middle"
+							fontSize="14"
+							fontFamily={theme.fontFamily}
+							fill={theme.markerTextColor}
+							fontWeight="bold"
+						>
+							{finger}
+						</text>
+					)}
+				</g>
+			);
+	}
+};
+
 const ChordDiagram = ({
 						  notes,
 						  chordName,
 						  startingFret,
+	theme,
 					  }: {
 	notes: NormalizedNote[];
 	chordName: string;
 	startingFret: number;
+	theme: ChordTheme;
 }) => {
 	// SVG dimensions
 	const width = 300;
 	const height = 400;
 	const stringSpacing = width / 7;
 	const fretSpacing = height / 6;
-	const textMargin = 80;
+	const textMargin = theme.showStringNames ? 80 : 60;
 	const leftMargin = 40;
 	const rightMargin = 40;
 	const topMargin = 20;
@@ -83,6 +172,7 @@ const ChordDiagram = ({
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby="chordTitle chordDesc"
 			role="img"
+			style={{ backgroundColor: theme.backgroundColor }}
 		>
 			<title id="chordTitle">{chordName} Guitar Chord Diagram</title>
 			<desc id="chordDesc">
@@ -95,23 +185,23 @@ const ChordDiagram = ({
 				y={textMargin / 2}
 				textAnchor="middle"
 				fontSize="24"
-				fontFamily="Arial"
+				fontFamily={theme.fontFamily}
 				fontWeight="bold"
-				fill="black"
+				fill={theme.textColor}
 			>
 				{chordName}
 			</text>
 
 			{/* String names */}
-			{strings.map((_, i) => (
+			{theme.showStringNames && strings.map((_, i) => (
 				<text
 					key={`string-name-${i}`}
 					x={stringSpacing * (i + 1) + leftMargin}
 					y={textMargin}
 					textAnchor="middle"
 					fontSize="18"
-					fontFamily="Arial"
-					fill="black"
+					fontFamily={theme.fontFamily}
+					fill={theme.textColor}
 				>
 					{stringNames[i]}
 				</text>
@@ -125,7 +215,7 @@ const ChordDiagram = ({
 					y1={textMargin + topMargin}
 					x2={stringSpacing * (i + 1) + leftMargin}
 					y2={height + textMargin}
-					stroke="black"
+					stroke={theme.stringColor}
 					strokeWidth="2"
 				/>
 			))}
@@ -138,21 +228,21 @@ const ChordDiagram = ({
 					y1={fretSpacing * i + textMargin + topMargin}
 					x2={leftMargin + fretLineWidth + 20}
 					y2={fretSpacing * i + textMargin + topMargin}
-					stroke={i === 0 ? "black" : "gray"}
+					stroke={i === 0 ? theme.nutColor : theme.fretColor}
 					strokeWidth={i === 0 ? "3" : "2"}
 				/>
 			))}
 
 			{/* Fret numbers */}
-			{frets.slice(1).map((_, i) => (
+			{theme.showFretNumbers && frets.slice(1).map((_, i) => (
 				<text
 					key={`fret-number-${i}`}
 					x={width + leftMargin + 10}
 					y={fretSpacing * (i + 1) + textMargin + topMargin + fretSpacing / 2}
 					textAnchor="middle"
 					fontSize="16"
-					fontFamily="Arial"
-					fill="black"
+					fontFamily={theme.fontFamily}
+					fill={theme.textColor}
 				>
 					{startingFret + i}
 				</text>
@@ -161,19 +251,24 @@ const ChordDiagram = ({
 			{/* Note markers and open/muted strings */}
 			{notes.map((note) => {
 				const { stringIndex, fret, finger } = note;
+				const xPosition = stringSpacing * (6 - stringIndex) + leftMargin;
 
 				if (fret === 0 || fret === null) {
+					const symbol = fret === 0 ? "O" : "X";
+					const color = fret === 0 ? theme.openStringColor : theme.mutedColor;
+
 					return (
 						<text
 							key={`open-${stringIndex}`}
-							x={stringSpacing * (6 - stringIndex) + leftMargin}
+							x={xPosition}
 							y={textMargin + topMargin - 10}
 							textAnchor="middle"
 							fontSize="20"
-							fontFamily="Arial"
-							fill="black"
+							fontFamily={theme.fontFamily}
+							fill={color}
+							fontWeight="bold"
 						>
-							{fret === 0 ? "O" : "X"}
+							{symbol}
 						</text>
 					);
 				}
@@ -181,40 +276,8 @@ const ChordDiagram = ({
 				const visualFret = fret - startingFret + 1;
 
 				if (visualFret >= 1 && visualFret <= 5) {
-					return (
-						<g key={`note-${stringIndex}`}>
-							<circle
-								cx={stringSpacing * (6 - stringIndex) + leftMargin}
-								cy={
-									fretSpacing * visualFret +
-									textMargin +
-									topMargin -
-									fretSpacing / 2
-								}
-								r={12}
-								fill="blue"
-							/>
-							{finger > 0 && (
-								<text
-									x={stringSpacing * (6 - stringIndex) + leftMargin}
-									y={
-										fretSpacing * visualFret +
-										textMargin +
-										topMargin -
-										fretSpacing / 2 +
-										5
-									}
-									textAnchor="middle"
-									fontSize="14"
-									fontFamily="Arial"
-									fill="white"
-									fontWeight="bold"
-								>
-									{finger}
-								</text>
-							)}
-						</g>
-					);
+					const cy = fretSpacing * visualFret + textMargin + topMargin - fretSpacing / 2;
+					return renderMarker(xPosition, cy, theme, finger, `note-${stringIndex}`);
 				}
 
 				return null;
@@ -227,27 +290,31 @@ export const ChordSVG = ({
 							 chord,
 							 chordName,
 							 startingFret,
+	theme = chordThemes.classic, // Default to classic theme
 						 }: ChordSVGProps) => {
 
 	const normalizedNotes = normalizeChordData(chord);
 
 	const noteNames = normalizedNotes
 		.map((note) => getNoteName(note.stringIndex, note.fret))
-		.filter(Boolean)
+		.filter(Boolean);
 
 	return (
-		<div className="mb-6">
+		<div className="mb-6" style={{ backgroundColor: theme.backgroundColor, padding: '1rem', borderRadius: '0.5rem' }}>
 			<div className="max-w-md mx-auto">
 				<ChordDiagram
 					notes={normalizedNotes}
 					chordName={chordName}
 					startingFret={startingFret}
+					theme={theme}
 				/>
 			</div>
-			<div className="mt-4 text-center">
-				<strong className="block mb-2">Notes:</strong>
-				<p className="text-lg">{noteNames.join(", ")}</p>
+			{theme.showStringNames && (
+				<div className="mt-4 text-center" style={{ color: theme.textColor }}>
+					<strong className="block mb-2" style={{ fontFamily: theme.fontFamily }}>Notes:</strong>
+					<p className="text-lg" style={{ fontFamily: theme.fontFamily }}>{noteNames.join(", ")}</p>
 			</div>
+			)}
 		</div>
 	);
 };

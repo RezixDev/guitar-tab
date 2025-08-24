@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Guitar } from "lucide-react";
+import { Guitar, Palette } from "lucide-react";
 import { ChordModal } from "@/components/chords/chordDetails/ChordModal";
 import { FloatingChordViewerProps } from "@/types/chord";
+import { chordThemes } from "@/types/chord";
 import {
 	Tooltip,
 	TooltipContent,
@@ -14,7 +16,12 @@ export function ViewDiagram({
 	ChordSVGComponent,
 	isOpen,
 	onOpenChange,
-}: FloatingChordViewerProps) {
+	selectedTheme,  // RECEIVE AS PROP
+	onThemeChange,  // RECEIVE AS PROP
+}: FloatingChordViewerProps & {
+	selectedTheme: string;
+	onThemeChange: (theme: string) => void;
+}) {
 	return (
 		<>
 			{/* Mobile version with tooltip */}
@@ -54,6 +61,8 @@ export function ViewDiagram({
 				isOpen={isOpen}
 				onClose={() => onOpenChange(false)}
 				ChordSVGComponent={ChordSVGComponent}
+				selectedTheme={selectedTheme}  // PASS THROUGH
+				onThemeChange={onThemeChange}  // PASS THROUGH
 			/>
 		</>
 	);
