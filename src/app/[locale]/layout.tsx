@@ -2,7 +2,6 @@
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { RootLayout } from "@/components/layouts/root-layout";
-import { unstable_setRequestLocale } from "next-intl/server";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -34,8 +33,6 @@ export default async function Layout(props: RootLayoutProps) {
     const {
         children
     } = props;
-
-    unstable_setRequestLocale(locale);
 
     // Lade die Übersetzungen
     const messages = (await import(`@/messages/${locale}.json`)).default;
