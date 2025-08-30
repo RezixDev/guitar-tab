@@ -4,7 +4,6 @@ import React from "react";
 import type { ChordSVGProps, Note, ChordTheme } from "@/types/chord";
 import { chordThemes } from "@/types/chord";
 
-// Internal type for normalized notes with string position
 type NormalizedNote = {
 	stringIndex: number;
 	fret: number | null;

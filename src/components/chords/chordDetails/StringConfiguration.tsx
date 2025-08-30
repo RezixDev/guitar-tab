@@ -20,7 +20,7 @@ export function StringConfiguration({
 	chord,
 	onNoteChange,
 }: StringConfigurationProps) {
-	const strings = ["E", "A", "D", "G", "B", "e"] as const;
+	const strings = ["e", "B", "G", "D", "A", "E"] as const;
 	const [activeFinger, setActiveFinger] = useState(1);
 	const [lastActiveString, setLastActiveString] = useState<number | null>(null);
 	const [windowStart, setWindowStart] = useState(0);
