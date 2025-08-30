@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import type { ChangeEvent } from 'react';
 
-interface ChordSearchProps {
+type ChordSearchProps = {
   searchTerm: string;
   onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }

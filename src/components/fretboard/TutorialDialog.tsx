@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react"
 import {
 	Dialog,
 	DialogContent,
@@ -6,69 +6,60 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
-interface TutorialDialogProps {
-	isOpen: boolean;
-	onClose: () => void;
+type TutorialDialogProps = {
+	isOpen: boolean
+	onClose: () => void
 	translations: {
-		title: string;
-		steps: string[];
-		previous?: string;
-		next?: string;
-		start?: string;
-		skip?: string;
-	};
+		title: string
+		steps: readonly string[]
+		previous?: string
+		next?: string
+		start?: string
+		skip?: string
+	}
 }
 
-export const TutorialDialog: React.FC<TutorialDialogProps> = ({
-	isOpen,
-	onClose,
-	translations,
-}) => {
-	const [currentStep, setCurrentStep] = useState(0);
+export function TutorialDialog({ isOpen, onClose, translations }: TutorialDialogProps) {
+	const [currentStep, setCurrentStep] = useState(0)
+	const lastIndex = translations.steps.length - 1
+	const isLast = currentStep === lastIndex
 
 	const handleNext = () => {
-		if (currentStep < translations.steps.length - 1) {
-			setCurrentStep((prev) => prev + 1);
-		} else {
-			handleClose();
-		}
-	};
+		if (!isLast) setCurrentStep((s) => s + 1)
+		else handleClose()
+	}
 
-	const handlePrevious = () => {
-		if (currentStep > 0) {
-			setCurrentStep((prev) => prev - 1);
-		}
-	};
+	const handlePrev = () => {
+		if (currentStep > 0) setCurrentStep((s) => s - 1)
+	}
 
 	const handleClose = () => {
-		setCurrentStep(0);
-		onClose();
-	};
-
-	const isLastStep = currentStep === translations.steps.length - 1;
+		setCurrentStep(0)
+		onClose()
+	}
 
 	return (
-		<Dialog open={isOpen} onOpenChange={handleClose}>
+		<Dialog open={isOpen} onOpenChange={(open) => (!open ? handleClose() : null)}>
 			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle className="text-xl font-semibold tracking-tight">
 						{translations.title}
 					</DialogTitle>
-					<DialogDescription className="mt-4 leading-relaxed whitespace-pre-line">
+					<DialogDescription className="mt-4 whitespace-pre-line leading-relaxed">
 						{translations.steps[currentStep]}
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="flex justify-center mt-4">
-					<div className="flex gap-1">
-						{translations.steps.map((_, index) => (
+				<div className="mt-4 flex justify-center">
+					<div className="flex gap-1" aria-label="progress">
+						{translations.steps.map((_, i) => (
 							<div
-								key={index}
+								key={i}
 								className={`h-1.5 w-8 rounded-full transition-colors ${
-									index === currentStep ? "bg-primary" : "bg-muted"
+									i === currentStep ? "bg-primary" : "bg-muted"
 								}`}
 							/>
 						))}
@@ -79,23 +70,21 @@ export const TutorialDialog: React.FC<TutorialDialogProps> = ({
 					<div className="flex gap-2">
 						<Button
 							variant="outline"
-							onClick={handlePrevious}
+							onClick={handlePrev}
 							disabled={currentStep === 0}
 							className="w-24"
 						>
-							{translations.previous || "Previous"}
+							{translations.previous ?? "Previous"}
 						</Button>
 						<Button onClick={handleNext} className="w-24">
-							{isLastStep
-								? translations.start || "Start"
-								: translations.next || "Next"}
+							{isLast ? translations.start ?? "Start" : translations.next ?? "Next"}
 						</Button>
 					</div>
 					<Button variant="ghost" onClick={handleClose}>
-						{translations.skip || "Skip Tutorial"}
+						{translations.skip ?? "Skip Tutorial"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-	);
-};
+	)
+}

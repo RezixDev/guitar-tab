@@ -1,32 +1,19 @@
-import React from "react";
-import { Tuning, Note, NotePosition, getNote } from "@/utils/noteUtils";
+import { useMemo } from "react"
+import type { Tuning, NotePosition } from "@/utils/noteUtils"
 
-interface FretboardSVGProps {
-	tuning: Tuning;
-	width: number;
-	height: number;
-	onFretClick: (string: number, fret: number) => void;
-	showNext: boolean;
-	currentNote: Note;
-	guessedPositions: NotePosition[];
-	chordPositions: NotePosition[];
-	easyMode: boolean;
+type FretboardSVGProps = {
+  tuning: Tuning
+  width: number
+  height: number
+  onFretClick: (stringIndex: number, fretIndex: number) => void
+  showNext: boolean
+  currentNote: { string: number; fret: number; note: string }
+  guessedPositions: NotePosition[]
+  chordPositions: NotePosition[]
+  easyMode: boolean
 }
 
-const FretboardScales: React.FC<FretboardSVGProps> = ({
-	tuning,
-	width,
-	height,
-	onFretClick,
-	chordPositions,
-	easyMode,
-}) => {
-	const stringCount = 6;
-	const fretCount = 12;
-	const stringSpacing = height / (stringCount + 1);
-	const fretSpacing = width / (fretCount + 1);
-
-	const noteColors: { [key: string]: string } = {
+const NOTE_COLORS = {
 		A: "#1D7669",
 		"A#": "#3FB82D",
 		B: "#A5E906",
@@ -39,63 +26,46 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 		"F#": "#5D25BE",
 		G: "#5251EB",
 		"G#": "#1767FC",
-	};
+} as const
 
-	const convertStringPosition = (pos: number) => pos;
+const getLuminance = (hex: string) => {
+  const r = parseInt(hex.slice(1, 3), 16) / 255
+  const g = parseInt(hex.slice(3, 5), 16) / 255
+  const b = parseInt(hex.slice(5, 7), 16) / 255
+  const lin = [r, g, b].map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
 
-	const renderNotes = (stringSpacing: number, fretSpacing: number) => {
-	  return chordPositions.map(({ string, fret, note }) => {
-		const adjustedString = convertStringPosition(string);
-		const backgroundColor = easyMode ? noteColors[note] : "transparent";
-		const fontColor = getFontColor(backgroundColor);
+const fontOn = (bg: string) => (getLuminance(bg) > 0.5 ? "#000000" : "#FFFFFF")
+
+export function FretboardScales({
+  tuning,
+  width,
+  height,
+  onFretClick,
+  chordPositions,
+  easyMode,
+}: FretboardSVGProps) {
+  const stringCount = 6
+  const fretCount = 12
+  const stringSpacing = height / (stringCount + 1)
+  const fretSpacing = width / (fretCount + 1)
+
+  const strings = useMemo(() => Array.from({ length: stringCount }, (_, i) => i), [])
+  const frets = useMemo(() => Array.from({ length: fretCount }, (_, i) => i), [])
   
 		return (
-		  <g
-			key={`fret-note-${string}-${fret}`}
-			onClick={() => onFretClick(string, fret)}
-			style={{ cursor: "pointer" }}
+    <div className="relative w-full overflow-x-auto">
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+        className="rounded-lg border border-gray-300 shadow-md"
 		  >
-			<circle
-			  cx={fretSpacing * (fret + 0.5)}
-			  cy={stringSpacing * (adjustedString + 1)}
-			  r={fretSpacing / 4}
-			  fill={backgroundColor}
-			/>
-			{easyMode && (
-			  <text
-				x={fretSpacing * (fret + 0.5)}
-				y={stringSpacing * (adjustedString + 1) + 4}
-				textAnchor="middle"
-				fontSize="10"
-				fontFamily="Arial"
-				fill={fontColor}
-				style={{ pointerEvents: "none" }}
-			  >
-				{note}
-			  </text>
-			)}
-		  </g>
-		);
-	  });
-	};
-	
-	const getLuminance = (hexColor: string): number => {
-		const r = parseInt(hexColor.substr(1, 2), 16) / 255;
-		const g = parseInt(hexColor.substr(3, 2), 16) / 255;
-		const b = parseInt(hexColor.substr(5, 2), 16) / 255;
-
-		const a = [r, g, b].map((v) =>
-			v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
-		);
-
-		return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-	};
-
-	const getFontColor = (hexColor: string): string =>
-		getLuminance(hexColor) > 0.5 ? "#000000" : "#FFFFFF";
-
-	const renderStrings = () =>
-		[...Array(stringCount)].map((_, i) => (
+        <g transform="translate(40, 0)">
+          {strings.map((i) => (
 			<line
 				key={`string-${i}`}
 				x1={0}
@@ -103,12 +73,11 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 				x2={width}
 				y2={stringSpacing * (i + 1)}
 				stroke="black"
-				strokeWidth="2"
+              strokeWidth={2}
 			/>
-		));
+          ))}
 
-	const renderFrets = () =>
-		[...Array(fretCount + 1)].map((_, i) => (
+          {Array.from({ length: fretCount + 1 }, (_, i) => (
 			<line
 				key={`fret-${i}`}
 				x1={fretSpacing * i}
@@ -116,12 +85,11 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 				x2={fretSpacing * i}
 				y2={height}
 				stroke="black"
-				strokeWidth={i === 0 ? "4" : "2"}
+              strokeWidth={i === 0 ? 4 : 2}
 			/>
-		));
+          ))}
 
-	const renderFretNumbers = () =>
-		[...Array(fretCount)].map((_, i) => (
+          {frets.map((i) => (
 			<text
 				key={`fret-number-${i}`}
 				x={fretSpacing * (i + 1) - fretSpacing / 2}
@@ -133,23 +101,25 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 			>
 				{i + 1}
 			</text>
-		));
+          ))}
 
-	const renderClickableAreas = () =>
-		chordPositions.map(({ string, fret, note }) => {
-			const backgroundColor = easyMode ? noteColors[note] : "transparent";
-			const fontColor = getFontColor(backgroundColor);
+          {chordPositions.map(({ string, fret, note }) => {
+            const bg = easyMode ? NOTE_COLORS[note as keyof typeof NOTE_COLORS] ?? "transparent" : "transparent"
+            const fg = bg === "transparent" ? "#000000" : fontOn(bg)
 			return (
 				<g
 					key={`fret-note-${string}-${fret}`}
 					onClick={() => onFretClick(string, fret)}
 					style={{ cursor: "pointer" }}
+                role="button"
+                tabIndex={0}
+                aria-label={`String ${string + 1}, Fret ${fret + 1}, Note ${note}`}
 				>
 					<circle
 						cx={fretSpacing * (fret + 0.5)}
 						cy={stringSpacing * (string + 1)}
 						r={fretSpacing / 4}
-						fill={backgroundColor}
+                  fill={bg}
 					/>
 					{easyMode && (
 						<text
@@ -158,38 +128,22 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 							textAnchor="middle"
 							fontSize="10"
 							fontFamily="Arial"
-							fill={fontColor}
+                    fill={fg}
 							style={{ pointerEvents: "none" }}
 						>
 							{note}
 						</text>
 					)}
 				</g>
-			);
-		});
-
-	return (
-		<div className="relative w-full overflow-x-auto">
-			<svg
-				width={width}
-				height={height}
-				viewBox={`0 0 ${width} ${height}`}
-				preserveAspectRatio="xMidYMid meet"
-				xmlns="http://www.w3.org/2000/svg"
-				className="border border-gray-300 rounded-lg shadow-md"
-			>
-				<g transform={`translate(40, 0)`}>
-					{renderStrings()}
-					{renderFrets()}
-					{renderFretNumbers()}
-					{renderClickableAreas()}
+            )
+          })}
 				</g>
 				<g>
-					{tuning.map((note, index) => (
+          {tuning.map((note, i) => (
 						<text
-							key={`string-name-${index}`}
-							x="20"
-							y={stringSpacing * (index + 1) + 5}
+              key={`string-name-${i}`}
+              x={20}
+              y={stringSpacing * (i + 1) + 5}
 							textAnchor="middle"
 							fontSize="12"
 							fontFamily="Arial"
@@ -201,7 +155,5 @@ const FretboardScales: React.FC<FretboardSVGProps> = ({
 				</g>
 			</svg>
 		</div>
-	);
-};
-
-export default FretboardScales;
+  )
+}

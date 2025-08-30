@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
 import { generateRandomNote, getNote, getAllNotePositions } from '@/utils/noteUtils';
 
-interface GameState {
+type GameState = {
   currentNote: Note;
   points: number;
   targetPoints: number;
@@ -17,7 +17,7 @@ interface GameState {
   totalPositions: number;
 }
 
-interface GameTranslations {
+type GameTranslations = {
   feedback: {
     perfect: string;
     tryAgainAny: string;

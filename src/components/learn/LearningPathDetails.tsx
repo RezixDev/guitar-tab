@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getUserProgress } from "@/lib/learn/utils";
 
-interface LearningPathDetailsProps {
+type LearningPathDetailsProps = {
 	path: LearningPath & { modules: Module[] }; // Ensure modules is required
 	translations: {
 		title: string;

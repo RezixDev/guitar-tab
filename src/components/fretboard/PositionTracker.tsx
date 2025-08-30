@@ -1,61 +1,46 @@
-// components/fretboard/PositionTracker.tsx
-import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { getAllNotePositions } from "@/utils/noteUtils";
-import type { Note, Tuning } from "@/utils/noteUtils";
+import { Card } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { getAllNotePositions } from "@/utils/noteUtils"
+import type { Note, Tuning } from "@/utils/noteUtils"
+import { useMemo } from "react"
 
-interface PositionTrackerProps {
-	currentNote: Note;
-	tuning: Tuning;
-	foundPositions: Set<string>;
-	showNext: boolean;
-	isHardMode: boolean;
+type PositionTrackerProps = {
+  currentNote: Note
+  tuning: Tuning
+  foundPositions: ReadonlySet<string>
+  showNext: boolean
+  isHardMode: boolean
 }
 
-export const PositionTracker: React.FC<PositionTrackerProps> = ({
+export function PositionTracker({
 	currentNote,
 	tuning,
 	foundPositions,
 	showNext,
 	isHardMode,
-}) => {
-	const [stats, setStats] = useState({
-		total: 0,
-		found: 0,
-		remaining: 0,
-		progress: 0,
-	});
+}: PositionTrackerProps) {
+  if (!isHardMode) return null
 
-	useEffect(() => {
-		if (!currentNote || !isHardMode) return;
-
-		const allPositions = getAllNotePositions(currentNote.note, tuning);
-		const maxPossiblePositions = tuning.length; // 6 for standard guitar
-
-		if (allPositions.length > maxPossiblePositions) {
-			allPositions.length = maxPossiblePositions;
+  const stats = useMemo(() => {
+    if (!currentNote) {
+      return { total: 0, found: 0, remaining: 0, progress: 0 }
 		}
 
-		const uniquePositions = new Set(
-			allPositions.map((pos) => `${pos.string}-${pos.fret}`)
-		);
-		const foundCount = foundPositions.size;
+    const all = getAllNotePositions(currentNote.note, tuning)
+    const max = tuning.length
+    const limited = all.slice(0, Math.min(all.length, max))
+    const unique = new Set(limited.map((p) => `${p.string}-${p.fret}`))
 
-		const remaining = uniquePositions.size - foundCount;
+    const total = unique.size
+    const found = foundPositions.size
+    const remaining = Math.max(0, total - found)
+    const progress = total > 0 ? (found / total) * 100 : 0
 
-		setStats({
-			total: uniquePositions.size,
-			found: foundCount,
-			remaining: uniquePositions.size - foundCount,
-			progress: (foundCount / uniquePositions.size) * 100,
-		});
-	}, [currentNote, foundPositions, tuning, isHardMode]);
-
-	if (!isHardMode) return null;
+    return { total, found, remaining, progress }
+  }, [currentNote, tuning, foundPositions])
 
 	return (
-		<Card className="p-4 mb-4">
+    <Card className="mb-4 p-4">
 			<div className="space-y-2">
 				<div className="flex justify-between text-sm">
 					<span className="font-medium">
@@ -63,18 +48,18 @@ export const PositionTracker: React.FC<PositionTrackerProps> = ({
 					</span>
 					{stats.remaining > 0 && (
 						<span className="text-muted-foreground">
-							{stats.remaining} position{stats.remaining !== 1 ? "s" : ""}{" "}
-							remaining
+              {stats.remaining} position{stats.remaining !== 1 ? "s" : ""} remaining
 						</span>
 					)}
 				</div>
 				<Progress value={stats.progress} className="h-2" />
-				{showNext && (
-					<div className="text-center text-sm text-green-600 font-medium mt-2">
+
+        {showNext && stats.remaining === 0 && (
+          <div className="mt-2 text-center text-sm font-medium text-green-600">
 						All positions found! Press Enter or click Next Note to continue
 					</div>
 				)}
 			</div>
 		</Card>
-	);
-};
+  )
+}

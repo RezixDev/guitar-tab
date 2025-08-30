@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { FretboardGame } from "@/components/fretboard/FretboardGame";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/routing";
@@ -9,7 +9,7 @@ type PageParams = {
 	locale: string;
 };
 
-interface PageProps {
+type PageProps = {
 	params: Promise<PageParams>;
 }
 

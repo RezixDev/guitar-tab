@@ -1,36 +1,32 @@
-// components/TuningSelector.tsx
-import React from "react";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-interface TuningSelectorProps {
-	onChange: (value: string) => void;
-	value?: string;
-	disabled?: boolean;
+const TUNINGS = [
+  { value: "standard", label: "Standard (EADGBE)" },
+  { value: "halfStepDown", label: "Half Step Down (Eb Ab Db Gb Bb Eb)" },
+  { value: "dropD", label: "Drop D (DADGBE)" },
+] as const
+
+type Tuning = (typeof TUNINGS)[number]["value"]
+
+type TuningSelectorProps = {
+  onChange: (value: Tuning) => void
+  value?: Tuning
+  disabled?: boolean
 }
 
-export const TuningSelector: React.FC<TuningSelectorProps> = ({
-	onChange,
-	value = "standard",
-	disabled = false,
-}) => {
+export function TuningSelector({ onChange, value = "standard", disabled = false }: TuningSelectorProps) {
 	return (
-		<Select onValueChange={onChange} value={value} disabled={disabled}>
-			<SelectTrigger className="w-[180px]">
+    <Select onValueChange={(v) => onChange(v as Tuning)} value={value} disabled={disabled}>
+      <SelectTrigger className="w-[220px]">
 				<SelectValue placeholder="Select Tuning" />
 			</SelectTrigger>
 			<SelectContent>
-				<SelectItem value="standard">Standard (EADGBE)</SelectItem>
-				<SelectItem value="halfStepDown">
-					Half Step Down (Eb Ab Db Gb Bb Eb)
+        {TUNINGS.map((t) => (
+          <SelectItem key={t.value} value={t.value}>
+            {t.label}
 				</SelectItem>
-				<SelectItem value="dropD">Drop D (DADGBE)</SelectItem>
+        ))}
 			</SelectContent>
 		</Select>
-	);
-};
+  )
+}

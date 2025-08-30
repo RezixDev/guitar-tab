@@ -1,4 +1,4 @@
-export interface Module {
+export type Module = {
   id: string;
   pathId: string;
   title: string;
@@ -8,7 +8,7 @@ export interface Module {
   lessons: Lesson[];
 }
 
-export interface Lesson {
+export type Lesson = {
   id: string;
   moduleId: string;
   title: string;
@@ -19,7 +19,7 @@ export interface Lesson {
   prerequisites?: string[]; // IDs of required lessons
 }
 
-export interface LessonContent {
+export type LessonContent = {
   theory: string;
   tablature?: string;
   videoUrl?: string;
@@ -28,7 +28,7 @@ export interface LessonContent {
   tools?: string[]; // References to tools like "tuner", "metronome"
 }
 
-export interface Exercise {
+export type Exercise = {
   id: string;
   title: string;
   description: string;
@@ -39,7 +39,7 @@ export interface Exercise {
   requiredTools?: string[];
 }
 
-export interface LearningPath {
+export type LearningPath = {
   id: string;
   title: string;
   description: string;
@@ -50,7 +50,7 @@ export interface LearningPath {
   modules?: Module[];
 }
 
-export interface UserProgress {
+export type UserProgress = {
   userId: string;
   pathId: string;
   completedLessons: string[];
@@ -59,7 +59,7 @@ export interface UserProgress {
 }
 
 // Adding QuizQuestion interface since it was referenced but not defined
-export interface QuizQuestion {
+export type QuizQuestion = {
   id: string;
   question: string;
   options: string[];

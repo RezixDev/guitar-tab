@@ -1,41 +1,42 @@
-import React from "react";
+
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select"
 
-interface PointsSelectorProps {
-	value: number;
-	onChange: (value: number) => void;
-	disabled?: boolean;
+const pointsOptions = [5, 10, 20, 30, 40, 50] as const
+type Points = (typeof pointsOptions)[number]
+
+type PointsSelectorProps = {
+  value: Points
+  onChange: (value: Points) => void
+  disabled?: boolean
 }
 
-const pointsOptions = [5, 10, 20, 30, 40, 50] as const;
-
-export const PointsSelector: React.FC<PointsSelectorProps> = ({
+export function PointsSelector({
 	value,
 	onChange,
 	disabled = false,
-}) => {
+}: PointsSelectorProps) {
 	return (
 		<Select
-			onValueChange={(val) => onChange(Number(val))}
-			value={value.toString()}
+      value={`${value}`}
+      onValueChange={(v) => onChange(Number(v) as Points)}
 			disabled={disabled}
 		>
 			<SelectTrigger className="w-[180px]">
 				<SelectValue placeholder="Select Target Points" />
 			</SelectTrigger>
 			<SelectContent>
-				{pointsOptions.map((points) => (
-					<SelectItem key={points} value={points.toString()}>
-						{points} points
+        {pointsOptions.map((points) => (
+          <SelectItem key={points} value={`${points}`}>
+            {points} points
 					</SelectItem>
 				))}
 			</SelectContent>
 		</Select>
-	);
-};
+  )
+}

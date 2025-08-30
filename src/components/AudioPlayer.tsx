@@ -1,69 +1,68 @@
-'use client';
+"use client"
 
-import React, { useEffect } from 'react';
-import * as Tone from 'tone';
+import { useEffect, useMemo } from "react"
+import * as Tone from "tone"
 
-interface AudioPlayerProps {
-  notes: string[];
+const URLS = {
+  A2: "A2.mp3",
+  "A#2": "A#2.mp3",
+  B2: "B2.mp3",
+  C3: "C3.mp3",
+  "C#3": "C#3.mp3",
+  D3: "D3.mp3",
+  "D#3": "D#3.mp3",
+  E3: "E3.mp3",
+  F3: "F3.mp3",
+  "F#3": "F#3.mp3",
+  G3: "G3.mp3",
+  "G#3": "G#3.mp3",
+  A3: "A3.mp3",
+  "A#3": "A#3.mp3",
+  B3: "B3.mp3",
+  C4: "C4.mp3",
+  "C#4": "C#4.mp3",
+  D4: "D4.mp3",
+  "D#4": "D#4.mp3",
+  E4: "E4.mp3",
+  F4: "F4.mp3",
+  "F#4": "F#4.mp3",
+  G4: "G4.mp3",
+  "G#4": "G#4.mp3",
+  A4: "A4.mp3",
+  "A#4": "A#4.mp3",
+  B4: "B4.mp3",
+  C5: "C5.mp3",
+  "C#5": "C#5.mp3",
+  D5: "D5.mp3",
+  "D#5": "D#5.mp3",
+} as const
+
+type Note = keyof typeof URLS
+
+type AudioPlayerProps = {
+  notes: readonly Note[]
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ notes }) => {
+export default function AudioPlayer({ notes }: AudioPlayerProps) {
+  const sampler = useMemo(
+    () => new Tone.Sampler(URLS, () => {}, "samples/").toDestination(),
+    []
+  )
+
   useEffect(() => {
-    const samples = {
-      A2: 'samples/A2.mp3',
-      'A#2': 'samples/A#2.mp3',
-      B2: 'samples/B2.mp3',
-      C3: 'samples/C3.mp3',
-      'C#3': 'samples/C#3.mp3',
-      D3: 'samples/D3.mp3',
-      'D#3': 'samples/D#3.mp3',
-      E3: 'samples/E3.mp3',
-      F3: 'samples/F3.mp3',
-      'F#3': 'samples/F#3.mp3',
-      G3: 'samples/G3.mp3',
-      'G#3': 'samples/G#3.mp3',
-      A3: 'samples/A3.mp3',
-      'A#3': 'samples/A#3.mp3',
-      B3: 'samples/B3.mp3',
-      C4: 'samples/C4.mp3',
-      'C#4': 'samples/C#4.mp3',
-      D4: 'samples/D4.mp3',
-      'D#4': 'samples/D#4.mp3',
-      E4: 'samples/E4.mp3',
-      F4: 'samples/F4.mp3',
-      'F#4': 'samples/F#4.mp3',
-      G4: 'samples/G4.mp3',
-      'G#4': 'samples/G#4.mp3',
-      A4: 'samples/A4.mp3',
-      'A#4': 'samples/A#4.mp3',
-      B4: 'samples/B4.mp3',
-      C5: 'samples/C5.mp3',
-      'C#5': 'samples/C#5.mp3',
-      D5: 'samples/D5.mp3',
-      'D#5': 'samples/D#5.mp3',
-    };
+    if (!sampler.loaded || notes.length === 0) return
+    const now = Tone.now()
+    notes.forEach((n, i) => {
+      sampler.triggerAttackRelease(n, "8n", now + i * 0.1)
+    })
+  }, [notes, sampler])
 
-    const sampler = new Tone.Sampler(samples, () => {
-      console.log('Sampler loaded');
-    }).toDestination();
-
-    const playChord = () => {
-      notes.forEach((note, index) => {
-        sampler.triggerAttackRelease(note, '8n', Tone.now() + index * 0.1);
-      });
-    };
-
-    // Attach the playChord function to the window object for global access
-    /*  window.playChord = playChord; */
-
-    // Cleanup
+  useEffect(() => {
     return () => {
-      sampler.dispose();
-      /*       delete window.playChord; */
-    };
-  }, [notes]);
+      sampler.disconnect()
+      sampler.dispose()
+    }
+  }, [sampler])
 
-  return null; // This component does not render anything visible
-};
-
-export default AudioPlayer;
+  return null
+}

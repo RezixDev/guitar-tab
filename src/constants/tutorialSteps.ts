@@ -1,5 +1,5 @@
 // constants/tutorialSteps.ts
-export interface TutorialStep {
+export type TutorialStep = {
     title: string;
     content: string;
     image?: string;

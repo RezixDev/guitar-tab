@@ -20,7 +20,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import * as Pitchfinder from "pitchfinder";
 
-interface TunerNote {
+type TunerNote = {
 	note: string;
 	frequency: number;
 	string: number;

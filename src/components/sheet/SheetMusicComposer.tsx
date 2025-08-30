@@ -1,7 +1,7 @@
 "use client"
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import * as Tone from 'tone';
-import { Play, Pause, RotateCcw, Trash2, Music, Clock, Volume2 } from 'lucide-react';
+import { Play, Pause, RotateCcw, Trash2, Music, Clock, Volume2, SkipForward, SkipBack } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
 
 type Note = {
     id: number;
@@ -31,26 +32,31 @@ type DurationInfo = {
     beats: number;
     symbol: string;
     name: string;
+    toneNotation: string;
 }
 
-export const SheetMusicComposer: React.FC = () => {
+export function SheetMusicComposer() {
     const [notes, setNotes] = useState<Note[]>([]);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentBeat, setCurrentBeat] = useState(-1);
+    const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
     const [selectedDuration, setSelectedDuration] = useState('quarter');
     const [tempo, setTempo] = useState(120);
     const [volume, setVolume] = useState([-10]);
+    const [playbackStartIndex, setPlaybackStartIndex] = useState(0);
+    const [playheadPosition, setPlayheadPosition] = useState(-1);
+
     const synthRef = useRef<Tone.PolySynth | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const sequenceRef = useRef<Tone.Part | null>(null);
+    const transportPositionRef = useRef<number>(0);
 
-    // Note durations in beats
+    // Note durations with proper Tone.js notation
     const durations: Record<string, DurationInfo> = {
-        whole: { beats: 4, symbol: '○', name: 'Whole' },
-        half: { beats: 2, symbol: '𝅗𝅥', name: 'Half' },
-        quarter: { beats: 1, symbol: '♩', name: 'Quarter' },
-        eighth: { beats: 0.5, symbol: '♪', name: 'Eighth' },
-        sixteenth: { beats: 0.25, symbol: '♬', name: 'Sixteenth' }
+        whole: { beats: 4, symbol: '𝅝', name: 'Whole', toneNotation: '1n' },
+        half: { beats: 2, symbol: '𝅗𝅥', name: 'Half', toneNotation: '2n' },
+        quarter: { beats: 1, symbol: '♩', name: 'Quarter', toneNotation: '4n' },
+        eighth: { beats: 0.5, symbol: '♪', name: 'Eighth', toneNotation: '8n' },
+        sixteenth: { beats: 0.25, symbol: '♬', name: 'Sixteenth', toneNotation: '16n' }
     };
 
     // Staff configuration
@@ -101,14 +107,10 @@ export const SheetMusicComposer: React.FC = () => {
         synthRef.current.volume.value = volume[0];
 
         return () => {
+            stopPlayback();
             if (synthRef.current) {
                 synthRef.current.dispose();
             }
-            if (sequenceRef.current) {
-                sequenceRef.current.dispose();
-            }
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
         };
     }, []);
 
@@ -119,10 +121,28 @@ export const SheetMusicComposer: React.FC = () => {
         }
     }, [volume]);
 
+    // Update tempo during playback
+    useEffect(() => {
+        Tone.Transport.bpm.value = tempo;
+    }, [tempo]);
+
     // Draw staff
     useEffect(() => {
         drawStaff();
-    }, [notes, currentBeat]);
+    }, [notes, currentNoteIndex, playheadPosition, playbackStartIndex]);
+
+    const stopPlayback = useCallback(() => {
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+        if (sequenceRef.current) {
+            sequenceRef.current.dispose();
+            sequenceRef.current = null;
+        }
+        setIsPlaying(false);
+        setCurrentNoteIndex(-1);
+        setPlayheadPosition(-1);
+        transportPositionRef.current = 0;
+    }, []);
 
     const drawStaff = () => {
         const canvas = canvasRef.current;
@@ -148,6 +168,18 @@ export const SheetMusicComposer: React.FC = () => {
         ctx.font = '400 14px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#64748b';
         ctx.fillText(`♩ = ${tempo} BPM`, 30, 80);
+
+        // Draw playhead if playing
+        if (playheadPosition >= 0 && playheadPosition <= canvas.width) {
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(playheadPosition, staffConfig.topMargin - 20);
+            ctx.lineTo(playheadPosition, staffConfig.topMargin + staffConfig.staffHeight + 20);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
 
         // Draw staff lines for each measure
         for (let measure = 0; measure < staffConfig.measures; measure++) {
@@ -196,11 +228,13 @@ export const SheetMusicComposer: React.FC = () => {
 
         // Draw notes
         notes.forEach((note, index) => {
-            drawNote(ctx, note, index === currentBeat);
+            const isCurrentNote = index === currentNoteIndex;
+            const isStartPoint = index === playbackStartIndex && !isPlaying;
+            drawNote(ctx, note, isCurrentNote, isStartPoint);
         });
     };
 
-    const drawNote = (ctx: CanvasRenderingContext2D, note: Note, isPlaying: boolean) => {
+    const drawNote = (ctx: CanvasRenderingContext2D, note: Note, isPlaying: boolean, isStartPoint: boolean) => {
         const x = staffConfig.leftMargin + note.x;
         const y = staffConfig.topMargin + (note.staffPosition * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2);
 
@@ -239,6 +273,17 @@ export const SheetMusicComposer: React.FC = () => {
             ctx.beginPath();
             ctx.arc(x, y, 12, 0, Math.PI * 2);
             ctx.fill();
+        }
+
+        // Highlight start point
+        if (isStartPoint) {
+            ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.arc(x, y, 16, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
 
         const noteColor = isPlaying ? '#6366f1' : '#020817';
@@ -305,6 +350,17 @@ export const SheetMusicComposer: React.FC = () => {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
+        // Check if clicking on an existing note to set start position
+        const clickedNoteIndex = notes.findIndex(note => {
+            const noteX = staffConfig.leftMargin + note.x;
+            return Math.abs(noteX - x) < 15 && Math.abs(y - (staffConfig.topMargin + (note.staffPosition * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2))) < 15;
+        });
+
+        if (clickedNoteIndex !== -1 && e.shiftKey) {
+            setPlaybackStartIndex(clickedNoteIndex);
+            return;
+        }
+
         if (x < staffConfig.leftMargin || x > staffConfig.leftMargin + (staffConfig.measures * staffConfig.measureWidth)) {
             return;
         }
@@ -343,15 +399,7 @@ export const SheetMusicComposer: React.FC = () => {
         if (!synthRef.current) return;
 
         if (isPlaying) {
-            // Stop playback
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
-            if (sequenceRef.current) {
-                sequenceRef.current.dispose();
-                sequenceRef.current = null;
-            }
-            setIsPlaying(false);
-            setCurrentBeat(-1);
+            stopPlayback();
             return;
         }
 
@@ -360,37 +408,52 @@ export const SheetMusicComposer: React.FC = () => {
         // Start audio context
         await Tone.start();
 
+        // Stop any existing playback
+        stopPlayback();
+
         // Set tempo
         Tone.Transport.bpm.value = tempo;
 
+        // Get notes to play starting from the selected index
+        const notesToPlay = notes.slice(playbackStartIndex);
+
+        if (notesToPlay.length === 0) return;
+
         // Create events for Tone.Part
         let currentTime = 0;
-        const events: Array<[number, any]> = [];
+        const events: Array<{ time: number; note: string; duration: string; index: number; x: number }> = [];
 
-        notes.forEach((note, index) => {
-            events.push([currentTime, { note: note.pitch, duration: note.beats, index }]);
+        notesToPlay.forEach((note, idx) => {
+            const actualIndex = playbackStartIndex + idx;
+            events.push({
+                time: currentTime,
+                note: note.pitch,
+                duration: durations[note.duration].toneNotation,
+                index: actualIndex,
+                x: note.x
+            });
             currentTime += note.beats;
         });
 
-        // Create and start Tone.Part
+        // Create Tone.Part
         sequenceRef.current = new Tone.Part((time, value) => {
-            setCurrentBeat(value.index);
-            synthRef.current?.triggerAttackRelease(
-                value.note,
-                value.duration + 'n',
-                time
-            );
+            // Trigger the note
+            synthRef.current?.triggerAttackRelease(value.note, value.duration, time);
 
-            // Clear highlight after note plays
+            // Update current note index
             Tone.Draw.schedule(() => {
-                if (value.index === notes.length - 1) {
-                    setTimeout(() => {
-                        setCurrentBeat(-1);
-                        setIsPlaying(false);
-                    }, (value.duration * 60 / tempo) * 1000);
-                }
-            }, time + value.duration);
-        }, events);
+                setCurrentNoteIndex(value.index);
+                setPlayheadPosition(staffConfig.leftMargin + value.x);
+            }, time);
+
+            // Clear highlight after the last note
+            if (value.index === notes.length - 1) {
+                const noteDurationInSeconds = Tone.Time(value.duration).toSeconds();
+                Tone.Draw.schedule(() => {
+                    stopPlayback();
+                }, time + noteDurationInSeconds);
+            }
+        }, events.map(e => [e.time, e]));
 
         sequenceRef.current.loop = false;
         sequenceRef.current.start(0);
@@ -401,23 +464,33 @@ export const SheetMusicComposer: React.FC = () => {
     };
 
     const clearNotes = () => {
+        stopPlayback();
         setNotes([]);
-        if (isPlaying) {
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
-            if (sequenceRef.current) {
-                sequenceRef.current.dispose();
-                sequenceRef.current = null;
-            }
-            setIsPlaying(false);
-            setCurrentBeat(-1);
-        }
+        setPlaybackStartIndex(0);
     };
 
     const deleteLastNote = () => {
         if (notes.length > 0) {
-            setNotes(notes.slice(0, -1));
+            const newNotes = notes.slice(0, -1);
+            setNotes(newNotes);
+            if (playbackStartIndex >= newNotes.length) {
+                setPlaybackStartIndex(Math.max(0, newNotes.length - 1));
+            }
         }
+    };
+
+    const moveStartPoint = (direction: 'prev' | 'next') => {
+        if (notes.length === 0) return;
+
+        if (direction === 'prev') {
+            setPlaybackStartIndex(Math.max(0, playbackStartIndex - 1));
+        } else {
+            setPlaybackStartIndex(Math.min(notes.length - 1, playbackStartIndex + 1));
+        }
+    };
+
+    const resetStartPoint = () => {
+        setPlaybackStartIndex(0);
     };
 
     return (
@@ -429,102 +502,147 @@ export const SheetMusicComposer: React.FC = () => {
                         <Music className="w-8 h-8 text-primary" />
                         Sheet Music Composer
                     </h1>
-                    <p className="text-muted-foreground">Click on the staff to compose your melody</p>
+                    <p className="text-muted-foreground">Click to add notes • Shift+Click to set start point</p>
                 </div>
 
                 {/* Main Card */}
                 <Card className="overflow-hidden">
                     <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
-                        <div className="flex flex-wrap gap-4 items-center justify-between">
-                            {/* Playback Controls */}
-                            <div className="flex gap-2">
-                                <Button
-                                    onClick={playNotes}
-                                    variant={isPlaying ? "destructive" : "default"}
-                                    size="default"
-                                    className="gap-2"
-                                >
-                                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                                    {isPlaying ? 'Stop' : 'Play'}
-                                </Button>
+                        <div className="space-y-4">
+                            {/* Primary Controls Row */}
+                            <div className="flex flex-wrap gap-4 items-center justify-between">
+                                {/* Playback Controls */}
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={playNotes}
+                                        variant={isPlaying ? "destructive" : "default"}
+                                        size="default"
+                                        className="gap-2"
+                                        disabled={notes.length === 0}
+                                    >
+                                        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                                        {isPlaying ? 'Stop' : 'Play'}
+                                    </Button>
 
-                                <Button
-                                    onClick={clearNotes}
-                                    variant="secondary"
-                                    size="default"
-                                    className="gap-2"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                    Clear
-                                </Button>
+                                    <Button
+                                        onClick={clearNotes}
+                                        variant="secondary"
+                                        size="default"
+                                        className="gap-2"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Clear
+                                    </Button>
 
-                                <Button
-                                    onClick={deleteLastNote}
-                                    variant="outline"
-                                    size="default"
-                                    className="gap-2"
-                                    disabled={notes.length === 0}
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    Undo
-                                </Button>
-                            </div>
+                                    <Button
+                                        onClick={deleteLastNote}
+                                        variant="outline"
+                                        size="default"
+                                        className="gap-2"
+                                        disabled={notes.length === 0}
+                                    >
+                                        <RotateCcw className="w-4 h-4" />
+                                        Undo
+                                    </Button>
+                                </div>
 
-                            {/* Note Duration Selector */}
-                            <div className="flex items-center gap-2">
-                                <Label htmlFor="duration">Duration:</Label>
-                                <Select value={selectedDuration} onValueChange={setSelectedDuration}>
-                                    <SelectTrigger id="duration" className="w-[140px]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {Object.entries(durations).map(([key, value]) => (
-                                            <SelectItem key={key} value={key}>
-                        <span className="flex items-center gap-2">
-                          <span className="text-lg">{value.symbol}</span>
-                          <span>{value.name}</span>
-                        </span>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Tempo Control */}
-                            <div className="flex items-center gap-3">
-                                <Label className="flex items-center gap-1">
-                                    <Clock className="w-4 h-4" />
-                                    Tempo:
-                                </Label>
+                                {/* Note Duration Selector */}
                                 <div className="flex items-center gap-2">
-                                    <Slider
-                                        value={[tempo]}
-                                        onValueChange={(value) => setTempo(value[0])}
-                                        min={60}
-                                        max={180}
-                                        step={5}
-                                        className="w-24"
-                                    />
-                                    <Badge variant="secondary" className="min-w-[3rem] justify-center">
-                                        {tempo}
-                                    </Badge>
+                                    <Label htmlFor="duration">Duration:</Label>
+                                    <Select value={selectedDuration} onValueChange={setSelectedDuration}>
+                                        <SelectTrigger id="duration" className="w-[140px]">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {Object.entries(durations).map(([key, value]) => (
+                                                <SelectItem key={key} value={key}>
+                                                    <span className="flex items-center gap-2">
+                                                        <span className="text-lg">{value.symbol}</span>
+                                                        <span>{value.name}</span>
+                                                    </span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
 
-                            {/* Volume Control */}
-                            <div className="flex items-center gap-3">
-                                <Label className="flex items-center gap-1">
-                                    <Volume2 className="w-4 h-4" />
-                                    Volume:
-                                </Label>
-                                <Slider
-                                    value={volume}
-                                    onValueChange={setVolume}
-                                    min={-30}
-                                    max={0}
-                                    step={1}
-                                    className="w-24"
-                                />
+                            <Separator />
+
+                            {/* Secondary Controls Row */}
+                            <div className="flex flex-wrap gap-6 items-center justify-between">
+                                {/* Start Point Controls */}
+                                <div className="flex items-center gap-2">
+                                    <Label>Start Point:</Label>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            onClick={() => moveStartPoint('prev')}
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            disabled={notes.length === 0 || playbackStartIndex === 0}
+                                        >
+                                            <SkipBack className="w-4 h-4" />
+                                        </Button>
+                                        <Badge variant="secondary" className="min-w-[3rem] justify-center">
+                                            {notes.length > 0 ? `${playbackStartIndex + 1}/${notes.length}` : '0/0'}
+                                        </Badge>
+                                        <Button
+                                            onClick={() => moveStartPoint('next')}
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            disabled={notes.length === 0 || playbackStartIndex >= notes.length - 1}
+                                        >
+                                            <SkipForward className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            onClick={resetStartPoint}
+                                            variant="ghost"
+                                            size="sm"
+                                            disabled={playbackStartIndex === 0}
+                                        >
+                                            Reset
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Tempo Control */}
+                                <div className="flex items-center gap-3">
+                                    <Label className="flex items-center gap-1">
+                                        <Clock className="w-4 h-4" />
+                                        Tempo:
+                                    </Label>
+                                    <div className="flex items-center gap-2">
+                                        <Slider
+                                            value={[tempo]}
+                                            onValueChange={(value) => setTempo(value[0])}
+                                            min={60}
+                                            max={180}
+                                            step={5}
+                                            className="w-24"
+                                        />
+                                        <Badge variant="secondary" className="min-w-[4rem] justify-center">
+                                            {tempo} BPM
+                                        </Badge>
+                                    </div>
+                                </div>
+
+                                {/* Volume Control */}
+                                <div className="flex items-center gap-3">
+                                    <Label className="flex items-center gap-1">
+                                        <Volume2 className="w-4 h-4" />
+                                        Volume:
+                                    </Label>
+                                    <Slider
+                                        value={volume}
+                                        onValueChange={setVolume}
+                                        min={-30}
+                                        max={0}
+                                        step={1}
+                                        className="w-24"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </CardHeader>
@@ -547,9 +665,16 @@ export const SheetMusicComposer: React.FC = () => {
                                 {notes.length} note{notes.length !== 1 ? 's' : ''} in composition
                             </Badge>
                             {notes.length > 0 && (
-                                <Badge variant="secondary" className="text-sm">
-                                    Duration: {notes.reduce((sum, note) => sum + note.beats, 0)} beats
-                                </Badge>
+                                <div className="flex gap-2">
+                                    <Badge variant="secondary" className="text-sm">
+                                        Total duration: {notes.reduce((sum, note) => sum + note.beats, 0)} beats
+                                    </Badge>
+                                    {playbackStartIndex > 0 && (
+                                        <Badge variant="outline" className="text-sm text-green-600">
+                                            Playing from note {playbackStartIndex + 1}
+                                        </Badge>
+                                    )}
+                                </div>
                             )}
                         </div>
                     </CardContent>
@@ -560,12 +685,15 @@ export const SheetMusicComposer: React.FC = () => {
                     <Music className="h-4 w-4" />
                     <AlertDescription className="space-y-2">
                         <p>
-                            <strong>How to compose:</strong> Select a note duration, then click on the staff to place notes.
-                            Click Play to hear your composition.
+                            <strong>How to compose:</strong> Click on the staff to place notes. Select different durations from the dropdown.
+                            The playback will respect note durations and tempo settings.
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            Tips: Notes snap to the nearest line or space. You'll hear a preview when placing each note.
-                            Playback follows left-to-right order.
+                            <strong>Tips:</strong>
+                            • Shift+Click on a note to set it as the playback start point
+                            • Use the Start Point controls to navigate through notes
+                            • The tempo slider changes playback speed in real-time
+                            • A red line shows the current playback position
                         </p>
                     </AlertDescription>
                 </Alert>

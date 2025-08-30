@@ -1,5 +1,5 @@
 // src/data/chords.tsx
-interface Chord {
+type Chord = {
 	name: string;
 	startingFret: number;
 	notes: {

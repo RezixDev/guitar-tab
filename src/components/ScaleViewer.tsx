@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
-import FretboardScales from './FretboardScales';
+import { FretboardScales } from './FretboardScales';
 import {
   Tuning,
   standardTuning,
@@ -12,7 +12,7 @@ import {
   majorPentatonicScale,
   minorPentatonicScale,
   bluesScale,
-} from '../utils/noteUtils';
+} from '@/utils/noteUtils';
 
 export const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const;
 
@@ -34,12 +34,12 @@ const STRING_ORDER = [
   'E'  // Low E
 ] as const;
 
-interface ScaleSelectorProps {
+type ScaleSelectorProps = {
   selectedScale: string;
   handleScaleChange: (scale: string) => void;
 }
 
-interface GroundNoteSelectorProps {
+type GroundNoteSelectorProps = {
   groundNote: Note;
   handleGroundNoteChange: (note: Note) => void;
 }

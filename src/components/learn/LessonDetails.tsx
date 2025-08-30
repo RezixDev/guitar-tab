@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { type Lesson, type LearningPath, type Module } from "@/types/learn";
 
-interface LessonDetailsProps {
+type LessonDetailsProps = {
 	lesson: Lesson;
 	path: LearningPath & { modules: Module[] }; // Ensure modules is required
 	translations: {

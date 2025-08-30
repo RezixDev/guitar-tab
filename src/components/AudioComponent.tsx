@@ -1,28 +1,29 @@
-import React, { useEffect } from 'react';
-import { getAudioContext } from '../utils/audioContext';
+import { useEffect } from "react"
+import { getAudioContext } from "../utils/audioContext"
 
-const AudioComponent: React.FC = () => {
+export function AudioComponent() {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const audioContext = getAudioContext();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+    const audioContext = getAudioContext()
+    const oscillator = audioContext.createOscillator()
+    const gainNode = audioContext.createGain()
 
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+    oscillator.connect(gainNode)
+    gainNode.connect(audioContext.destination)
 
-      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime)
 
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 1);
+    oscillator.start()
+    oscillator.stop(audioContext.currentTime + 1)
 
       return () => {
-        audioContext.close();
-      };
+      oscillator.disconnect()
+      gainNode.disconnect()
+      // don't close shared context if your app reuses it
+      if (audioContext.state !== "closed") {
+        void audioContext.close()
+      }
     }
-  }, []);
+  }, [])
 
-  return <div>Audio Component</div>;
-};
-
-export default AudioComponent;
+  return <div>Audio Component</div>
+}

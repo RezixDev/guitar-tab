@@ -1,5 +1,5 @@
 // app/services/statisticsService.ts
-export interface GameSession {
+export type GameSession = {
   date: Date;
   mode: string;
   totalAttempts: number;
