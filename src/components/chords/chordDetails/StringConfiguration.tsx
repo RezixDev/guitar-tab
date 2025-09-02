@@ -9,15 +9,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-type Note = {
-	fret: number | null;
-	finger: string;
-};
-
-type Chord = {
-	notes: Note[];
-};
+import type { Note, Chord } from "@/types/chord"; // Import from types file
 
 type StringConfigurationProps = {
 	chord: Chord;
@@ -241,7 +233,7 @@ export const StringConfiguration = ({
 													}}
 												>
 													<span className="absolute inset-0 flex items-center justify-center text-white text-sm">
-														{note.finger || activeFinger}
+														{note.finger?.toString() || activeFinger}
 													</span>
 												</div>
 											)}
