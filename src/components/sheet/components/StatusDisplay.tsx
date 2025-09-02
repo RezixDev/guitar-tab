@@ -1,18 +1,18 @@
+
 // components/StatusDisplay.tsx
-import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { calculateTotalDuration } from '../utils/noteUtils';
 import { Note } from '../types/music';
 
-interface StatusDisplayProps {
+type StatusDisplayProps = {
     notes: Note[];
     playbackStartIndex: number;
-}
+};
 
-export const StatusDisplay: React.FC<StatusDisplayProps> = ({
-                                                                notes,
-                                                                playbackStartIndex
-                                                            }) => {
+export const StatusDisplay = ({
+                                  notes,
+                                  playbackStartIndex
+                              }: StatusDisplayProps) => {
     const totalDuration = calculateTotalDuration(notes);
 
     return (

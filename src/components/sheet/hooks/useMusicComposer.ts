@@ -1,5 +1,5 @@
-// hooks/useMusicComposer.ts
-import { useState, useRef, useEffect, useCallback } from 'react';
+// hooks/useMusicComposer.ts (updated without useCallback)
+import { useState, useRef, useEffect } from 'react';
 import { Note } from '../types/music';
 import { AudioManager } from '../utils/AudioManager';
 import { createNoteFromClick, findNoteAtPosition, sortNotesByPosition } from '../utils/noteUtils';
@@ -43,16 +43,16 @@ export const useMusicComposer = () => {
         }
     }, [tempo]);
 
-    const stopPlayback = useCallback(() => {
+    const stopPlayback = () => {
         if (audioManagerRef.current) {
             audioManagerRef.current.stopSequence();
         }
         setIsPlaying(false);
         setCurrentNoteIndex(-1);
         setPlayheadPosition(-1);
-    }, []);
+    };
 
-    const handleCanvasClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = e.currentTarget;
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -76,9 +76,9 @@ export const useMusicComposer = () => {
         }
 
         setNotes(prevNotes => sortNotesByPosition([...prevNotes, newNote]));
-    }, [notes, selectedDuration]);
+    };
 
-    const playNotes = useCallback(async () => {
+    const playNotes = async () => {
         if (!audioManagerRef.current) return;
 
         if (isPlaying) {
@@ -105,15 +105,15 @@ export const useMusicComposer = () => {
         );
 
         setIsPlaying(true);
-    }, [notes, playbackStartIndex, isPlaying, stopPlayback]);
+    };
 
-    const clearNotes = useCallback(() => {
+    const clearNotes = () => {
         stopPlayback();
         setNotes([]);
         setPlaybackStartIndex(0);
-    }, [stopPlayback]);
+    };
 
-    const deleteLastNote = useCallback(() => {
+    const deleteLastNote = () => {
         if (notes.length > 0) {
             const newNotes = notes.slice(0, -1);
             setNotes(newNotes);
@@ -121,9 +121,9 @@ export const useMusicComposer = () => {
                 setPlaybackStartIndex(Math.max(0, newNotes.length - 1));
             }
         }
-    }, [notes, playbackStartIndex]);
+    };
 
-    const moveStartPoint = useCallback((direction: 'prev' | 'next') => {
+    const moveStartPoint = (direction: 'prev' | 'next') => {
         if (notes.length === 0) return;
 
         if (direction === 'prev') {
@@ -131,11 +131,11 @@ export const useMusicComposer = () => {
         } else {
             setPlaybackStartIndex(Math.min(notes.length - 1, playbackStartIndex + 1));
         }
-    }, [notes.length, playbackStartIndex]);
+    };
 
-    const resetStartPoint = useCallback(() => {
+    const resetStartPoint = () => {
         setPlaybackStartIndex(0);
-    }, []);
+    };
 
     return {
         // State

@@ -1,5 +1,5 @@
+// SheetMusicComposer.tsx (main component updated)
 "use client"
-import React from 'react';
 import { Music } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Controls } from './components/Controls';
@@ -8,7 +8,7 @@ import { StatusDisplay } from './components/StatusDisplay';
 import { Instructions } from './components/Instructions';
 import { useMusicComposer } from './hooks/useMusicComposer';
 
-export function SheetMusicComposer() {
+export const SheetMusicComposer = () => {
     const {
         // State
         notes,
@@ -89,4 +89,4 @@ export function SheetMusicComposer() {
             </div>
         </div>
     );
-}
+};

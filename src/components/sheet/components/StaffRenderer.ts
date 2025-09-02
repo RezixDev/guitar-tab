@@ -1,6 +1,6 @@
 // components/StaffRenderer.ts
 import { Note } from '../types/music';
-import { staffConfig, durations } from '../constants/music';
+import { staffConfig } from '../constants/music';
 
 export class StaffRenderer {
     private ctx: CanvasRenderingContext2D;

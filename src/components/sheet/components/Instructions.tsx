@@ -1,9 +1,8 @@
 // components/Instructions.tsx
-import React from 'react';
 import { Music } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-export const Instructions: React.FC = () => {
+export const Instructions = () => {
     return (
         <Alert>
             <Music className="h-4 w-4" />

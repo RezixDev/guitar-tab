@@ -1,5 +1,4 @@
 // components/Controls.tsx
-import React from 'react';
 import { Play, Pause, RotateCcw, Trash2, Clock, Volume2, SkipForward, SkipBack } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { durations } from '../constants/music';
 
-interface ControlsProps {
+type ControlsProps = {
     isPlaying: boolean;
     notesLength: number;
     selectedDuration: string;
@@ -24,24 +23,24 @@ interface ControlsProps {
     onVolumeChange: (volume: number[]) => void;
     onMoveStartPoint: (direction: 'prev' | 'next') => void;
     onResetStartPoint: () => void;
-}
+};
 
-export const Controls: React.FC<ControlsProps> = ({
-                                                      isPlaying,
-                                                      notesLength,
-                                                      selectedDuration,
-                                                      tempo,
-                                                      volume,
-                                                      playbackStartIndex,
-                                                      onPlay,
-                                                      onClear,
-                                                      onDeleteLast,
-                                                      onDurationChange,
-                                                      onTempoChange,
-                                                      onVolumeChange,
-                                                      onMoveStartPoint,
-                                                      onResetStartPoint
-                                                  }) => {
+export const Controls = ({
+                             isPlaying,
+                             notesLength,
+                             selectedDuration,
+                             tempo,
+                             volume,
+                             playbackStartIndex,
+                             onPlay,
+                             onClear,
+                             onDeleteLast,
+                             onDurationChange,
+                             onTempoChange,
+                             onVolumeChange,
+                             onMoveStartPoint,
+                             onResetStartPoint
+                         }: ControlsProps) => {
     return (
         <div className="space-y-4">
             {/* Primary Controls Row */}

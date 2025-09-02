@@ -1,26 +1,26 @@
 // components/StaffCanvas.tsx
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Note } from '../types/music';
 import { StaffRenderer } from './StaffRenderer';
 import { staffConfig } from '../constants/music';
 
-interface StaffCanvasProps {
+type StaffCanvasProps = {
     notes: Note[];
     currentNoteIndex: number;
     playheadPosition: number;
     playbackStartIndex: number;
     tempo: number;
     onCanvasClick: (e: React.MouseEvent<HTMLCanvasElement>) => void;
-}
+};
 
-export const StaffCanvas: React.FC<StaffCanvasProps> = ({
-                                                            notes,
-                                                            currentNoteIndex,
-                                                            playheadPosition,
-                                                            playbackStartIndex,
-                                                            tempo,
-                                                            onCanvasClick
-                                                        }) => {
+export const StaffCanvas = ({
+                                notes,
+                                currentNoteIndex,
+                                playheadPosition,
+                                playbackStartIndex,
+                                tempo,
+                                onCanvasClick
+                            }: StaffCanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rendererRef = useRef<StaffRenderer | null>(null);
 
