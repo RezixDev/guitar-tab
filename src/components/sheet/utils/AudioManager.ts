@@ -3,14 +3,23 @@ import * as Tone from 'tone';
 import { Note } from '../types/music';
 import { durations } from '../constants/music';
 
+interface PartEvent {
+    time: number;
+    note: string;
+    duration: string;
+    index: number;
+    x: number;
+}
+
 export class AudioManager {
     private synth: Tone.PolySynth | null = null;
     private sequence: Tone.Part | null = null;
     private isInitialized = false;
 
-    async initialize(volume: number = -10) {
+    async initialize(volume: number = -10): Promise<void> {
+        try {
+            // Create PolySynth with proper constructor pattern
         this.synth = new Tone.PolySynth(Tone.Synth, {
-            maxPolyphony: 8,
             oscillator: { type: 'triangle' },
             envelope: {
                 attack: 0.02,
@@ -20,21 +29,27 @@ export class AudioManager {
             }
         }).toDestination();
 
+            // Set maxPolyphony as a property (not in constructor options)
+            this.synth.maxPolyphony = 8;
         this.synth.volume.value = volume;
         this.isInitialized = true;
+        } catch (error) {
+            console.error('Failed to initialize AudioManager:', error);
+            throw error;
+        }
     }
 
-    updateVolume(volume: number) {
+    updateVolume(volume: number): void {
         if (this.synth) {
             this.synth.volume.value = volume;
         }
     }
 
-    updateTempo(tempo: number) {
+    updateTempo(tempo: number): void {
         Tone.Transport.bpm.value = tempo;
     }
 
-    playPreviewNote(pitch: string) {
+    playPreviewNote(pitch: string): void {
         if (this.synth) {
             this.synth.triggerAttackRelease(pitch, '8n');
         }
@@ -45,22 +60,31 @@ export class AudioManager {
         startIndex: number,
         onNotePlay: (index: number, x: number) => void,
         onSequenceEnd: () => void
-    ) {
-        if (!this.synth) return;
+    ): Promise<void> {
+        if (!this.synth) {
+            console.warn('AudioManager not initialized');
+            return;
+        }
 
-        // Start audio context
+        try {
+            // Start audio context if needed
+            if (Tone.context.state !== 'running') {
         await Tone.start();
+            }
 
         // Stop any existing playback
         this.stopSequence();
 
         // Get notes to play starting from the selected index
         const notesToPlay = notes.slice(startIndex);
-        if (notesToPlay.length === 0) return;
+            if (notesToPlay.length === 0) {
+                console.warn('No notes to play');
+                return;
+            }
 
-        // Create events for Tone.Part
+            // Create events for Tone.Part using object format
         let currentTime = 0;
-        const events: Array<{ time: number; note: string; duration: string; index: number; x: number }> = [];
+            const events: PartEvent[] = [];
 
         notesToPlay.forEach((note, idx) => {
             const actualIndex = startIndex + idx;
@@ -74,49 +98,94 @@ export class AudioManager {
             currentTime += note.beats;
         });
 
-        // Create Tone.Part
-        this.sequence = new Tone.Part((time, value) => {
+            // Create Tone.Part with proper event structure
+            this.sequence = new Tone.Part((time, event: PartEvent) => {
             // Trigger the note
-            this.synth?.triggerAttackRelease(value.note, value.duration, time);
+                this.synth?.triggerAttackRelease(event.note, event.duration, time);
 
-            // Update current note index
+                // Update current note index on the main thread
             Tone.Draw.schedule(() => {
-                onNotePlay(value.index, value.x);
+                    onNotePlay(event.index, event.x);
             }, time);
 
             // Clear highlight after the last note
-            if (value.index === notes.length - 1) {
-                const noteDurationInSeconds = Tone.Time(value.duration).toSeconds();
+                if (event.index === notes.length - 1) {
+                    const noteDurationInSeconds = Tone.Time(event.duration).toSeconds();
                 Tone.Draw.schedule(() => {
                     onSequenceEnd();
                 }, time + noteDurationInSeconds);
             }
-        }, events.map(e => [e.time, e]));
+            }, events);
 
+            // Configure and start the sequence
         this.sequence.loop = false;
         this.sequence.start(0);
 
         // Start transport
         Tone.Transport.start();
+
+        } catch (error) {
+            console.error('Failed to play sequence:', error);
+            this.stopSequence();
+            onSequenceEnd(); // Ensure UI is reset on error
+        }
     }
 
-    stopSequence() {
+    stopSequence(): void {
+        try {
+            // Stop and clear transport
         Tone.Transport.stop();
         Tone.Transport.cancel();
+
+            // Dispose of the sequence
         if (this.sequence) {
             this.sequence.dispose();
             this.sequence = null;
         }
-    }
 
-    dispose() {
-        this.stopSequence();
-        if (this.synth) {
-            this.synth.dispose();
+            // Stop all currently playing voices
+            this.synth?.releaseAll();
+        } catch (error) {
+            console.error('Error stopping sequence:', error);
         }
     }
 
-    get initialized() {
+    dispose(): void {
+        try {
+        this.stopSequence();
+        if (this.synth) {
+            this.synth.dispose();
+                this.synth = null;
+            }
+
+            this.isInitialized = false;
+        } catch (error) {
+            console.error('Error disposing AudioManager:', error);
+        }
+    }
+
+    get initialized(): boolean {
         return this.isInitialized;
+    }
+
+    // Additional utility methods for better UX
+    get isPlaying(): boolean {
+        return Tone.Transport.state === 'started';
+    }
+
+    get currentTempo(): number {
+        return Tone.Transport.bpm.value;
+    }
+
+    pause(): void {
+        if (this.isPlaying) {
+            Tone.Transport.pause();
+        }
+    }
+
+    resume(): void {
+        if (Tone.Transport.state === 'paused') {
+            Tone.Transport.start();
+        }
     }
 }
