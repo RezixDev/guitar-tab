@@ -4,7 +4,7 @@ import { Note } from '../types/music';
 import { durations } from '../constants/music';
 
 interface PartEvent {
-    time: number;
+    time: string;
     note: string;
     duration: string;
     index: number;
@@ -19,20 +19,20 @@ export class AudioManager {
     async initialize(volume: number = -10): Promise<void> {
         try {
             // Create PolySynth with proper constructor pattern
-        this.synth = new Tone.PolySynth(Tone.Synth, {
-            oscillator: { type: 'triangle' },
-            envelope: {
-                attack: 0.02,
-                decay: 0.1,
-                sustain: 0.3,
-                release: 1
-            }
-        }).toDestination();
+            this.synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'triangle' },
+                envelope: {
+                    attack: 0.02,
+                    decay: 0.1,
+                    sustain: 0.3,
+                    release: 1
+                }
+            }).toDestination();
 
             // Set maxPolyphony as a property (not in constructor options)
             this.synth.maxPolyphony = 8;
-        this.synth.volume.value = volume;
-        this.isInitialized = true;
+            this.synth.volume.value = volume;
+            this.isInitialized = true;
         } catch (error) {
             console.error('Failed to initialize AudioManager:', error);
             throw error;
@@ -46,6 +46,7 @@ export class AudioManager {
     }
 
     updateTempo(tempo: number): void {
+        // Simply update the transport BPM - this will affect all scheduled events
         Tone.Transport.bpm.value = tempo;
     }
 
@@ -69,60 +70,69 @@ export class AudioManager {
         try {
             // Start audio context if needed
             if (Tone.context.state !== 'running') {
-        await Tone.start();
+                await Tone.start();
             }
 
-        // Stop any existing playback
-        this.stopSequence();
+            // Stop any existing playback
+            this.stopSequence();
 
-        // Get notes to play starting from the selected index
-        const notesToPlay = notes.slice(startIndex);
+            // Get notes to play starting from the selected index
+            const notesToPlay = notes.slice(startIndex);
             if (notesToPlay.length === 0) {
                 console.warn('No notes to play');
                 return;
             }
 
-            // Create events for Tone.Part using object format
-        let currentTime = 0;
+            // Create events using Tone.js musical time notation
+            let currentTime = 0; // Track position in quarter notes
             const events: PartEvent[] = [];
 
-        notesToPlay.forEach((note, idx) => {
-            const actualIndex = startIndex + idx;
-            events.push({
-                time: currentTime,
-                note: note.pitch,
-                duration: durations[note.duration].toneNotation,
-                index: actualIndex,
-                x: note.x
-            });
-            currentTime += note.beats;
-        });
+            notesToPlay.forEach((note, idx) => {
+                const actualIndex = startIndex + idx;
 
-            // Create Tone.Part with proper event structure
+                // Convert current time to Tone.js notation (bars:beats:subdivisions)
+                // Since we're tracking in quarter notes, currentTime is the beat count
+                const bars = Math.floor(currentTime / 4);
+                const beats = currentTime % 4;
+                const timeNotation = `${bars}:${beats}:0`;
+
+                events.push({
+                    time: timeNotation,
+                    note: note.pitch,
+                    duration: durations[note.duration].toneNotation,
+                    index: actualIndex,
+                    x: note.x
+                });
+
+                // Advance by the note's beat duration
+                currentTime += note.beats;
+            });
+
+            // Create Tone.Part with musical time events
             this.sequence = new Tone.Part((time, event: PartEvent) => {
-            // Trigger the note
+                // Trigger the note
                 this.synth?.triggerAttackRelease(event.note, event.duration, time);
 
                 // Update current note index on the main thread
-            Tone.Draw.schedule(() => {
+                Tone.Draw.schedule(() => {
                     onNotePlay(event.index, event.x);
-            }, time);
+                }, time);
 
-            // Clear highlight after the last note
+                // Clear highlight after the last note
                 if (event.index === notes.length - 1) {
                     const noteDurationInSeconds = Tone.Time(event.duration).toSeconds();
-                Tone.Draw.schedule(() => {
-                    onSequenceEnd();
-                }, time + noteDurationInSeconds);
-            }
+                    Tone.Draw.schedule(() => {
+                        onSequenceEnd();
+                    }, time + noteDurationInSeconds);
+                }
             }, events);
 
             // Configure and start the sequence
-        this.sequence.loop = false;
-        this.sequence.start(0);
+            this.sequence.loop = false;
+            this.sequence.start(0);
 
-        // Start transport
-        Tone.Transport.start();
+            // Start transport
+            Tone.Transport.start();
 
         } catch (error) {
             console.error('Failed to play sequence:', error);
@@ -134,14 +144,14 @@ export class AudioManager {
     stopSequence(): void {
         try {
             // Stop and clear transport
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
 
             // Dispose of the sequence
-        if (this.sequence) {
-            this.sequence.dispose();
-            this.sequence = null;
-        }
+            if (this.sequence) {
+                this.sequence.dispose();
+                this.sequence = null;
+            }
 
             // Stop all currently playing voices
             this.synth?.releaseAll();
@@ -152,9 +162,9 @@ export class AudioManager {
 
     dispose(): void {
         try {
-        this.stopSequence();
-        if (this.synth) {
-            this.synth.dispose();
+            this.stopSequence();
+            if (this.synth) {
+                this.synth.dispose();
                 this.synth = null;
             }
 

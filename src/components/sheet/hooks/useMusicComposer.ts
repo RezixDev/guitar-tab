@@ -1,4 +1,4 @@
-// hooks/useMusicComposer.ts (updated without useCallback)
+// hooks/useMusicComposer.ts
 import { useState, useRef, useEffect } from 'react';
 import { Note } from '../types/music';
 import { AudioManager } from '../utils/AudioManager';
@@ -36,7 +36,7 @@ export const useMusicComposer = () => {
         }
     }, [volume]);
 
-    // Update tempo
+    // Update tempo - Tone.js will handle this automatically for active sequences
     useEffect(() => {
         if (audioManagerRef.current) {
             audioManagerRef.current.updateTempo(tempo);
