@@ -47,6 +47,7 @@ export const AppSidebar = () => {
         { label: "Scale Viewer", href: `/${locale}/tools/scales` },
         { label: "Chord Library", href: `/${locale}/tools/chords` },
         { label: "Guitar Tuner", href: `/${locale}/tools/tuner` },
+		{ label: "Sheet Music Composer", href: `/${locale}/tools/sheet` },
 			],
 		},
     { icon: Book, label: "Lessons", href: `/${locale}/learn` },

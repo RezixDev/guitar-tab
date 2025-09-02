@@ -18,12 +18,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface ExtendedChordModalProps extends ChordModalProps {
-	selectedTheme?: string;
-	onThemeChange?: (theme: string) => void;
-}
-
 export function ChordModal({
 	chord,
 	isOpen,
@@ -31,7 +25,7 @@ export function ChordModal({
 	ChordSVGComponent,
 	selectedTheme = "classic",
 	onThemeChange,
-}: ExtendedChordModalProps) {
+}: ChordModalProps) {
 	const handleThemeChange = (theme: string) => {
 		if (onThemeChange) {
 			onThemeChange(theme);

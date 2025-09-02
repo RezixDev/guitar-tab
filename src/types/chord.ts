@@ -1,5 +1,4 @@
 // types/chord.ts
-// types/chord.ts - Add these to your existing types file
 
 export type ChordTheme = {
   name: string;
@@ -197,6 +196,8 @@ export type ChordModalProps = {
   isOpen: boolean;
   onClose: () => void;
   ChordSVGComponent: React.ComponentType<ChordSVGProps>;
+  selectedTheme?: string;
+  onThemeChange?: (theme: string) => void;
 }
 
 export type FloatingChordViewerProps = {
