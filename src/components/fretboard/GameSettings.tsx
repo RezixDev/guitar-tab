@@ -23,6 +23,7 @@ type GameSettingsProps = {
 				newbie: { label: string; description: string }
 				easy: { label: string; description: string }
 				hard: { label: string; description: string }
+				findAll: { label: string; description: string }
 				time: { label: string; description: string }
 			}
 		}

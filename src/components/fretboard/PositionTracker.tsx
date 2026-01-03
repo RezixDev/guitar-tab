@@ -9,27 +9,21 @@ type PositionTrackerProps = {
   tuning: Tuning
   foundPositions: ReadonlySet<string>
   showNext: boolean
-  isHardMode: boolean
 }
 
 export function PositionTracker({
-	currentNote,
-	tuning,
-	foundPositions,
-	showNext,
-	isHardMode,
+  currentNote,
+  tuning,
+  foundPositions,
+  showNext,
 }: PositionTrackerProps) {
-  if (!isHardMode) return null
-
   const stats = useMemo(() => {
     if (!currentNote) {
       return { total: 0, found: 0, remaining: 0, progress: 0 }
-		}
+    }
 
     const all = getAllNotePositions(currentNote.note, tuning)
-    const max = tuning.length
-    const limited = all.slice(0, Math.min(all.length, max))
-    const unique = new Set(limited.map((p) => `${p.string}-${p.fret}`))
+    const unique = new Set(all.map((p) => `${p.string}-${p.fret}`))
 
     const total = unique.size
     const found = foundPositions.size
@@ -39,27 +33,27 @@ export function PositionTracker({
     return { total, found, remaining, progress }
   }, [currentNote, tuning, foundPositions])
 
-	return (
+  return (
     <Card className="mb-4 p-4">
-			<div className="space-y-2">
-				<div className="flex justify-between text-sm">
-					<span className="font-medium">
-						Positions Found: {stats.found} / {stats.total}
-					</span>
-					{stats.remaining > 0 && (
-						<span className="text-muted-foreground">
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="font-medium">
+            Positions Found: {stats.found} / {stats.total}
+          </span>
+          {stats.remaining > 0 && (
+            <span className="text-muted-foreground">
               {stats.remaining} position{stats.remaining !== 1 ? "s" : ""} remaining
-						</span>
-					)}
-				</div>
-				<Progress value={stats.progress} className="h-2" />
+            </span>
+          )}
+        </div>
+        <Progress value={stats.progress} className="h-2" />
 
         {showNext && stats.remaining === 0 && (
           <div className="mt-2 text-center text-sm font-medium text-green-600">
-						All positions found! Press Enter or click Next Note to continue
-					</div>
-				)}
-			</div>
-		</Card>
+            All positions found! Press Enter or click Next Note to continue
+          </div>
+        )}
+      </div>
+    </Card>
   )
 }

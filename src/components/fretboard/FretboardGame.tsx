@@ -84,6 +84,7 @@ export const FretboardGame = () => {
 		isNewbieMode,
 		isEasyMode,
 		isHardMode,
+		isFindAllMode,
 		isTimeChallenge,
 	} = useGameModes();
 
@@ -154,7 +155,7 @@ export const FretboardGame = () => {
 
 	const handleFretClick = (visualString: number, fret: number) => {
 		if (!gameState.showNext && isGameStarted) {
-			handleGuess(visualString, fret, isNewbieMode, isHardMode);
+			handleGuess(visualString, fret, isNewbieMode, isHardMode, isFindAllMode);
 			if (audioManager && isAudioLoaded) {
 				audioManager.playNote(visualString.toString(), fret);
 			}
@@ -229,6 +230,10 @@ export const FretboardGame = () => {
 					label: t("gameModes.hard.label"),
 					description: t("gameModes.hard.description"),
 				},
+				findAll: {
+					label: t("gameModes.findAll.label"),
+					description: t("gameModes.findAll.description"),
+				},
 				time: {
 					label: t("gameModes.time.label"),
 					description: t("gameModes.time.description"),
@@ -295,13 +300,12 @@ export const FretboardGame = () => {
 					translations={formattedTranslations}
 				/>
 
-				{isGameStarted && isHardMode && (
+				{isGameStarted && (isHardMode || isFindAllMode) && (
 					<PositionTracker
 						currentNote={gameState.currentNote}
 						tuning={tuning}
 						foundPositions={gameState.foundPositions}
 						showNext={gameState.showNext}
-						isHardMode={isHardMode}
 					/>
 				)}
 

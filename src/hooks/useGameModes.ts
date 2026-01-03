@@ -10,6 +10,7 @@ export const useGameModes = () => {
         isNewbieMode: gameMode === 'newbie',
         isEasyMode: gameMode === 'easy',
         isHardMode: gameMode === 'hard',
+        isFindAllMode: gameMode === 'findAll',
         isTimeChallenge: gameMode === 'time'
     };
 };

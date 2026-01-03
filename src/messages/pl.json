@@ -1,70 +1,68 @@
 {
-    "home": {
-      "hero": {
-        "title": "Opanuj gitarę",
-        "subtitle": "Ucz się, ćwicz i rozwijaj swoją grę na gitarze z naszymi interaktywnymi narzędziami",
-        "getStarted": "Rozpocznij",
-        "exploreTools": "Przeglądaj narzędzia"
+  "home": {
+    "hero": {
+      "title": "Opanuj gitarę",
+      "subtitle": "Ucz się, ćwicz i rozwijaj swoją grę na gitarze z naszymi interaktywnymi narzędziami",
+      "getStarted": "Rozpocznij",
+      "exploreTools": "Przeglądaj narzędzia"
+    },
+    "tools": {
+      "title": "Przydatne narzędzia",
+      "launchTool": "Uruchom narzędzie",
+      "fretboard": {
+        "title": "Trener progów",
+        "description": "Poznaj nuty na gryfie"
       },
-      "tools": {
-        "title": "Przydatne narzędzia",
-        "launchTool": "Uruchom narzędzie",
-        "fretboard": {
-          "title": "Trener progów",
-          "description": "Poznaj nuty na gryfie"
-        },
-        "scales": {
-          "title": "Skale",
-          "description": "Odkryj i ćwicz różne skale"
-        },
-        "chords": {
-          "title": "Akordy",
-          "description": "Ucz się i ćwicz układy akordów"
-        },
-        "tuner": {
-          "title": "Tuner",
-          "description": "Nastraj gitarę precyzyjnie"
-        }
+      "scales": {
+        "title": "Skale",
+        "description": "Odkryj i ćwicz różne skale"
       },
-      "learning": {
-        "title": "Ścieżki nauki",
-        "explore": "Odkrywaj",
-        "paths": {
-          "learn": {
-            "title": "Nauka",
-            "description": "Ustrukturyzowane lekcje gitary dla wszystkich poziomów",
-            "features": {
-              "beginner": "Podstawy dla początkujących",
-              "intermediate": "Techniki średniozaawansowane",
-              "advanced": "Koncepcje zaawansowane",
-              "songs": "Nauka przez praktykę"
-            }
-          },
-          "practice": {
-            "title": "Ćwiczenia",
-            "description": "Rozwijaj swoje umiejętności poprzez ukierunkowane ćwiczenia",
-            "features": {
-              "exercises": "Ćwiczenia techniczne",
-              "routines": "Rutyny ćwiczeń",
-              "sessions": "Sesje z przewodnikiem",
-              "progress": "Śledzenie postępów"
-            }
-          },
-          "theory": {
-            "title": "Teoria muzyki",
-            "description": "Zrozum podstawy teorii muzycznej",
-            "features": {
-              "circle": "Koło kwintowe",
-              "keys": "Zrozumienie tonacji",
-              "chords": "Konstrukcja akordów",
-              "harmony": "Koncepcje harmonii"
-            }
+      "chords": {
+        "title": "Akordy",
+        "description": "Ucz się i ćwicz układy akordów"
+      },
+      "tuner": {
+        "title": "Tuner",
+        "description": "Nastraj gitarę precyzyjnie"
+      }
+    },
+    "learning": {
+      "title": "Ścieżki nauki",
+      "explore": "Odkrywaj",
+      "paths": {
+        "learn": {
+          "title": "Nauka",
+          "description": "Ustrukturyzowane lekcje gitary dla wszystkich poziomów",
+          "features": {
+            "beginner": "Podstawy dla początkujących",
+            "intermediate": "Techniki średniozaawansowane",
+            "advanced": "Koncepcje zaawansowane",
+            "songs": "Nauka przez praktykę"
+          }
+        },
+        "practice": {
+          "title": "Ćwiczenia",
+          "description": "Rozwijaj swoje umiejętności poprzez ukierunkowane ćwiczenia",
+          "features": {
+            "exercises": "Ćwiczenia techniczne",
+            "routines": "Rutyny ćwiczeń",
+            "sessions": "Sesje z przewodnikiem",
+            "progress": "Śledzenie postępów"
+          }
+        },
+        "theory": {
+          "title": "Teoria muzyki",
+          "description": "Zrozum podstawy teorii muzycznej",
+          "features": {
+            "circle": "Koło kwintowe",
+            "keys": "Zrozumienie tonacji",
+            "chords": "Konstrukcja akordów",
+            "harmony": "Koncepcje harmonii"
           }
         }
       }
-    },
-
-
+    }
+  },
   "learn": {
     "title": "Ścieżki Nauki Gitary",
     "levels": {
@@ -147,81 +145,85 @@
     "lesson": "Lekcja",
     "practice": "Ćwiczenia praktyczne",
     "next": "Następna lekcja"
-},
-"Fretboard": {
-  "title": "Gra w Zgadywanie Pozycji na Gryfie",
-  "backToHome": "Powrót do Strony Głównej",
-  "tutorial": {
-    "title": "Jak Grać",
-    "step1": "Znajdź wskazaną nutę na gryfie",
-    "step2": "Kliknij prawidłową pozycję",
-    "step3": "Przejdź przez wszystkie pozycje"
   },
-  "game": {
-    "ready": "Gotowy do sprawdzenia swojej znajomości gryfu?",
-    "startGame": "Rozpocznij Grę",
-    "findNote": "Znajdź tę nutę na gryfie:",
-    "pressEnter": "Naciśnij Enter lub kliknij Następna Nuta aby kontynuować",
-    "nextNote": "Następna Nuta",
-    "resetGame": "Zresetuj Grę",
-    "streak": "Seria: {count}",
-    "score": "{current} / {target}",
-    "time": "{seconds}s",
-    "best": "Najlepszy: {time}s"
-  },
-  "settings": {
-    "tuning": "Strojenie",
-    "targetScore": "Cel Punktowy",
-    "gameMode": "Tryb Gry"
-  },
-  "completion": {
-    "title": "Gratulacje!",
-    "subtitle": "Ukończyłeś wyzwanie!",
-    "correct": "Poprawne: {count}",
-    "time": "Czas: {seconds}s",
-    "streak": "Seria: {count}",
-    "bestTime": "Najlepszy: {time}s",
-    "accuracy": "Dokładność",
-    "close": "Zamknij",
-    "playAgain": "Zagraj Ponownie"
-  },
-  "gameModes": {
-  "placeholder": "Wybierz tryb gry",
-  "newbie": {
-    "label": "Tryb początkujący",
-    "description": "Wiele prawidłowych pozycji z pomocą wizualną"
-  },
-  "easy": {
-    "label": "Tryb łatwy",
-    "description": "Zgadywanie pojedynczej pozycji z podstawową informacją zwrotną"
-  },
-  "hard": {
-    "label": "Tryb trudny",
-    "description": "Znajdź wszystkie pozycje bez pomocy wizualnej"
-  },
-  "time": {
-    "label": "Wyzwanie czasowe",
-    "description": "Wyścig z czasem z punktacją opartą na szybkości"
-  }
-},
-"keyboard": {
-  "title": "Skróty klawiszowe",
-  "shortcuts": {
-    "navigate": "Nawigacja",
-    "selectNote": "Wybierz nutę",
-    "nextNote": "Następna nuta"
-  }
-},
-"feedback": {
-    "perfect": "Perfekcyjnie! Znalazłeś dokładną pozycję!",
-    "tryAgainAny": "Spróbuj ponownie! Znajdź dowolną pozycję tej nuty.",
-    "foundOne": "Znalazłeś jedną prawidłową pozycję!",
-    "tryAgain": "Spróbuj ponownie!",
-    "excellent": "Znakomicie! Znalazłeś wszystkie pozycje!",
-    "remainingPositions": "Prawidłowo! Pozostało {count} pozycji.",
-    "remainingPosition": "Prawidłowo! Pozostała 1 pozycja.",
-    "tryAgainAll": "Spróbuj ponownie! Znajdź wszystkie pozycje tej nuty.",
-    "correct": "Prawidłowo!"
+  "Fretboard": {
+    "title": "Gra w Zgadywanie Pozycji na Gryfie",
+    "backToHome": "Powrót do Strony Głównej",
+    "tutorial": {
+      "title": "Jak Grać",
+      "step1": "Znajdź wskazaną nutę na gryfie",
+      "step2": "Kliknij prawidłową pozycję",
+      "step3": "Przejdź przez wszystkie pozycje"
+    },
+    "game": {
+      "ready": "Gotowy do sprawdzenia swojej znajomości gryfu?",
+      "startGame": "Rozpocznij Grę",
+      "findNote": "Znajdź tę nutę na gryfie:",
+      "pressEnter": "Naciśnij Enter lub kliknij Następna Nuta aby kontynuować",
+      "nextNote": "Następna Nuta",
+      "resetGame": "Zresetuj Grę",
+      "streak": "Seria: {count}",
+      "score": "{current} / {target}",
+      "time": "{seconds}s",
+      "best": "Najlepszy: {time}s"
+    },
+    "settings": {
+      "tuning": "Strojenie",
+      "targetScore": "Cel Punktowy",
+      "gameMode": "Tryb Gry"
+    },
+    "completion": {
+      "title": "Gratulacje!",
+      "subtitle": "Ukończyłeś wyzwanie!",
+      "correct": "Poprawne: {count}",
+      "time": "Czas: {seconds}s",
+      "streak": "Seria: {count}",
+      "bestTime": "Najlepszy: {time}s",
+      "accuracy": "Dokładność",
+      "close": "Zamknij",
+      "playAgain": "Zagraj Ponownie"
+    },
+    "gameModes": {
+      "placeholder": "Wybierz tryb gry",
+      "newbie": {
+        "label": "Tryb początkujący",
+        "description": "Wiele prawidłowych pozycji z pomocą wizualną"
+      },
+      "easy": {
+        "label": "Tryb łatwy",
+        "description": "Zgadywanie pojedynczej pozycji z podstawową informacją zwrotną"
+      },
+      "hard": {
+        "label": "Tryb trudny",
+        "description": "Znajdź wszystkie pozycje bez pomocy wizualnej"
+      },
+      "findAll": {
+        "label": "Tryb Znajdź Wszystkie",
+        "description": "Znajdź wszystkie pozycje nuty na gryfie"
+      },
+      "time": {
+        "label": "Wyzwanie czasowe",
+        "description": "Wyścig z czasem z punktacją opartą na szybkości"
+      }
+    },
+    "keyboard": {
+      "title": "Skróty klawiszowe",
+      "shortcuts": {
+        "navigate": "Nawigacja",
+        "selectNote": "Wybierz nutę",
+        "nextNote": "Następna nuta"
+      }
+    },
+    "feedback": {
+      "perfect": "Perfekcyjnie! Znalazłeś dokładną pozycję!",
+      "tryAgainAny": "Spróbuj ponownie! Znajdź dowolną pozycję tej nuty.",
+      "foundOne": "Znalazłeś jedną prawidłową pozycję!",
+      "tryAgain": "Spróbuj ponownie!",
+      "excellent": "Znakomicie! Znalazłeś wszystkie pozycje!",
+      "remainingPositions": "Prawidłowo! Pozostało {count} pozycji.",
+      "remainingPosition": "Prawidłowo! Pozostała 1 pozycja.",
+      "tryAgainAll": "Spróbuj ponownie! Znajdź wszystkie pozycje tej nuty.",
+      "correct": "Prawidłowo!"
+    }
   }
 }
-  }

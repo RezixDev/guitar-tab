@@ -69,7 +69,8 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations, opt
     string: number,
     fret: number,
     isNewbieMode: boolean = false,
-    isHardMode: boolean = false
+    isHardMode: boolean = false,
+    isFindAllMode: boolean = false
   ) => {
     if (gameState.isPositionLocked && isNewbieMode) return;
 
@@ -86,7 +87,7 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations, opt
       note: calculateNote(string, fret, tuning)
     };
 
-    if (!isNewbieMode && !isHardMode) {
+    if (!isNewbieMode && !isHardMode && !isFindAllMode) {
       if (isCorrect) {
         updateGameState({
           points: gameState.points + 1,
@@ -128,7 +129,7 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations, opt
       return;
     }
 
-    if (isHardMode) {
+    if (isHardMode || isFindAllMode) {
       if (isCorrect && !isAlreadyGuessed) {
         const allPositions = getAllNotePositions(gameState.currentNote.note, tuning);
         const positionKey = `${string}-${fret}`;
@@ -160,6 +161,7 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations, opt
       } else {
         const allPositionsFound = gameState.foundPositions.size >= gameState.totalPositions;
 
+        // In Hard Mode/Find All, incorrect guesses reset streak
         updateGameState({
           streak: 0,
           totalAttempts: gameState.totalAttempts + 1,

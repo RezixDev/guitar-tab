@@ -144,43 +144,47 @@
       "close": "Schließen",
       "playAgain": "Nochmal Spielen"
     },
-   "gameModes": {
-  "placeholder": "Spielmodus auswählen",
-  "newbie": {
-    "label": "Anfänger-Modus",
-    "description": "Mehrere korrekte Positionen mit visueller Hilfe"
-  },
-  "easy": {
-    "label": "Einfacher Modus",
-    "description": "Einzelne Positionen raten mit grundlegendem Feedback"
-  },
-  "hard": {
-    "label": "Schwerer Modus",
-    "description": "Finde alle Positionen ohne visuelle Hilfen"
-  },
-  "time": {
-    "label": "Zeit-Challenge",
-    "description": "Wettkampf gegen die Zeit mit geschwindigkeitsbasierter Punktzahl"
-  }
-},
-"keyboard": {
-    "title": "Tastenkombinationen",
-    "shortcuts": {
-      "navigate": "Navigieren",
-      "selectNote": "Note auswählen",
-      "nextNote": "Nächste Note"
+    "gameModes": {
+      "placeholder": "Spielmodus auswählen",
+      "newbie": {
+        "label": "Anfänger-Modus",
+        "description": "Mehrere korrekte Positionen mit visueller Hilfe"
+      },
+      "easy": {
+        "label": "Einfacher Modus",
+        "description": "Einzelne Positionen raten mit grundlegendem Feedback"
+      },
+      "hard": {
+        "label": "Schwerer Modus",
+        "description": "Finde alle Positionen ohne visuelle Hilfen"
+      },
+      "findAll": {
+        "label": "Finde Alles Modus",
+        "description": "Finde alle Positionen der Note auf dem Griffbrett"
+      },
+      "time": {
+        "label": "Zeit-Challenge",
+        "description": "Wettkampf gegen die Zeit mit geschwindigkeitsbasierter Punktzahl"
+      }
+    },
+    "keyboard": {
+      "title": "Tastenkombinationen",
+      "shortcuts": {
+        "navigate": "Navigieren",
+        "selectNote": "Note auswählen",
+        "nextNote": "Nächste Note"
+      }
+    },
+    "feedback": {
+      "perfect": "Perfekt! Du hast die exakte Position gefunden!",
+      "tryAgainAny": "Versuch es noch einmal! Finde eine beliebige Position dieser Note.",
+      "foundOne": "Du hast eine richtige Position gefunden!",
+      "tryAgain": "Versuch es noch einmal!",
+      "excellent": "Ausgezeichnet! Du hast alle Positionen gefunden!",
+      "remainingPositions": "Richtig! Noch {count} Positionen übrig.",
+      "remainingPosition": "Richtig! Noch 1 Position übrig.",
+      "tryAgainAll": "Versuch es noch einmal! Finde alle Positionen dieser Note.",
+      "correct": "Richtig!"
     }
-  },
-  "feedback": {
-    "perfect": "Perfekt! Du hast die exakte Position gefunden!",
-    "tryAgainAny": "Versuch es noch einmal! Finde eine beliebige Position dieser Note.",
-    "foundOne": "Du hast eine richtige Position gefunden!",
-    "tryAgain": "Versuch es noch einmal!",
-    "excellent": "Ausgezeichnet! Du hast alle Positionen gefunden!",
-    "remainingPositions": "Richtig! Noch {count} Positionen übrig.",
-    "remainingPosition": "Richtig! Noch 1 Position übrig.",
-    "tryAgainAll": "Versuch es noch einmal! Finde alle Positionen dieser Note.",
-    "correct": "Richtig!"
-  }
   }
 }
