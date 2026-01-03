@@ -72,7 +72,7 @@ export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePos
 
 
   for (let string = 0; string < tuning.length; string++) {
-    for (let fret = 0; fret <= maxFret; fret++) {
+    for (let fret = 1; fret <= maxFret; fret++) {
       const currentNote = calculateNote(string, fret, tuning);
       if (currentNote === noteToFind) {
         const positionKey = `${string}-${fret}`;
