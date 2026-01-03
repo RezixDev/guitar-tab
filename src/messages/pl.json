@@ -24,6 +24,10 @@
       "tuner": {
         "title": "Tuner",
         "description": "Nastraj gitarę precyzyjnie"
+      },
+      "practice": {
+        "title": "Codzienne ćwiczenia",
+        "description": "Generuj tabulatury do codziennych ćwiczeń"
       }
     },
     "learning": {
