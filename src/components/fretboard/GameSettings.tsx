@@ -1,32 +1,32 @@
 
 import { Label } from "@/components/ui/label"
 import { TuningSelector } from "./TuningSelector"
-import { PointsSelector } from "./PointsSelector"
+import { PointsSelector, type Points } from "./PointsSelector"
 import { GameModesDropdown, type GameMode } from "./GameModesDropdown"
 import type { Tuning } from "@/utils/noteUtils"
 
 type GameSettingsProps = {
-  onTuningChange: (value: string) => void
-  targetPoints: number
-  onTargetPointsChange: (value: number) => void
-  gameMode: GameMode
-  onGameModeChange: (mode: GameMode) => void
-  disabled?: boolean
-  displayTuning: Tuning
+	onTuningChange: (value: string) => void
+	targetPoints: Points
+	onTargetPointsChange: (value: Points) => void
+	gameMode: GameMode
+	onGameModeChange: (mode: GameMode) => void
+	disabled?: boolean
+	displayTuning: Tuning
 	translations: {
-    tuning: string
-    targetScore: string
-    gameMode: string
+		tuning: string
+		targetScore: string
+		gameMode: string
 		gameModes: {
-      placeholder: string
+			placeholder: string
 			modes: {
-        newbie: { label: string; description: string }
-        easy: { label: string; description: string }
-        hard: { label: string; description: string }
-        time: { label: string; description: string }
-      }
-    }
-  }
+				newbie: { label: string; description: string }
+				easy: { label: string; description: string }
+				hard: { label: string; description: string }
+				time: { label: string; description: string }
+			}
+		}
+	}
 }
 
 export function GameSettings({
@@ -36,11 +36,11 @@ export function GameSettings({
 	gameMode,
 	onGameModeChange,
 	disabled = false,
-  displayTuning, // kept for API parity; not rendered here
+	displayTuning, // kept for API parity; not rendered here
 	translations,
 }: GameSettingsProps) {
 	return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+		<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 			<div className="space-y-4">
 				<div className="space-y-2">
 					<Label>{translations.tuning}</Label>
@@ -65,5 +65,5 @@ export function GameSettings({
 				/>
 			</div>
 		</div>
-  )
+	)
 }

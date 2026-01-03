@@ -1,0 +1,1299 @@
+# Codebase Export for Claude
+Generated on: Wed Sep  3 07:51:18 CEST 2025
+
+## Project Structure
+components/
+├── chords
+│   ├── chordDetails
+│   │   ├── ChordDetails.tsx
+│   │   ├── ChordModal.tsx
+│   │   ├── ChordSVG.tsx
+│   │   ├── StringConfiguration.tsx
+│   │   ├── ThemeSelector.tsx
+│   │   └── ViewDiagram.tsx
+│   └── chordLibrary
+│       ├── ChordList.tsx
+│       ├── ChordSearch.tsx
+│       └── ChordTabs.tsx
+├── fretboard
+│   ├── CompletionModal.tsx
+│   ├── FretboardGame.tsx
+│   ├── FretboardSVG.tsx
+│   ├── GameControls.tsx
+│   ├── GameModesDropdown.tsx
+│   ├── GameSettings.tsx
+│   ├── KeyboardControls.tsx
+│   ├── ModeToggle.tsx
+│   ├── PointsSelector.tsx
+│   ├── PositionTracker.tsx
+│   ├── TuningSelector.tsx
+│   ├── TutorialDialog.tsx
+│   └── useClientEffect.ts
+├── layouts
+│   ├── app-sidebar.tsx
+│   └── root-layout.tsx
+├── learn
+│   ├── LearnPageContent.tsx
+│   ├── LearningPathCard.tsx
+│   ├── LearningPathDetails.tsx
+│   └── LessonDetails.tsx
+├── providers
+│   └── NextIntlClientProvider.tsx
+├── sheet
+│   ├── components
+│   │   ├── Controls.tsx
+│   │   ├── Instructions.tsx
+│   │   ├── StaffCanvas.tsx
+│   │   ├── StaffRenderer.ts
+│   │   └── StatusDisplay.tsx
+│   ├── constants
+│   │   └── music.ts
+│   ├── hooks
+│   │   └── useMusicComposer.ts
+│   ├── types
+│   │   └── music.ts
+│   ├── utils
+│   │   ├── AudioManager.ts
+│   │   └── noteUtils.ts
+│   ├── SheetMusicComposer.tsx
+├── ui
+│   ├── accordion.tsx
+│   ├── alert-dialog.tsx
+│   ├── alert.tsx
+│   ├── aspect-ratio.tsx
+│   ├── avatar.tsx
+│   ├── badge.tsx
+│   ├── breadcrumb.tsx
+│   ├── button.tsx
+│   ├── calendar.tsx
+│   ├── card.tsx
+│   ├── carousel.tsx
+│   ├── chart.tsx
+│   ├── checkbox.tsx
+│   ├── collapsible.tsx
+│   ├── command.tsx
+│   ├── context-menu.tsx
+│   ├── dialog.tsx
+│   ├── drawer.tsx
+│   ├── dropdown-menu.tsx
+│   ├── form.tsx
+│   ├── hover-card.tsx
+│   ├── input-otp.tsx
+│   ├── input.tsx
+│   ├── label.tsx
+│   ├── menubar.tsx
+│   ├── navigation-menu.tsx
+│   ├── pagination.tsx
+│   ├── popover.tsx
+│   ├── progress.tsx
+│   ├── radio-group.tsx
+│   ├── resizable.tsx
+│   ├── scroll-area.tsx
+│   ├── select.tsx
+│   ├── separator.tsx
+│   ├── sheet.tsx
+│   ├── sidebar.tsx
+│   ├── skeleton.tsx
+│   ├── slider.tsx
+│   ├── sonner.tsx
+│   ├── switch.tsx
+│   ├── table.tsx
+│   ├── tabs.tsx
+│   ├── textarea.tsx
+│   ├── toggle-group.tsx
+│   ├── toggle.tsx
+│   └── tooltip.tsx
+├── AudioComponent.tsx
+├── AudioPlayer.tsx
+├── BaseFretboard.tsx
+├── FretboardScales.tsx
+├── GuitarTuner.tsx
+├── HomePage.tsx
+├── LanguageSwitcher.tsx
+├── PageTuner.tsx
+├── ScaleViewer.tsx
+├── theme-provider.tsx
+└── theme-toggle.tsx
+
+## Project Files
+
+
+## File: ./types/music.ts
+// types/music.ts
+export type Note = {
+    id: number;
+    pitch: string;
+    staffPosition: number;
+    ledger: boolean;
+    x: number;
+    measure: number;
+    duration: string;
+    beats: number;
+}
+
+export type StaffPosition = {
+    note: string;
+    position: number;
+    ledger?: boolean;
+}
+
+export type DurationInfo = {
+    beats: number;
+    symbol: string;
+    name: string;
+    toneNotation: string;
+}
+
+export type StaffConfig = {
+    topMargin: number;
+    lineSpacing: number;
+    staffHeight: number;
+    measureWidth: number;
+    leftMargin: number;
+    measures: number;
+}
+
+
+## File: ./constants/music.ts
+// constants/music.ts
+import { DurationInfo, StaffPosition, StaffConfig } from '../types/music';
+
+// Note durations with proper Tone.js notation
+export const durations: Record<string, DurationInfo> = {
+    whole: { beats: 4, symbol: '𝅝', name: 'Whole', toneNotation: '1n' },
+    half: { beats: 2, symbol: '𝅗𝅥', name: 'Half', toneNotation: '2n' },
+    quarter: { beats: 1, symbol: '♩', name: 'Quarter', toneNotation: '4n' },
+    eighth: { beats: 0.5, symbol: '♪', name: 'Eighth', toneNotation: '8n' },
+    sixteenth: { beats: 0.25, symbol: '♬', name: 'Sixteenth', toneNotation: '16n' }
+};
+
+// Staff configuration
+export const staffConfig: StaffConfig = {
+    topMargin: 120,
+    lineSpacing: 14,
+    staffHeight: 56,
+    measureWidth: 220,
+    leftMargin: 90,
+    measures: 4
+};
+
+// Note positions on treble clef
+export const staffPositions: StaffPosition[] = [
+    { note: 'C6', position: -3.5, ledger: true },
+    { note: 'B5', position: -3, ledger: true },
+    { note: 'A5', position: -2.5, ledger: true },
+    { note: 'G5', position: -2, ledger: true },
+    { note: 'F5', position: -1.5 },
+    { note: 'E5', position: -1 },
+    { note: 'D5', position: -0.5 },
+    { note: 'C5', position: 0 },
+    { note: 'B4', position: 0.5 },
+    { note: 'A4', position: 1 },
+    { note: 'G4', position: 1.5 },
+    { note: 'F4', position: 2 },
+    { note: 'E4', position: 2.5 },
+    { note: 'D4', position: 3 },
+    { note: 'C4', position: 3.5, ledger: true },
+    { note: 'B3', position: 4, ledger: true },
+    { note: 'A3', position: 4.5, ledger: true },
+    { note: 'G3', position: 5, ledger: true }
+];
+
+
+## File: ./utils/AudioManager.ts
+// utils/AudioManager.ts
+import * as Tone from 'tone';
+import { Note } from '../types/music';
+import { durations } from '../constants/music';
+
+interface PartEvent {
+    time: string;
+    note: string;
+    duration: string;
+    index: number;
+    x: number;
+}
+
+export class AudioManager {
+    private synth: Tone.PolySynth | null = null;
+    private sequence: Tone.Part | null = null;
+    private isInitialized = false;
+
+    async initialize(volume: number = -10): Promise<void> {
+        try {
+            // Create PolySynth with proper constructor pattern
+            this.synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'triangle' },
+                envelope: {
+                    attack: 0.02,
+                    decay: 0.1,
+                    sustain: 0.3,
+                    release: 1
+                }
+            }).toDestination();
+
+            // Set maxPolyphony as a property (not in constructor options)
+            this.synth.maxPolyphony = 8;
+            this.synth.volume.value = volume;
+            this.isInitialized = true;
+        } catch (error) {
+            console.error('Failed to initialize AudioManager:', error);
+            throw error;
+        }
+    }
+
+    updateVolume(volume: number): void {
+        if (this.synth) {
+            this.synth.volume.value = volume;
+        }
+    }
+
+    updateTempo(tempo: number): void {
+        // Simply update the transport BPM - this will affect all scheduled events
+        Tone.Transport.bpm.value = tempo;
+    }
+
+    playPreviewNote(pitch: string): void {
+        if (this.synth) {
+            this.synth.triggerAttackRelease(pitch, '8n');
+        }
+    }
+
+    async playSequence(
+        notes: Note[],
+        startIndex: number,
+        onNotePlay: (index: number, x: number) => void,
+        onSequenceEnd: () => void
+    ): Promise<void> {
+        if (!this.synth) {
+            console.warn('AudioManager not initialized');
+            return;
+        }
+
+        try {
+            // Start audio context if needed
+            if (Tone.context.state !== 'running') {
+                await Tone.start();
+            }
+
+            // Stop any existing playback
+            this.stopSequence();
+
+            // Get notes to play starting from the selected index
+            const notesToPlay = notes.slice(startIndex);
+            if (notesToPlay.length === 0) {
+                console.warn('No notes to play');
+                return;
+            }
+
+            // Create events using Tone.js musical time notation
+            let currentTime = 0; // Track position in quarter notes
+            const events: PartEvent[] = [];
+
+            notesToPlay.forEach((note, idx) => {
+                const actualIndex = startIndex + idx;
+
+                // Convert current time to Tone.js notation (bars:beats:subdivisions)
+                // Since we're tracking in quarter notes, currentTime is the beat count
+                const bars = Math.floor(currentTime / 4);
+                const beats = currentTime % 4;
+                const timeNotation = `${bars}:${beats}:0`;
+
+                events.push({
+                    time: timeNotation,
+                    note: note.pitch,
+                    duration: durations[note.duration].toneNotation,
+                    index: actualIndex,
+                    x: note.x
+                });
+
+                // Advance by the note's beat duration
+                currentTime += note.beats;
+            });
+
+            // Create Tone.Part with musical time events
+            this.sequence = new Tone.Part((time, event: PartEvent) => {
+                // Trigger the note
+                this.synth?.triggerAttackRelease(event.note, event.duration, time);
+
+                // Update current note index on the main thread
+                Tone.Draw.schedule(() => {
+                    onNotePlay(event.index, event.x);
+                }, time);
+
+                // Clear highlight after the last note
+                if (event.index === notes.length - 1) {
+                    const noteDurationInSeconds = Tone.Time(event.duration).toSeconds();
+                    Tone.Draw.schedule(() => {
+                        onSequenceEnd();
+                    }, time + noteDurationInSeconds);
+                }
+            }, events);
+
+            // Configure and start the sequence
+            this.sequence.loop = false;
+            this.sequence.start(0);
+
+            // Start transport
+            Tone.Transport.start();
+
+        } catch (error) {
+            console.error('Failed to play sequence:', error);
+            this.stopSequence();
+            onSequenceEnd(); // Ensure UI is reset on error
+        }
+    }
+
+    stopSequence(): void {
+        try {
+            // Stop and clear transport
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
+
+            // Dispose of the sequence
+            if (this.sequence) {
+                this.sequence.dispose();
+                this.sequence = null;
+            }
+
+            // Stop all currently playing voices
+            this.synth?.releaseAll();
+        } catch (error) {
+            console.error('Error stopping sequence:', error);
+        }
+    }
+
+    dispose(): void {
+        try {
+            this.stopSequence();
+            if (this.synth) {
+                this.synth.dispose();
+                this.synth = null;
+            }
+
+            this.isInitialized = false;
+        } catch (error) {
+            console.error('Error disposing AudioManager:', error);
+        }
+    }
+
+    get initialized(): boolean {
+        return this.isInitialized;
+    }
+
+    // Additional utility methods for better UX
+    get isPlaying(): boolean {
+        return Tone.Transport.state === 'started';
+    }
+
+    get currentTempo(): number {
+        return Tone.Transport.bpm.value;
+    }
+
+    pause(): void {
+        if (this.isPlaying) {
+            Tone.Transport.pause();
+        }
+    }
+
+    resume(): void {
+        if (Tone.Transport.state === 'paused') {
+            Tone.Transport.start();
+        }
+    }
+}
+
+
+## File: ./utils/noteUtils.ts
+// utils/noteUtils.ts
+import { Note } from '../types/music';
+import { staffConfig, staffPositions, durations } from '../constants/music';
+
+export const createNoteFromClick = (
+    x: number,
+    y: number,
+    selectedDuration: string
+): Note | null => {
+    // Check boundaries
+    if (x < staffConfig.leftMargin ||
+        x > staffConfig.leftMargin + (staffConfig.measures * staffConfig.measureWidth)) {
+        return null;
+    }
+
+    if (y < staffConfig.topMargin - 25 ||
+        y > staffConfig.topMargin + staffConfig.staffHeight + 25) {
+        return null;
+    }
+
+    const relativeY = y - staffConfig.topMargin - (staffConfig.staffHeight / 2);
+    const staffPosition = Math.round(relativeY / staffConfig.lineSpacing * 2) / 2;
+
+    const closestNote = staffPositions.reduce((prev, curr) => {
+        return Math.abs(curr.position - staffPosition) < Math.abs(prev.position - staffPosition) ? curr : prev;
+    });
+
+    return {
+        id: Date.now(),
+        pitch: closestNote.note,
+        staffPosition: closestNote.position,
+        ledger: closestNote.ledger || false,
+        x: x - staffConfig.leftMargin,
+        measure: Math.floor((x - staffConfig.leftMargin) / staffConfig.measureWidth),
+        duration: selectedDuration,
+        beats: durations[selectedDuration].beats
+    };
+};
+
+export const findNoteAtPosition = (
+    notes: Note[],
+    clickX: number,
+    clickY: number
+): number => {
+    return notes.findIndex(note => {
+        const noteX = staffConfig.leftMargin + note.x;
+        const noteY = staffConfig.topMargin + (note.staffPosition * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2);
+        return Math.abs(noteX - clickX) < 15 && Math.abs(noteY - clickY) < 15;
+    });
+};
+
+export const sortNotesByPosition = (notes: Note[]): Note[] => {
+    return [...notes].sort((a, b) => a.x - b.x);
+};
+
+export const calculateTotalDuration = (notes: Note[]): number => {
+    return notes.reduce((sum, note) => sum + note.beats, 0);
+};
+
+
+## File: ./components/StaffRenderer.ts
+// components/StaffRenderer.ts
+import { Note } from '../types/music';
+import { staffConfig } from '../constants/music';
+
+export class StaffRenderer {
+    private ctx: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement;
+
+    constructor(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Could not get canvas context');
+        this.ctx = ctx;
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
+    }
+
+    drawStaff(notes: Note[], currentNoteIndex: number, playheadPosition: number, playbackStartIndex: number, tempo: number) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw background
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.drawTitle(tempo);
+        this.drawPlayhead(playheadPosition);
+        this.drawStaffLines();
+        this.drawClefAndTimeSignature();
+        this.drawNotes(notes, currentNoteIndex, playbackStartIndex);
+    }
+
+    private drawTitle(tempo: number) {
+        // Draw title
+        this.ctx.fillStyle = '#020817';
+        this.ctx.font = '600 24px system-ui, -apple-system, sans-serif';
+        this.ctx.fillText('Interactive Composition', 30, 50);
+
+        // Draw tempo marking
+        this.ctx.font = '400 14px system-ui, -apple-system, sans-serif';
+        this.ctx.fillStyle = '#64748b';
+        this.ctx.fillText(`♩ = ${tempo} BPM`, 30, 80);
+    }
+
+    private drawPlayhead(playheadPosition: number) {
+        if (playheadPosition >= 0 && playheadPosition <= this.canvas.width) {
+            this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            this.ctx.lineWidth = 2;
+            this.ctx.setLineDash([5, 5]);
+            this.ctx.beginPath();
+            this.ctx.moveTo(playheadPosition, staffConfig.topMargin - 20);
+            this.ctx.lineTo(playheadPosition, staffConfig.topMargin + staffConfig.staffHeight + 20);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+        }
+    }
+
+    private drawStaffLines() {
+        // Draw staff lines for each measure
+        for (let measure = 0; measure < staffConfig.measures; measure++) {
+            const measureX = staffConfig.leftMargin + (measure * staffConfig.measureWidth);
+
+            // Draw staff lines
+            this.ctx.strokeStyle = '#e2e8f0';
+            this.ctx.lineWidth = 1.5;
+            for (let i = 0; i < 5; i++) {
+                const y = staffConfig.topMargin + (i * staffConfig.lineSpacing);
+                this.ctx.beginPath();
+                this.ctx.moveTo(measureX, y);
+                this.ctx.lineTo(measureX + staffConfig.measureWidth, y);
+                this.ctx.stroke();
+            }
+
+            // Draw measure lines
+            this.ctx.strokeStyle = '#94a3b8';
+            this.ctx.lineWidth = 2;
+            this.ctx.beginPath();
+            this.ctx.moveTo(measureX, staffConfig.topMargin);
+            this.ctx.lineTo(measureX, staffConfig.topMargin + staffConfig.staffHeight);
+            this.ctx.stroke();
+
+            // Draw end barline
+            if (measure === staffConfig.measures - 1) {
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeStyle = '#475569';
+                this.ctx.beginPath();
+                this.ctx.moveTo(measureX + staffConfig.measureWidth, staffConfig.topMargin);
+                this.ctx.lineTo(measureX + staffConfig.measureWidth, staffConfig.topMargin + staffConfig.staffHeight);
+                this.ctx.stroke();
+            }
+        }
+    }
+
+    private drawClefAndTimeSignature() {
+        // Draw clef
+        this.ctx.font = 'bold 52px serif';
+        this.ctx.fillStyle = '#020817';
+        this.ctx.fillText('𝄞', staffConfig.leftMargin - 55, staffConfig.topMargin + 40);
+
+        // Draw time signature
+        this.ctx.font = '600 30px system-ui, -apple-system, sans-serif';
+        this.ctx.fillStyle = '#334155';
+        this.ctx.fillText('4', staffConfig.leftMargin - 25, staffConfig.topMargin + 20);
+        this.ctx.fillText('4', staffConfig.leftMargin - 25, staffConfig.topMargin + 48);
+    }
+
+    private drawNotes(notes: Note[], currentNoteIndex: number, playbackStartIndex: number) {
+        notes.forEach((note, index) => {
+            const isCurrentNote = index === currentNoteIndex;
+            const isStartPoint = index === playbackStartIndex && currentNoteIndex === -1;
+            this.drawNote(note, isCurrentNote, isStartPoint);
+        });
+    }
+
+    private drawNote(note: Note, isPlaying: boolean, isStartPoint: boolean) {
+        const x = staffConfig.leftMargin + note.x;
+        const y = staffConfig.topMargin + (note.staffPosition * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2);
+
+        this.drawLedgerLines(note, x);
+        this.drawNoteHighlight(x, y, isPlaying, isStartPoint);
+        this.drawNoteHead(note, x, y, isPlaying);
+        this.drawStem(note, x, y, isPlaying);
+    }
+
+    private drawLedgerLines(note: Note, x: number) {
+        if (!note.ledger) return;
+
+        this.ctx.strokeStyle = '#e2e8f0';
+        this.ctx.lineWidth = 1.5;
+
+        if (note.staffPosition < 0) {
+            for (let pos = -0.5; pos >= note.staffPosition; pos -= 1) {
+                const ledgerY = staffConfig.topMargin + (pos * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2);
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - 18, ledgerY);
+                this.ctx.lineTo(x + 18, ledgerY);
+                this.ctx.stroke();
+            }
+        } else if (note.staffPosition > 4) {
+            for (let pos = 4.5; pos <= note.staffPosition; pos += 1) {
+                const ledgerY = staffConfig.topMargin + (pos * staffConfig.lineSpacing) + (staffConfig.staffHeight / 2);
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - 18, ledgerY);
+                this.ctx.lineTo(x + 18, ledgerY);
+                this.ctx.stroke();
+            }
+        }
+    }
+
+    private drawNoteHighlight(x: number, y: number, isPlaying: boolean, isStartPoint: boolean) {
+        // Highlight if playing
+        if (isPlaying) {
+            this.ctx.fillStyle = 'rgba(99, 102, 241, 0.2)';
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 20, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            this.ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 12, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+
+        // Highlight start point
+        if (isStartPoint) {
+            this.ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
+            this.ctx.lineWidth = 3;
+            this.ctx.setLineDash([3, 3]);
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 16, 0, Math.PI * 2);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+        }
+    }
+
+    private drawNoteHead(note: Note, x: number, y: number, isPlaying: boolean) {
+        const noteColor = isPlaying ? '#6366f1' : '#020817';
+
+        this.ctx.fillStyle = note.duration === 'whole' || note.duration === 'half' ? '#ffffff' : noteColor;
+        this.ctx.strokeStyle = noteColor;
+        this.ctx.lineWidth = 2.5;
+        this.ctx.beginPath();
+        this.ctx.ellipse(x, y, 9, 7, -0.25, 0, Math.PI * 2);
+
+        if (note.duration === 'whole' || note.duration === 'half') {
+            this.ctx.stroke();
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fill();
+        } else {
+            this.ctx.fill();
+        }
+    }
+
+    private drawStem(note: Note, x: number, y: number, isPlaying: boolean) {
+        if (note.duration === 'whole') return;
+
+        const noteColor = isPlaying ? '#6366f1' : '#020817';
+        const stemDirection = note.staffPosition > 1 ? -1 : 1;
+        const stemHeight = 40;
+
+        this.ctx.strokeStyle = noteColor;
+        this.ctx.lineWidth = 2.5;
+        this.ctx.beginPath();
+        this.ctx.moveTo(x + (stemDirection === 1 ? 8 : -8), y);
+        this.ctx.lineTo(x + (stemDirection === 1 ? 8 : -8), y + (stemHeight * stemDirection));
+        this.ctx.stroke();
+
+        // Draw flags
+        if (note.duration === 'eighth' || note.duration === 'sixteenth') {
+            this.drawFlags(note, x, y, stemDirection, stemHeight, noteColor);
+        }
+    }
+
+    // Updated drawFlags method - flags should droop downward
+    private drawFlags(note: Note, x: number, y: number, stemDirection: number, stemHeight: number, noteColor: string) {
+        const stemX = x + (stemDirection === 1 ? 8 : -8);
+        const stemTip = y + (stemHeight * stemDirection);
+
+        this.ctx.fillStyle = noteColor;
+
+        // Draw first flag (eighth note) - always droops downward
+        this.drawEighthFlag(stemX, stemTip, stemDirection);
+
+        // Draw second flag for sixteenth notes
+        if (note.duration === 'sixteenth') {
+            this.drawEighthFlag(stemX, stemTip + (8 * stemDirection), stemDirection);
+        }
+    }
+
+    private drawEighthFlag(stemX: number, flagY: number, stemDirection: number) {
+        this.ctx.beginPath();
+
+        // Flag always curves right and DOWN (like gravity is pulling it)
+        const flagLength = 16;
+        const flagDrop = 14;
+
+        // Start at stem tip
+        this.ctx.moveTo(stemX, flagY);
+
+        // Always curve right and down, regardless of stem direction
+        this.ctx.quadraticCurveTo(
+            stemX + flagLength * 0.8, flagY + flagDrop * 0.3,  // Control point - slight right, slight down
+            stemX + flagLength, flagY + flagDrop               // End point - full right, full down
+        );
+
+        // Create flag thickness by curving back up slightly
+        this.ctx.quadraticCurveTo(
+            stemX + flagLength * 0.6, flagY + flagDrop * 0.8,  // Control point for return curve
+            stemX, flagY + 2                                    // Back to near stem, slightly below start
+        );
+
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+}
+
+
+## File: ./hooks/useMusicComposer.ts
+// hooks/useMusicComposer.ts
+import { useState, useRef, useEffect } from 'react';
+import { Note } from '../types/music';
+import { AudioManager } from '../utils/AudioManager';
+import { createNoteFromClick, findNoteAtPosition, sortNotesByPosition } from '../utils/noteUtils';
+import { staffConfig } from '../constants/music';
+
+export const useMusicComposer = () => {
+    const [notes, setNotes] = useState<Note[]>([]);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
+    const [selectedDuration, setSelectedDuration] = useState('quarter');
+    const [tempo, setTempo] = useState(120);
+    const [volume, setVolume] = useState([-10]);
+    const [playbackStartIndex, setPlaybackStartIndex] = useState(0);
+    const [playheadPosition, setPlayheadPosition] = useState(-1);
+
+    const audioManagerRef = useRef<AudioManager | null>(null);
+
+    // Initialize audio manager
+    useEffect(() => {
+        audioManagerRef.current = new AudioManager();
+        audioManagerRef.current.initialize(volume[0]);
+
+        return () => {
+            if (audioManagerRef.current) {
+                audioManagerRef.current.dispose();
+            }
+        };
+    }, []);
+
+    // Update volume
+    useEffect(() => {
+        if (audioManagerRef.current) {
+            audioManagerRef.current.updateVolume(volume[0]);
+        }
+    }, [volume]);
+
+    // Update tempo - Tone.js will handle this automatically for active sequences
+    useEffect(() => {
+        if (audioManagerRef.current) {
+            audioManagerRef.current.updateTempo(tempo);
+        }
+    }, [tempo]);
+
+    const stopPlayback = () => {
+        if (audioManagerRef.current) {
+            audioManagerRef.current.stopSequence();
+        }
+        setIsPlaying(false);
+        setCurrentNoteIndex(-1);
+        setPlayheadPosition(-1);
+    };
+
+    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = e.currentTarget;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Check if clicking on an existing note to set start position
+        const clickedNoteIndex = findNoteAtPosition(notes, x, y);
+
+        if (clickedNoteIndex !== -1 && e.shiftKey) {
+            setPlaybackStartIndex(clickedNoteIndex);
+            return;
+        }
+
+        // Create new note
+        const newNote = createNoteFromClick(x, y, selectedDuration);
+        if (!newNote) return;
+
+        // Play preview sound
+        if (audioManagerRef.current) {
+            audioManagerRef.current.playPreviewNote(newNote.pitch);
+        }
+
+        setNotes(prevNotes => sortNotesByPosition([...prevNotes, newNote]));
+    };
+
+    const playNotes = async () => {
+        if (!audioManagerRef.current) return;
+
+        if (isPlaying) {
+            stopPlayback();
+            return;
+        }
+
+        if (notes.length === 0) return;
+
+        const onNotePlay = (index: number, x: number) => {
+            setCurrentNoteIndex(index);
+            setPlayheadPosition(staffConfig.leftMargin + x);
+        };
+
+        const onSequenceEnd = () => {
+            stopPlayback();
+        };
+
+        await audioManagerRef.current.playSequence(
+            notes,
+            playbackStartIndex,
+            onNotePlay,
+            onSequenceEnd
+        );
+
+        setIsPlaying(true);
+    };
+
+    const clearNotes = () => {
+        stopPlayback();
+        setNotes([]);
+        setPlaybackStartIndex(0);
+    };
+
+    const deleteLastNote = () => {
+        if (notes.length > 0) {
+            const newNotes = notes.slice(0, -1);
+            setNotes(newNotes);
+            if (playbackStartIndex >= newNotes.length) {
+                setPlaybackStartIndex(Math.max(0, newNotes.length - 1));
+            }
+        }
+    };
+
+    const moveStartPoint = (direction: 'prev' | 'next') => {
+        if (notes.length === 0) return;
+
+        if (direction === 'prev') {
+            setPlaybackStartIndex(Math.max(0, playbackStartIndex - 1));
+        } else {
+            setPlaybackStartIndex(Math.min(notes.length - 1, playbackStartIndex + 1));
+        }
+    };
+
+    const resetStartPoint = () => {
+        setPlaybackStartIndex(0);
+    };
+
+    return {
+        // State
+        notes,
+        isPlaying,
+        currentNoteIndex,
+        selectedDuration,
+        tempo,
+        volume,
+        playbackStartIndex,
+        playheadPosition,
+
+        // Actions
+        handleCanvasClick,
+        playNotes,
+        clearNotes,
+        deleteLastNote,
+        moveStartPoint,
+        resetStartPoint,
+        setSelectedDuration,
+        setTempo,
+        setVolume
+    };
+};
+
+
+## File: ./components/Instructions.tsx
+// components/Instructions.tsx
+import { Music } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+export const Instructions = () => {
+    return (
+        <Alert>
+            <Music className="h-4 w-4" />
+            <AlertDescription className="space-y-2">
+                <p>
+                    <strong>How to compose:</strong> Click on the staff to place notes. Select different durations from the dropdown.
+                    The playback will respect note durations and tempo settings.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                    <strong>Tips:</strong>
+                    • Shift+Click on a note to set it as the playback start point
+                    • Use the Start Point controls to navigate through notes
+                    • The tempo slider changes playback speed in real-time
+                    • A red line shows the current playback position
+                </p>
+            </AlertDescription>
+        </Alert>
+    );
+};
+
+
+## File: ./components/StatusDisplay.tsx
+
+// components/StatusDisplay.tsx
+import { Badge } from '@/components/ui/badge';
+import { calculateTotalDuration } from '../utils/noteUtils';
+import { Note } from '../types/music';
+
+type StatusDisplayProps = {
+    notes: Note[];
+    playbackStartIndex: number;
+};
+
+export const StatusDisplay = ({
+                                  notes,
+                                  playbackStartIndex
+                              }: StatusDisplayProps) => {
+    const totalDuration = calculateTotalDuration(notes);
+
+    return (
+        <div className="mt-4 flex justify-between items-center">
+            <Badge variant="outline" className="text-sm">
+                {notes.length} note{notes.length !== 1 ? 's' : ''} in composition
+            </Badge>
+            {notes.length > 0 && (
+                <div className="flex gap-2">
+                    <Badge variant="secondary" className="text-sm">
+                        Total duration: {totalDuration} beats
+                    </Badge>
+                    {playbackStartIndex > 0 && (
+                        <Badge variant="outline" className="text-sm text-green-600">
+                            Playing from note {playbackStartIndex + 1}
+                        </Badge>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+## File: ./components/StaffCanvas.tsx
+// components/StaffCanvas.tsx
+import { useRef, useEffect } from 'react';
+import { Note } from '../types/music';
+import { StaffRenderer } from './StaffRenderer';
+import { staffConfig } from '../constants/music';
+
+type StaffCanvasProps = {
+    notes: Note[];
+    currentNoteIndex: number;
+    playheadPosition: number;
+    playbackStartIndex: number;
+    tempo: number;
+    onCanvasClick: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+};
+
+export const StaffCanvas = ({
+                                notes,
+                                currentNoteIndex,
+                                playheadPosition,
+                                playbackStartIndex,
+                                tempo,
+                                onCanvasClick
+                            }: StaffCanvasProps) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const rendererRef = useRef<StaffRenderer | null>(null);
+
+    useEffect(() => {
+        if (canvasRef.current && !rendererRef.current) {
+            rendererRef.current = new StaffRenderer(canvasRef.current);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (rendererRef.current) {
+            rendererRef.current.drawStaff(
+                notes,
+                currentNoteIndex,
+                playheadPosition,
+                playbackStartIndex,
+                tempo
+            );
+        }
+    }, [notes, currentNoteIndex, playheadPosition, playbackStartIndex, tempo]);
+
+    const canvasWidth = staffConfig.leftMargin + (staffConfig.measures * staffConfig.measureWidth) + 30;
+    const canvasHeight = 280;
+
+    return (
+        <div className="bg-background rounded-lg border shadow-inner overflow-x-auto">
+            <canvas
+                ref={canvasRef}
+                width={canvasWidth}
+                height={canvasHeight}
+                onClick={onCanvasClick}
+                className="cursor-crosshair hover:bg-muted/10 transition-colors"
+            />
+        </div>
+    );
+};
+
+
+## File: ./components/Controls.tsx
+// components/Controls.tsx
+import { Play, Pause, RotateCcw, Trash2, Clock, Volume2, SkipForward, SkipBack } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { durations } from '../constants/music';
+
+type ControlsProps = {
+    isPlaying: boolean;
+    notesLength: number;
+    selectedDuration: string;
+    tempo: number;
+    volume: number[];
+    playbackStartIndex: number;
+    onPlay: () => void;
+    onClear: () => void;
+    onDeleteLast: () => void;
+    onDurationChange: (duration: string) => void;
+    onTempoChange: (tempo: number) => void;
+    onVolumeChange: (volume: number[]) => void;
+    onMoveStartPoint: (direction: 'prev' | 'next') => void;
+    onResetStartPoint: () => void;
+};
+
+export const Controls = ({
+                             isPlaying,
+                             notesLength,
+                             selectedDuration,
+                             tempo,
+                             volume,
+                             playbackStartIndex,
+                             onPlay,
+                             onClear,
+                             onDeleteLast,
+                             onDurationChange,
+                             onTempoChange,
+                             onVolumeChange,
+                             onMoveStartPoint,
+                             onResetStartPoint
+                         }: ControlsProps) => {
+    return (
+        <div className="space-y-4">
+            {/* Primary Controls Row */}
+            <div className="flex flex-wrap gap-4 items-center justify-between">
+                {/* Playback Controls */}
+                <div className="flex gap-2">
+                    <Button
+                        onClick={onPlay}
+                        variant={isPlaying ? "destructive" : "default"}
+                        size="default"
+                        className="gap-2"
+                        disabled={notesLength === 0}
+                    >
+                        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                        {isPlaying ? 'Stop' : 'Play'}
+                    </Button>
+
+                    <Button
+                        onClick={onClear}
+                        variant="secondary"
+                        size="default"
+                        className="gap-2"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Clear
+                    </Button>
+
+                    <Button
+                        onClick={onDeleteLast}
+                        variant="outline"
+                        size="default"
+                        className="gap-2"
+                        disabled={notesLength === 0}
+                    >
+                        <RotateCcw className="w-4 h-4" />
+                        Undo
+                    </Button>
+                </div>
+
+                {/* Note Duration Selector */}
+                <div className="flex items-center gap-2">
+                    <Label htmlFor="duration">Duration:</Label>
+                    <Select value={selectedDuration} onValueChange={onDurationChange}>
+                        <SelectTrigger id="duration" className="w-[140px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.entries(durations).map(([key, value]) => (
+                                <SelectItem key={key} value={key}>
+                                    <span className="flex items-center gap-2">
+                                        <span className="text-lg">{value.symbol}</span>
+                                        <span>{value.name}</span>
+                                    </span>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* Secondary Controls Row */}
+            <div className="flex flex-wrap gap-6 items-center justify-between">
+                {/* Start Point Controls */}
+                <div className="flex items-center gap-2">
+                    <Label>Start Point:</Label>
+                    <div className="flex gap-1">
+                        <Button
+                            onClick={() => onMoveStartPoint('prev')}
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={notesLength === 0 || playbackStartIndex === 0}
+                        >
+                            <SkipBack className="w-4 h-4" />
+                        </Button>
+                        <Badge variant="secondary" className="min-w-[3rem] justify-center">
+                            {notesLength > 0 ? `${playbackStartIndex + 1}/${notesLength}` : '0/0'}
+                        </Badge>
+                        <Button
+                            onClick={() => onMoveStartPoint('next')}
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={notesLength === 0 || playbackStartIndex >= notesLength - 1}
+                        >
+                            <SkipForward className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            onClick={onResetStartPoint}
+                            variant="ghost"
+                            size="sm"
+                            disabled={playbackStartIndex === 0}
+                        >
+                            Reset
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Tempo Control */}
+                <div className="flex items-center gap-3">
+                    <Label className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        Tempo:
+                    </Label>
+                    <div className="flex items-center gap-2">
+                        <Slider
+                            value={[tempo]}
+                            onValueChange={(value) => onTempoChange(value[0])}
+                            min={60}
+                            max={180}
+                            step={5}
+                            className="w-24"
+                        />
+                        <Badge variant="secondary" className="min-w-[4rem] justify-center">
+                            {tempo} BPM
+                        </Badge>
+                    </div>
+                </div>
+
+                {/* Volume Control */}
+                <div className="flex items-center gap-3">
+                    <Label className="flex items-center gap-1">
+                        <Volume2 className="w-4 h-4" />
+                        Volume:
+                    </Label>
+                    <Slider
+                        value={volume}
+                        onValueChange={onVolumeChange}
+                        min={-30}
+                        max={0}
+                        step={1}
+                        className="w-24"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+
+## File: ./SheetMusicComposer.tsx
+// SheetMusicComposer.tsx (main component updated)
+"use client"
+import { Music } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Controls } from './components/Controls';
+import { StaffCanvas } from './components/StaffCanvas';
+import { StatusDisplay } from './components/StatusDisplay';
+import { Instructions } from './components/Instructions';
+import { useMusicComposer } from './hooks/useMusicComposer';
+
+export const SheetMusicComposer = () => {
+    const {
+        // State
+        notes,
+        isPlaying,
+        currentNoteIndex,
+        selectedDuration,
+        tempo,
+        volume,
+        playbackStartIndex,
+        playheadPosition,
+
+        // Actions
+        handleCanvasClick,
+        playNotes,
+        clearNotes,
+        deleteLastNote,
+        moveStartPoint,
+        resetStartPoint,
+        setSelectedDuration,
+        setTempo,
+        setVolume
+    } = useMusicComposer();
+
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-4 md:p-6">
+            <div className="max-w-7xl mx-auto space-y-6">
+                {/* Header */}
+                <div className="text-center space-y-2">
+                    <h1 className="text-4xl font-bold tracking-tight flex items-center justify-center gap-3">
+                        <Music className="w-8 h-8 text-primary" />
+                        Sheet Music Composer
+                    </h1>
+                    <p className="text-muted-foreground">Click to add notes • Shift+Click to set start point</p>
+                </div>
+
+                {/* Main Card */}
+                <Card className="overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
+                        <Controls
+                            isPlaying={isPlaying}
+                            notesLength={notes.length}
+                            selectedDuration={selectedDuration}
+                            tempo={tempo}
+                            volume={volume}
+                            playbackStartIndex={playbackStartIndex}
+                            onPlay={playNotes}
+                            onClear={clearNotes}
+                            onDeleteLast={deleteLastNote}
+                            onDurationChange={setSelectedDuration}
+                            onTempoChange={setTempo}
+                            onVolumeChange={setVolume}
+                            onMoveStartPoint={moveStartPoint}
+                            onResetStartPoint={resetStartPoint}
+                        />
+                    </CardHeader>
+
+                    <CardContent className="p-6">
+                        {/* Canvas Container */}
+                        <StaffCanvas
+                            notes={notes}
+                            currentNoteIndex={currentNoteIndex}
+                            playheadPosition={playheadPosition}
+                            playbackStartIndex={playbackStartIndex}
+                            tempo={tempo}
+                            onCanvasClick={handleCanvasClick}
+                        />
+
+                        {/* Note Counter */}
+                        <StatusDisplay
+                            notes={notes}
+                            playbackStartIndex={playbackStartIndex}
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Instructions */}
+                <Instructions />
+            </div>
+        </div>
+    );
+};
+

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select"
 
 const pointsOptions = [5, 10, 20, 30, 40, 50] as const
-type Points = (typeof pointsOptions)[number]
+export type Points = (typeof pointsOptions)[number]
 
 type PointsSelectorProps = {
   value: Points

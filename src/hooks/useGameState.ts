@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
 import { generateRandomNote, getNote, getAllNotePositions } from '@/utils/noteUtils';
+import type { Points } from '@/components/fretboard/PointsSelector';
 
 type GameState = {
   currentNote: Note;
   points: number;
-  targetPoints: number;
+  targetPoints: Points;
   streak: number;
   totalAttempts: number;
   feedback: string;
@@ -61,15 +62,15 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations) => 
   }, [gameState.currentNote.note, tuning]);
 
   const handleGuess = useCallback((
-    string: number, 
-    fret: number, 
+    string: number,
+    fret: number,
     isNewbieMode: boolean = false,
     isHardMode: boolean = false
   ) => {
     if (gameState.isPositionLocked && isNewbieMode) return;
-    
+
     const isCorrect = checkNoteAtPosition(string, fret);
-    
+
     const isAlreadyGuessed = gameState.guessedPositions.some(
       pos => pos.string === string && pos.fret === fret
     );
@@ -139,9 +140,9 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations) => 
           correctPositionsCount: foundCount,
           guessedPositions: [...gameState.guessedPositions, position],
           showNext: allPositionsFound,
-          feedback: allPositionsFound 
-          ? translations.feedback.excellent 
-          : translations.feedback.remainingPositions(remainingPositions),
+          feedback: allPositionsFound
+            ? translations.feedback.excellent
+            : translations.feedback.remainingPositions(remainingPositions),
           points: allPositionsFound ? gameState.points + 1 : gameState.points,
           streak: allPositionsFound ? gameState.streak + 1 : gameState.streak
         });
