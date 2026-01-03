@@ -30,10 +30,7 @@ export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'];
 export const halfStepDownTuning: Tuning = ['Eb', 'Bb', 'Gb', 'Db', 'Ab', 'Eb'];
 export const dropDTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'D'];
 
-export const convertStringPosition = (stringIndex: number, total: number = 6): number => {
-  // Convert from logical (0 = low E) to visual (0 = high E) position or vice versa
-  return total - 1 - stringIndex;
-};
+
 
 
 // Helper function to get the index of a note in the chromatic scale
@@ -54,15 +51,14 @@ export const getNoteIndex = (note: string): number => {
 };
 
 // Get note at a specific fret position
-export const getNote = (string: number, fret: number, tuning: Tuning): string => {
-  // Convert visual string position back to logical for tuning array access
-  const logicalString = convertStringPosition(string);
-  const openNote = tuning[logicalString];
+export const calculateNote = (string: number, fret: number, tuning: Tuning): string => {
+  // Use direct string index as tuning is already ordered visually
+  const openNote = tuning[string];
   const startIndex = getNoteIndex(openNote);
-  
+
   if (startIndex === -1) return notes[0];
-  
-  const noteIndex = (startIndex + 1  + fret) % 12;
+
+  const noteIndex = (startIndex + 1 + fret) % 12;
   return notes[noteIndex];
 };
 
@@ -70,30 +66,29 @@ export const getNote = (string: number, fret: number, tuning: Tuning): string =>
 // Get all positions of a specific note on the fretboard
 export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePosition[] => {
   const positions: NotePosition[] = [];
-  
+
   const maxFret = 12;
   const usedPositions = new Set<string>();
 
 
   for (let string = 0; string < tuning.length; string++) {
     for (let fret = 0; fret <= maxFret; fret++) {
-      const currentNote = getNote(string, fret, tuning);
+      const currentNote = calculateNote(string, fret, tuning);
       if (currentNote === noteToFind) {
         const positionKey = `${string}-${fret}`;
-        
+
         if (!usedPositions.has(positionKey)) {
           usedPositions.add(positionKey);
-          const visualString = convertStringPosition(string);
-          positions.push({ 
-            string: visualString, 
-            fret, 
-            note: currentNote 
+          positions.push({
+            string,
+            fret,
+            note: currentNote
           });
         }
       }
     }
   }
-  
+
   return positions;
 };
 
@@ -101,7 +96,7 @@ export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePos
 export const getScaleNotes = (rootNote: string, scaleIntervals: number[]): string[] => {
   const rootIndex = getNoteIndex(rootNote);
   if (rootIndex === -1) return [];
-  
+
   return scaleIntervals.map(interval => {
     const noteIndex = (rootIndex + interval) % 12;
     return notes[noteIndex];

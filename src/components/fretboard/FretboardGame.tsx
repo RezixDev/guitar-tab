@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGameState } from "@/hooks/useGameState";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useAudioManager } from "@/hooks/useAudioManager";
 import { useGameModes } from "@/hooks/useGameModes";
 import { useBestTime } from "@/hooks/useBestTime";
@@ -17,9 +18,12 @@ import { CompletionModal } from "./CompletionModal";
 import { TutorialDialog } from "./TutorialDialog";
 import { KeyboardControls } from "./KeyboardControls";
 import { PositionTracker } from "./PositionTracker";
+import type { Points } from "@/components/fretboard/PointsSelector";
 
 import {
 	standardTuning,
+	halfStepDownTuning,
+	dropDTuning,
 	generateRandomNote,
 	type Tuning,
 	type Note,
@@ -30,7 +34,19 @@ export const FretboardGame = () => {
 	const t = useTranslations("Fretboard");
 
 	// Game state
-	const [tuning, setTuning] = useState<Tuning>(standardTuning);
+	const [tuningId, setTuningId] = useLocalStorage<string>("fretboard-tuning-id", "standard");
+	const [targetPoints, setTargetPoints] = useLocalStorage<Points>("fretboard-target-points", 10);
+
+	const getTuningArray = (id: string): Tuning => {
+		switch (id) {
+			case 'halfStepDown': return halfStepDownTuning;
+			case 'dropD': return dropDTuning;
+			default: return standardTuning;
+		}
+	};
+
+	const tuning = getTuningArray(tuningId);
+
 	const [isGameStarted, setIsGameStarted] = useState(false);
 	const [showTutorial, setShowTutorial] = useState(false);
 	const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -58,7 +74,8 @@ export const FretboardGame = () => {
 	// Custom hooks
 	const { gameState, handleGuess, resetGame, updateGameState } = useGameState(
 		tuning,
-		feedbackTranslations
+		feedbackTranslations,
+		{ initialTargetPoints: targetPoints }
 	);
 	const { audioManager, isAudioLoaded } = useAudioManager();
 	const {
@@ -81,6 +98,12 @@ export const FretboardGame = () => {
 			foundPositions: new Set(),
 		});
 	}, [tuning, updateGameState]);
+
+	useEffect(() => {
+		if (gameState.targetPoints !== targetPoints) {
+			updateGameState({ targetPoints });
+		}
+	}, [targetPoints, gameState.targetPoints, updateGameState]);
 
 	// Timer effect
 	useEffect(() => {
@@ -124,9 +147,8 @@ export const FretboardGame = () => {
 	}, [gameState.showNext, handleNextNote]);
 
 	// Game actions
-	const handleTuningChange = (newTuning: string) => {
-		const tuningArray = newTuning.split("") as Tuning;
-		setTuning(tuningArray);
+	const handleTuningChange = (newTuningId: string) => {
+		setTuningId(newTuningId);
 		resetGame();
 	};
 
@@ -246,13 +268,11 @@ export const FretboardGame = () => {
 				<GameSettings
 					onTuningChange={handleTuningChange}
 					targetPoints={gameState.targetPoints}
-					onTargetPointsChange={(value) =>
-						updateGameState({ targetPoints: value })
-					}
+					onTargetPointsChange={setTargetPoints}
 					gameMode={gameMode}
 					onGameModeChange={setGameMode}
 					disabled={isGameStarted}
-					displayTuning={tuning}
+					displayTuning={tuningId}
 					translations={settingsTranslations}
 				/>
 

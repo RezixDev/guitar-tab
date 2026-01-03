@@ -1,9 +1,8 @@
-// hooks/useGameModes.ts
-import { useState } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { GameMode } from '@/components/fretboard/GameModesDropdown';
 
 export const useGameModes = () => {
-    const [gameMode, setGameMode] = useState<GameMode>('newbie');
+    const [gameMode, setGameMode] = useLocalStorage<GameMode>('fretboard-game-mode', 'newbie');
 
     return {
         gameMode,

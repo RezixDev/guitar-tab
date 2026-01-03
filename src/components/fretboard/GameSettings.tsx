@@ -12,7 +12,7 @@ type GameSettingsProps = {
 	gameMode: GameMode
 	onGameModeChange: (mode: GameMode) => void
 	disabled?: boolean
-	displayTuning: Tuning
+	displayTuning: string
 	translations: {
 		tuning: string
 		targetScore: string
@@ -36,7 +36,7 @@ export function GameSettings({
 	gameMode,
 	onGameModeChange,
 	disabled = false,
-	displayTuning, // kept for API parity; not rendered here
+	displayTuning,
 	translations,
 }: GameSettingsProps) {
 	return (
@@ -44,7 +44,7 @@ export function GameSettings({
 			<div className="space-y-4">
 				<div className="space-y-2">
 					<Label>{translations.tuning}</Label>
-					<TuningSelector onChange={onTuningChange} disabled={disabled} />
+					<TuningSelector onChange={onTuningChange} value={displayTuning as any} disabled={disabled} />
 				</div>
 				<div className="space-y-2">
 					<Label>{translations.targetScore}</Label>

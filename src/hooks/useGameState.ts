@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Tuning, Note, NotePosition } from '@/utils/noteUtils';
-import { generateRandomNote, getNote, getAllNotePositions } from '@/utils/noteUtils';
+import { generateRandomNote, calculateNote, getAllNotePositions } from '@/utils/noteUtils';
 import type { Points } from '@/components/fretboard/PointsSelector';
 
 type GameState = {
@@ -33,14 +33,18 @@ type GameTranslations = {
   };
 }
 
-export const useGameState = (tuning: Tuning, translations: GameTranslations) => {
+export type GameStateOptions = {
+  initialTargetPoints?: Points;
+}
+
+export const useGameState = (tuning: Tuning, translations: GameTranslations, options: GameStateOptions = {}) => {
   const initialNote = generateRandomNote(tuning);
   const initialTotalPositions = getAllNotePositions(initialNote.note, tuning).length;
 
   const [gameState, setGameState] = useState<GameState>({
     currentNote: initialNote,
     points: 0,
-    targetPoints: 10,
+    targetPoints: options.initialTargetPoints ?? 10,
     streak: 0,
     totalAttempts: 0,
     feedback: '',
@@ -57,7 +61,7 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations) => 
   }, []);
 
   const checkNoteAtPosition = useCallback((string: number, fret: number): boolean => {
-    const noteAtPosition = getNote(string, fret, tuning);
+    const noteAtPosition = calculateNote(string, fret, tuning);
     return noteAtPosition === gameState.currentNote.note;
   }, [gameState.currentNote.note, tuning]);
 
@@ -79,7 +83,7 @@ export const useGameState = (tuning: Tuning, translations: GameTranslations) => 
     const position: NotePosition = {
       string,
       fret,
-      note: getNote(string, fret, tuning)
+      note: calculateNote(string, fret, tuning)
     };
 
     if (!isNewbieMode && !isHardMode) {

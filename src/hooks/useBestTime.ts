@@ -1,17 +1,12 @@
 // hooks/useBestTime.ts
-import { useState } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 export const useBestTime = () => {
-    const [bestTime, setBestTime] = useState<number | null>(() => {
-        if (typeof window === 'undefined') return null;
-        const stored = localStorage.getItem('fretboard-best-time');
-        return stored ? Number(stored) : null;
-    });
+    const [bestTime, setBestTime] = useLocalStorage<number | null>('fretboard-best-time', null);
 
     const updateBestTime = (newTime: number) => {
         if (bestTime === null || newTime < bestTime) {
             setBestTime(newTime);
-            localStorage.setItem('fretboard-best-time', newTime.toString());
         }
     };
 
