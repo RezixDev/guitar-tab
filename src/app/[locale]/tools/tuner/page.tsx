@@ -1,5 +1,5 @@
 import { Guitar } from "lucide-react";
-import { PageTuner } from "@/components//PageTuner";
+import { GuitarTuner } from "@/components/GuitarTuner";
 
 export default function Page() {
 	return (
@@ -10,7 +10,7 @@ export default function Page() {
 				<h1 className="text-4xl font-bold">Guitar Tuner</h1>
 			</div>
 
-			<PageTuner />
+			<GuitarTuner />
 		</div>
 	);
 }
