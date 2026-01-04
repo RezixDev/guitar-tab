@@ -410,15 +410,16 @@ export function GuitarTuner() {
 				)}
 
 				<div className="flex items-center gap-4 mb-6">
-					<VolumeX className="w-4 h-4 text-muted-foreground" />
+					<VolumeX className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
 					<Slider
 						value={[volume]}
 						max={1}
 						step={0.01}
 						onValueChange={handleVolumeChange}
 						className="w-full"
+						aria-label="Reference tone volume"
 					/>
-					<Volume2 className="w-4 h-4 text-muted-foreground" />
+					<Volume2 className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
 				</div>
 
 				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -444,6 +445,9 @@ export function GuitarTuner() {
 										playNote(note);
 									}
 								}}
+								aria-label={`Play reference note ${note.note}`}
+								aria-pressed={selectedNote?.note === note.note}
+								title={`Play ${note.note}`}
 							>
 								{note.note}
 							</Button>
