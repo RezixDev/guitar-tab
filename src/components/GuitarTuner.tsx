@@ -44,26 +44,22 @@ const STANDARD_TUNING: TunerNote[] = [
 
 type TuningStatus = "flat" | "sharp" | "in-tune" | null;
 
-// Constants for pitch detection
 const SMOOTHING_COUNT = 5;
 const IN_TUNE_THRESHOLD_CENTS = 5;
-const MIN_GUITAR_FREQUENCY = 70; // Below lowest guitar string (E2 ~82 Hz)
-const MAX_GUITAR_FREQUENCY = 400; // Above highest standard tuning (E4 ~330 Hz)
+const MIN_GUITAR_FREQUENCY = 70;
+const MAX_GUITAR_FREQUENCY = 400;
 
 export function GuitarTuner() {
 	const [selectedNote, setSelectedNote] = useState<TunerNote | null>(null);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [volume, setVolume] = useState(0.5);
 	const [isMicActive, setIsMicActive] = useState(false);
-	const [detectedFrequency, setDetectedFrequency] = useState<number | null>(
-		null
-	);
+	const [detectedFrequency, setDetectedFrequency] = useState<number | null>(null);
 	const [detectedNote, setDetectedNote] = useState<TunerNote | null>(null);
 	const [tuningStatus, setTuningStatus] = useState<TuningStatus>(null);
 	const [micError, setMicError] = useState<string | null>(null);
 	const [tuningAccuracy, setTuningAccuracy] = useState(50);
-	const [isAudioContextInitialized, setIsAudioContextInitialized] =
-		useState(false);
+	const [isAudioContextInitialized, setIsAudioContextInitialized] = useState(false);
 
 	const audioContextRef = useRef<AudioContext | null>(null);
 	const oscillatorRef = useRef<OscillatorNode | null>(null);
@@ -71,58 +67,34 @@ export function GuitarTuner() {
 	const analyserRef = useRef<AnalyserNode | null>(null);
 	const micStreamRef = useRef<MediaStream | null>(null);
 	const micSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-	const pitchDetectorRef = useRef<
-		((input: Float32Array) => number | null) | null
-	>(null);
+	const pitchDetectorRef = useRef<((input: Float32Array) => number | null) | null>(null);
 	const pitchHistoryRef = useRef<number[]>([]);
 	const animationFrameRef = useRef<number | null>(null);
 
-	/**
-	 * Calculate cents difference between detected and target frequency.
-	 * Positive = sharp, Negative = flat
-	 */
-	const calculateCentsOffPitch = useCallback(
-		(detectedFreq: number, targetFreq: number): number => {
-			return 1200 * Math.log2(detectedFreq / targetFreq);
-		},
-		[]
-	);
+	const calculateCentsOffPitch = useCallback((detectedFreq: number, targetFreq: number): number => {
+		return 1200 * Math.log2(detectedFreq / targetFreq);
+	}, []);
 
-	/**
-	 * Find the closest note to a given frequency using cents calculation.
-	 * This is the key fix - we now find the CLOSEST note rather than checking ranges.
-	 */
-	const findClosestNote = useCallback(
-		(frequency: number): TunerNote => {
-			return STANDARD_TUNING.reduce((closest, note) => {
-				const currentCents = Math.abs(
-					calculateCentsOffPitch(frequency, note.frequency)
-				);
-				const closestCents = Math.abs(
-					calculateCentsOffPitch(frequency, closest.frequency)
-				);
-				return currentCents < closestCents ? note : closest;
-			});
-		},
-		[calculateCentsOffPitch]
-	);
+	const findClosestNote = useCallback((frequency: number): TunerNote => {
+		return STANDARD_TUNING.reduce((closest, note) => {
+			const currentCents = Math.abs(calculateCentsOffPitch(frequency, note.frequency));
+			const closestCents = Math.abs(calculateCentsOffPitch(frequency, closest.frequency));
+			return currentCents < closestCents ? note : closest;
+		});
+	}, [calculateCentsOffPitch]);
 
 	const initializeAudioContext = useCallback(() => {
 		if (!audioContextRef.current) {
 			try {
-				audioContextRef.current = new (window.AudioContext ||
-					(window as unknown as { webkitAudioContext: typeof AudioContext })
-						.webkitAudioContext)();
-
+				audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
 				gainNodeRef.current = audioContextRef.current.createGain();
 				analyserRef.current = audioContextRef.current.createAnalyser();
 				gainNodeRef.current.connect(audioContextRef.current.destination);
 
-				// Initialize Pitchfinder with optimized YIN configuration for guitar
 				const detector = Pitchfinder.YIN({
 					sampleRate: audioContextRef.current.sampleRate,
-					threshold: 0.15, // Lower threshold for better accuracy
-					probabilityThreshold: 0.1, // More lenient probability
+					threshold: 0.15,
+					probabilityThreshold: 0.1,
 				});
 
 				pitchDetectorRef.current = detector;
@@ -135,153 +107,79 @@ export function GuitarTuner() {
 
 	useEffect(() => {
 		return () => {
-			if (animationFrameRef.current) {
-				cancelAnimationFrame(animationFrameRef.current);
-			}
-			if (micStreamRef.current) {
-				micStreamRef.current.getTracks().forEach((track) => track.stop());
-			}
-			if (audioContextRef.current) {
-				audioContextRef.current.close();
-			}
+			if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+			if (micStreamRef.current) micStreamRef.current.getTracks().forEach((track) => track.stop());
+			if (audioContextRef.current) audioContextRef.current.close();
 		};
 	}, []);
 
-	const updateTuningStatus = useCallback(
-		(frequency: number, closestNote: TunerNote) => {
-			const cents = calculateCentsOffPitch(frequency, closestNote.frequency);
-			// Map cents to 0-100 range (50 = in tune, 0 = -50 cents flat, 100 = +50 cents sharp)
-			const accuracy = Math.max(0, Math.min(100, 50 + cents));
-			setTuningAccuracy(accuracy);
+	const updateTuningStatus = useCallback((frequency: number, closestNote: TunerNote) => {
+		const cents = calculateCentsOffPitch(frequency, closestNote.frequency);
+		const accuracy = Math.max(0, Math.min(100, 50 + cents));
+		setTuningAccuracy(accuracy);
 
-			if (Math.abs(cents) < IN_TUNE_THRESHOLD_CENTS) {
-				setTuningStatus("in-tune");
-			} else if (cents < -IN_TUNE_THRESHOLD_CENTS) {
-				setTuningStatus("flat");
-			} else {
-				setTuningStatus("sharp");
-			}
-		},
-		[calculateCentsOffPitch]
-	);
+		if (Math.abs(cents) < IN_TUNE_THRESHOLD_CENTS) {
+			setTuningStatus("in-tune");
+		} else if (cents < -IN_TUNE_THRESHOLD_CENTS) {
+			setTuningStatus("flat");
+		} else {
+			setTuningStatus("sharp");
+		}
+	}, [calculateCentsOffPitch]);
 
 	const startMicrophoneInput = async () => {
 		try {
-			if (!isAudioContextInitialized) {
-				initializeAudioContext();
-			}
-
-			// Resume audio context if suspended (browser autoplay policy)
-			if (audioContextRef.current?.state === "suspended") {
-				await audioContextRef.current.resume();
-			}
+			if (!isAudioContextInitialized) initializeAudioContext();
+			if (audioContextRef.current?.state === "suspended") await audioContextRef.current.resume();
 
 			const stream = await navigator.mediaDevices.getUserMedia({
-				audio: {
-					echoCancellation: false, // Disable for more accurate pitch detection
-					noiseSuppression: false, // Disable to preserve harmonic content
-					autoGainControl: false, // Disable for consistent amplitude
-				},
+				audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
 			});
 			micStreamRef.current = stream;
 
-			if (
-				!audioContextRef.current ||
-				!analyserRef.current ||
-				!pitchDetectorRef.current
-			) {
-				console.error("Required audio components not initialized");
-				return;
-			}
+			if (!audioContextRef.current || !analyserRef.current || !pitchDetectorRef.current) return;
 
-			micSourceRef.current =
-				audioContextRef.current.createMediaStreamSource(stream);
+			micSourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
 			micSourceRef.current.connect(analyserRef.current);
-
-			// Use larger FFT size for better low-frequency resolution (E2 at 82 Hz)
 			analyserRef.current.fftSize = 4096;
-			const bufferLength = analyserRef.current.fftSize;
-			const dataArray = new Float32Array(bufferLength);
+			const dataArray = new Float32Array(analyserRef.current.fftSize);
 
-			// Clear pitch history when starting
 			pitchHistoryRef.current = [];
-
 			setIsMicActive(true);
 			setMicError(null);
 
 			const analyzePitch = () => {
-				if (!analyserRef.current || !pitchDetectorRef.current) {
-					return;
-				}
-
+				if (!analyserRef.current || !pitchDetectorRef.current) return;
 				analyserRef.current.getFloatTimeDomainData(dataArray);
-
 				const frequency = pitchDetectorRef.current(dataArray);
 
-				if (
-					frequency &&
-					frequency > MIN_GUITAR_FREQUENCY &&
-					frequency < MAX_GUITAR_FREQUENCY
-				) {
-					// Add to pitch history for smoothing
+				if (frequency && frequency > MIN_GUITAR_FREQUENCY && frequency < MAX_GUITAR_FREQUENCY) {
 					pitchHistoryRef.current.push(frequency);
-					if (pitchHistoryRef.current.length > SMOOTHING_COUNT) {
-						pitchHistoryRef.current.shift();
-					}
-
-					// Calculate smoothed frequency (rolling average)
-					const smoothedFrequency =
-						pitchHistoryRef.current.reduce((a, b) => a + b, 0) /
-						pitchHistoryRef.current.length;
-
+					if (pitchHistoryRef.current.length > SMOOTHING_COUNT) pitchHistoryRef.current.shift();
+					const smoothedFrequency = pitchHistoryRef.current.reduce((a, b) => a + b, 0) / pitchHistoryRef.current.length;
 					setDetectedFrequency(smoothedFrequency);
-
-					// Find the closest note using cents calculation
 					const closestNote = findClosestNote(smoothedFrequency);
 					setDetectedNote(closestNote);
 					updateTuningStatus(smoothedFrequency, closestNote);
-				} else if (!frequency) {
-					// Only clear if we haven't detected a pitch
-					// Keep the last detection for a moment for stability
-					if (pitchHistoryRef.current.length === 0) {
-						setDetectedFrequency(null);
-						setDetectedNote(null);
-						setTuningStatus(null);
-					}
+				} else if (!frequency && pitchHistoryRef.current.length === 0) {
+					setDetectedFrequency(null);
+					setDetectedNote(null);
+					setTuningStatus(null);
 				}
-
 				animationFrameRef.current = requestAnimationFrame(analyzePitch);
 			};
-
 			analyzePitch();
 		} catch (error) {
-			console.error("Microphone access error:", error);
 			setMicError("Unable to access microphone. Please check permissions.");
 			setIsMicActive(false);
 		}
 	};
 
 	const stopMicrophoneInput = useCallback(() => {
-		if (animationFrameRef.current) {
-			cancelAnimationFrame(animationFrameRef.current);
-			animationFrameRef.current = null;
-		}
-
-		if (micSourceRef.current) {
-			micSourceRef.current.disconnect();
-			micSourceRef.current = null;
-		}
-
-		if (micStreamRef.current) {
-			micStreamRef.current.getTracks().forEach((track) => {
-				track.stop();
-			});
-			micStreamRef.current = null;
-		}
-
-		// Clear pitch history
+		if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+		if (micSourceRef.current) micSourceRef.current.disconnect();
+		if (micStreamRef.current) micStreamRef.current.getTracks().forEach((t) => t.stop());
 		pitchHistoryRef.current = [];
-
 		setIsMicActive(false);
 		setDetectedFrequency(null);
 		setDetectedNote(null);
@@ -289,34 +187,16 @@ export function GuitarTuner() {
 	}, []);
 
 	const playNote = (note: TunerNote) => {
-		if (!isAudioContextInitialized) {
-			initializeAudioContext();
-		}
-
+		if (!isAudioContextInitialized) initializeAudioContext();
 		if (!audioContextRef.current || !gainNodeRef.current) return;
+		if (audioContextRef.current.state === "suspended") audioContextRef.current.resume();
 
-		// Resume audio context if suspended
-		if (audioContextRef.current.state === "suspended") {
-			audioContextRef.current.resume();
-		}
-
-		if (oscillatorRef.current) {
-			oscillatorRef.current.stop();
-			oscillatorRef.current = null;
-		}
-
+		if (oscillatorRef.current) oscillatorRef.current.stop();
 		const osc = audioContextRef.current.createOscillator();
 		osc.type = "sine";
-		osc.frequency.setValueAtTime(
-			note.frequency,
-			audioContextRef.current.currentTime
-		);
+		osc.frequency.setValueAtTime(note.frequency, audioContextRef.current.currentTime);
 		osc.connect(gainNodeRef.current);
-		gainNodeRef.current.gain.setValueAtTime(
-			volume,
-			audioContextRef.current.currentTime
-		);
-
+		gainNodeRef.current.gain.setValueAtTime(volume, audioContextRef.current.currentTime);
 		osc.start();
 		oscillatorRef.current = osc;
 		setSelectedNote(note);
@@ -324,36 +204,22 @@ export function GuitarTuner() {
 	};
 
 	const stopNote = () => {
-		if (oscillatorRef.current) {
-			oscillatorRef.current.stop();
-			oscillatorRef.current = null;
-		}
+		if (oscillatorRef.current) oscillatorRef.current.stop();
 		setIsPlaying(false);
 		setSelectedNote(null);
 	};
 
 	const handleVolumeChange = (value: number[]) => {
-		const newVolume = value[0];
-		setVolume(newVolume);
+		setVolume(value[0]);
 		if (gainNodeRef.current && audioContextRef.current) {
-			gainNodeRef.current.gain.setValueAtTime(
-				newVolume,
-				audioContextRef.current.currentTime
-			);
+			gainNodeRef.current.gain.setValueAtTime(value[0], audioContextRef.current.currentTime);
 		}
 	};
 
-	const toggleMicrophone = () => {
-		if (isMicActive) {
-			stopMicrophoneInput();
-		} else {
-			startMicrophoneInput();
-		}
-	};
+	const toggleMicrophone = () => isMicActive ? stopMicrophoneInput() : startMicrophoneInput();
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-			{/* Main Tuner Section */}
 			<div className="lg:col-span-2">
 				<Card className="w-full">
 					<CardHeader>
@@ -362,17 +228,8 @@ export function GuitarTuner() {
 								<Guitar className="w-5 h-5" />
 								Guitar Tuner
 							</div>
-							<Button
-								variant={isMicActive ? "default" : "outline"}
-								size="sm"
-								onClick={toggleMicrophone}
-								className="w-full sm:w-auto gap-2"
-							>
-								{isMicActive ? (
-									<MicOff className="w-4 h-4" />
-								) : (
-									<Mic className="w-4 h-4" />
-								)}
+							<Button variant={isMicActive ? "default" : "outline"} size="sm" onClick={toggleMicrophone} className="w-full sm:w-auto gap-2">
+								{isMicActive ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
 								{isMicActive ? "Stop" : "Start"} Tuning
 							</Button>
 						</CardTitle>
@@ -388,58 +245,37 @@ export function GuitarTuner() {
 
 						{isMicActive && (
 							<div className="mb-6 p-4 sm:p-6 bg-muted rounded-lg">
-								<div className="space-y-4">
-									<div className="text-center">
-										<div className="text-3xl sm:text-4xl font-bold mb-2">
-											{detectedNote?.note || "--"}
-										</div>
-										<div className="text-base sm:text-lg text-muted-foreground">
-											{detectedFrequency
-												? `${detectedFrequency.toFixed(1)} Hz`
-												: "Listening..."}
-										</div>
+								<div className="space-y-4 text-center">
+									<div className="text-3xl sm:text-4xl font-bold mb-2">{detectedNote?.note || "--"}</div>
+									<div className="text-base sm:text-lg text-muted-foreground">
+										{detectedFrequency ? `${detectedFrequency.toFixed(1)} Hz` : "Listening..."}
 									</div>
 
-									<div className="flex items-center justify-center gap-4">
-										{tuningStatus && (
-											<div
-												className={cn(
-													"flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full font-medium text-sm sm:text-base",
-													tuningStatus === "in-tune" &&
-													"bg-green-500/10 text-green-500",
-													tuningStatus === "flat" && "bg-blue-500/10 text-blue-500",
-													tuningStatus === "sharp" && "bg-red-500/10 text-red-500"
-												)}
-											>
-												{tuningStatus === "in-tune" && (
-													<Check className="w-4 h-4 sm:w-5 sm:h-5" />
-												)}
-												{tuningStatus === "flat" && (
-													<ArrowDown className="w-4 h-4 sm:w-5 sm:h-5" />
-												)}
-												{tuningStatus === "sharp" && (
-													<ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
-												)}
-												<span className="capitalize">{tuningStatus}</span>
-											</div>
-										)}
-									</div>
+									{tuningStatus && (
+										<div className={cn(
+											"inline-flex items-center gap-2 px-4 py-2 rounded-full font-medium mx-auto",
+											tuningStatus === "in-tune" && "bg-green-500/10 text-green-500",
+											tuningStatus === "flat" && "bg-blue-500/10 text-blue-500",
+											tuningStatus === "sharp" && "bg-red-500/10 text-red-500"
+										)}>
+											{tuningStatus === "in-tune" && <Check className="w-5 h-5" />}
+											{tuningStatus === "flat" && <ArrowDown className="w-5 h-5" />}
+											{tuningStatus === "sharp" && <ArrowUp className="w-5 h-5" />}
+											<span className="capitalize">{tuningStatus}</span>
+										</div>
+									)}
 
 									{detectedNote && (
-										<div className="space-y-2">
+										<div className="space-y-2 mt-4">
 											<Progress value={tuningAccuracy} className="h-2" />
 											<div className="flex justify-between text-xs text-muted-foreground">
 												<span>♭ Flat</span>
 												<span>In Tune</span>
 												<span>Sharp ♯</span>
 											</div>
-										</div>
-									)}
-
-									{detectedNote && (
-										<div className="text-center text-xs sm:text-sm text-muted-foreground">
-											String {detectedNote.string} • Target:{" "}
-											{detectedNote.frequency.toFixed(1)} Hz
+											<div className="text-xs sm:text-sm text-muted-foreground">
+												String {detectedNote.string} • Target: {detectedNote.frequency.toFixed(1)} Hz
+											</div>
 										</div>
 									)}
 								</div>
@@ -447,151 +283,66 @@ export function GuitarTuner() {
 						)}
 
 						<div className="flex items-center gap-4 mb-6">
-							<VolumeX className="w-4 h-4 text-muted-foreground" />
-							<Slider
-								value={[volume]}
-								max={1}
-								step={0.01}
-								onValueChange={handleVolumeChange}
-								className="w-full"
-							/>
-							<Volume2 className="w-4 h-4 text-muted-foreground" />
+							<VolumeX className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+							<Slider value={[volume]} max={1} step={0.01} onValueChange={handleVolumeChange} className="w-full" aria-label="Volume" />
+							<Volume2 className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
 						</div>
 
 						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
 							{STANDARD_TUNING.map((note) => (
 								<div key={note.string} className="flex flex-col items-center">
 									<Button
-										variant={
-											selectedNote?.note === note.note ? "default" : "outline"
-										}
+										variant={selectedNote?.note === note.note ? "default" : "outline"}
 										size="lg"
 										className={cn(
 											"w-full aspect-square text-lg font-bold transition-all",
-											selectedNote?.note === note.note &&
-											"bg-primary text-primary-foreground ring-4 ring-primary/30",
-											detectedNote?.note === note.note &&
-											!selectedNote &&
-											"ring-4 ring-green-500/30"
+											selectedNote?.note === note.note && "bg-primary text-primary-foreground ring-4 ring-primary/30",
+											detectedNote?.note === note.note && !selectedNote && "ring-4 ring-green-500/30"
 										)}
-										onClick={() => {
-											if (isPlaying && selectedNote?.note === note.note) {
-												stopNote();
-											} else {
-												playNote(note);
-											}
-										}}
-									>
-										{note.note}
-									</Button>
-									<span className="mt-1 text-xs sm:text-sm text-muted-foreground">
-										String {note.string}
-									</span>
-								</div>
-							))}
-						</div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-							{STANDARD_TUNING.map((note) => (
-								<div key={note.string} className="flex flex-col items-center">
-									<Button
-										variant={
-											selectedNote?.note === note.note ? "default" : "outline"
-										}
-										size="lg"
-										className={cn(
-											"w-full aspect-square text-lg font-bold transition-all",
-											selectedNote?.note === note.note &&
-											"bg-primary text-primary-foreground ring-4 ring-primary/30",
-											detectedNote?.note === note.note &&
-											!selectedNote &&
-											"ring-4 ring-green-500/30"
-										)}
-										onClick={() => {
-											if (isPlaying && selectedNote?.note === note.note) {
-												stopNote();
-											} else {
-												playNote(note);
-											}
-										}}
-										// Added Accessibility features from feature branch
+										onClick={() => isPlaying && selectedNote?.note === note.note ? stopNote() : playNote(note)}
 										aria-label={`Play reference note ${note.note}`}
 										aria-pressed={selectedNote?.note === note.note}
-										title={`Play ${note.note}`}
 									>
 										{note.note}
 									</Button>
-									<span className="mt-1 text-xs sm:text-sm text-muted-foreground">
-										String {note.string}
-									</span>
+									<span className="mt-1 text-xs sm:text-sm text-muted-foreground">String {note.string}</span>
 								</div>
 							))}
 						</div>
 
-              <div className="mt-6 text-xs sm:text-sm text-muted-foreground text-center">
-                {isMicActive
-                  ? "Play a single string to detect its pitch"
-                  : "Click on a note to play/stop the reference tone"}
-              </div>
+						<div className="mt-6 text-xs sm:text-sm text-muted-foreground text-center">
+							{isMicActive ? "Play a single string to detect its pitch" : "Click on a note to play/stop the reference tone"}
 						</div>
 					</CardContent>
 				</Card>
 			</div>
 
-			{/* Information Section */}
 			<div className="lg:col-span-1">
 				<Card>
-					<CardHeader>
-						<CardTitle className="flex items-center gap-2">
-							<Info className="w-5 h-5" />
-							Tuning Guide
-						</CardTitle>
-					</CardHeader>
+					<CardHeader><CardTitle className="flex items-center gap-2"><Info className="w-5 h-5" />Tuning Guide</CardTitle></CardHeader>
 					<CardContent>
 						<Accordion type="single" collapsible className="w-full">
 							<AccordionItem value="standard-tuning">
 								<AccordionTrigger>Standard Tuning (EADGBe)</AccordionTrigger>
 								<AccordionContent>
-									<p className="text-sm text-muted-foreground mb-2">
-										The most common guitar tuning, from lowest to highest
-										string:
-									</p>
-									<ul className="list-disc list-inside space-y-1 text-sm">
-										<li>6th string (thickest): E2 (82.41 Hz)</li>
-										<li>5th string: A2 (110.00 Hz)</li>
-										<li>4th string: D3 (146.83 Hz)</li>
-										<li>3rd string: G3 (196.00 Hz)</li>
-										<li>2nd string: B3 (246.94 Hz)</li>
-										<li>1st string (thinnest): E4 (329.63 Hz)</li>
+									<ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+										<li>6th (thickest): E2 (82.41 Hz)</li>
+										<li>5th: A2 (110.00 Hz)</li>
+										<li>4th: D3 (146.83 Hz)</li>
+										<li>3rd: G3 (196.00 Hz)</li>
+										<li>2nd: B3 (246.94 Hz)</li>
+										<li>1st (thinnest): E4 (329.63 Hz)</li>
 									</ul>
 								</AccordionContent>
 							</AccordionItem>
-
 							<AccordionItem value="how-to-tune">
-								<AccordionTrigger>How to Tune Your Guitar</AccordionTrigger>
+								<AccordionTrigger>How to Tune</AccordionTrigger>
 								<AccordionContent>
 									<ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-										<li>Click &quot;Start Tuning&quot; to enable the microphone</li>
-										<li>Play a single string on your guitar</li>
-										<li>Watch the tuner display to see the detected note</li>
-										<li>
-											Adjust your tuning peg until the indicator shows &quot;In
-											Tune&quot;
-										</li>
-										<li>Repeat for each string</li>
+										<li>Click "Start Tuning"</li>
+										<li>Play a single string</li>
+										<li>Adjust peg until "In Tune" appears</li>
 									</ol>
-								</AccordionContent>
-							</AccordionItem>
-
-							<AccordionItem value="tips">
-								<AccordionTrigger>Tuning Tips</AccordionTrigger>
-								<AccordionContent>
-									<ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-										<li>Always tune up to the note, not down</li>
-										<li>Make small adjustments to the tuning pegs</li>
-										<li>New strings may need to be retuned more frequently</li>
-										<li>Ensure you&apos;re in a quiet environment</li>
-										<li>Check your tuning before each practice session</li>
-									</ul>
 								</AccordionContent>
 							</AccordionItem>
 						</Accordion>
