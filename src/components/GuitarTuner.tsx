@@ -490,11 +490,48 @@ export function GuitarTuner() {
 								</div>
 							))}
 						</div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+							{STANDARD_TUNING.map((note) => (
+								<div key={note.string} className="flex flex-col items-center">
+									<Button
+										variant={
+											selectedNote?.note === note.note ? "default" : "outline"
+										}
+										size="lg"
+										className={cn(
+											"w-full aspect-square text-lg font-bold transition-all",
+											selectedNote?.note === note.note &&
+											"bg-primary text-primary-foreground ring-4 ring-primary/30",
+											detectedNote?.note === note.note &&
+											!selectedNote &&
+											"ring-4 ring-green-500/30"
+										)}
+										onClick={() => {
+											if (isPlaying && selectedNote?.note === note.note) {
+												stopNote();
+											} else {
+												playNote(note);
+											}
+										}}
+										// Added Accessibility features from feature branch
+										aria-label={`Play reference note ${note.note}`}
+										aria-pressed={selectedNote?.note === note.note}
+										title={`Play ${note.note}`}
+									>
+										{note.note}
+									</Button>
+									<span className="mt-1 text-xs sm:text-sm text-muted-foreground">
+										String {note.string}
+									</span>
+								</div>
+							))}
+						</div>
 
-						<div className="mt-6 text-xs sm:text-sm text-muted-foreground text-center">
-							{isMicActive
-								? "Play a single string to detect its pitch"
-								: "Click on a note to play/stop the reference tone"}
+              <div className="mt-6 text-xs sm:text-sm text-muted-foreground text-center">
+                {isMicActive
+                  ? "Play a single string to detect its pitch"
+                  : "Click on a note to play/stop the reference tone"}
+              </div>
 						</div>
 					</CardContent>
 				</Card>
