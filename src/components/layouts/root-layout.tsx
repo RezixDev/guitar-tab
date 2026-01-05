@@ -41,11 +41,11 @@ export const RootLayout = ({
 				disableTransitionOnChange
 			>
 				<SidebarProvider>
-					<div className="flex min-h-screen">
+					<div className="flex min-h-screen w-full">
 						<div className="flex relative">
 							<AppSidebar />
 						</div>
-						<main className="flex-1">
+						<main className="flex-1 min-w-0 relative">
 							<div className="mx-auto max-w-6xl p-4 md:p-8 pt-16 md:pt-8">
 								{children}
 							</div>
