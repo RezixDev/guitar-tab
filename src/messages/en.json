@@ -24,6 +24,10 @@
       "tuner": {
         "title": "Tuner",
         "description": "Tune your guitar accurately"
+      },
+      "practice": {
+        "title": "Daily Practice",
+        "description": "Generate tabs for daily practice exercises"
       }
     },
     "learning": {
