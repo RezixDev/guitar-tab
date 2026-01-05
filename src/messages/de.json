@@ -24,6 +24,10 @@
       "tuner": {
         "title": "Stimmgerät",
         "description": "Stimme deine Gitarre präzise"
+      },
+      "practice": {
+        "title": "Tägliches Üben",
+        "description": "Generiere Tabs für tägliche Übungen"
       }
     },
     "learning": {

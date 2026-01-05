@@ -164,7 +164,7 @@ export function FretboardSVG({
 				{strings.map((stringIndex) =>
 					frets.map((fretIndex) => {
 						const displayStringIndex = toDisplayIndex(stringIndex, isFlipped)
-						const note = calculateNote(stringIndex, fretIndex, tuning)
+						const note = calculateNote(stringIndex, fretIndex + 1, tuning)
 						const showColor = isNewbieMode
 						const bg = showColor ? noteColors[note] : "transparent"
 						const isFocused =
@@ -173,7 +173,7 @@ export function FretboardSVG({
 						return (
 							<g
 								key={`fret-note-${stringIndex}-${fretIndex}`}
-								onClick={() => onFretClick(stringIndex, fretIndex)}
+								onClick={() => onFretClick(stringIndex, fretIndex + 1)}
 								onFocus={() => setFocused({ string: stringIndex, fret: fretIndex })}
 								style={{ cursor: "pointer" }}
 								role="button"
@@ -212,7 +212,7 @@ export function FretboardSVG({
 						return (
 							<>
 								<circle
-									cx={fretSpacing * (currentNote.fret + 0.5)}
+									cx={fretSpacing * (currentNote.fret - 0.5)}
 									cy={stringSpacing * (displayString + 1)}
 									r={12}
 									fill={highContrast ? "#ffffff" : "lightblue"}
@@ -220,7 +220,7 @@ export function FretboardSVG({
 									strokeWidth={1}
 								/>
 								<text
-									x={fretSpacing * (currentNote.fret + 0.5)}
+									x={fretSpacing * (currentNote.fret - 0.5)}
 									y={stringSpacing * (displayString + 1) + 4}
 									textAnchor="middle"
 									fontSize="10"
@@ -240,7 +240,7 @@ export function FretboardSVG({
 					return (
 						<g key={`guessed-${string}-${fret}`}>
 							<circle
-								cx={fretSpacing * (fret + 0.5)}
+								cx={fretSpacing * (fret - 0.5)}
 								cy={stringSpacing * (displayString + 1)}
 								r={12}
 								fill={highContrast ? "#ffffff" : "lightblue"}
@@ -248,7 +248,7 @@ export function FretboardSVG({
 								strokeWidth={1}
 							/>
 							<text
-								x={fretSpacing * (fret + 0.5)}
+								x={fretSpacing * (fret - 0.5)}
 								y={stringSpacing * (displayString + 1) + 4}
 								textAnchor="middle"
 								fontSize="10"

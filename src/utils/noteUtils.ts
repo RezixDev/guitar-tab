@@ -23,7 +23,7 @@ export type NotePosition = {
 };
 
 // The chromatic scale starting from C
-const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+export const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 // Reversed tuning order to match visual representation (high E to low E)
 export const standardTuning: Tuning = ['E', 'B', 'G', 'D', 'A', 'E'];
@@ -58,7 +58,7 @@ export const calculateNote = (string: number, fret: number, tuning: Tuning): str
 
   if (startIndex === -1) return notes[0];
 
-  const noteIndex = (startIndex + 1 + fret) % 12;
+  const noteIndex = (startIndex + fret) % 12;
   return notes[noteIndex];
 };
 
@@ -72,7 +72,7 @@ export const getAllNotePositions = (noteToFind: string, tuning: Tuning): NotePos
 
 
   for (let string = 0; string < tuning.length; string++) {
-    for (let fret = 0; fret <= maxFret; fret++) {
+    for (let fret = 1; fret <= maxFret; fret++) {
       const currentNote = calculateNote(string, fret, tuning);
       if (currentNote === noteToFind) {
         const positionKey = `${string}-${fret}`;

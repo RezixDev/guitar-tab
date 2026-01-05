@@ -22,6 +22,7 @@ import {
 	PlayCircle,
 	Settings,
 	Mic,
+	Dumbbell,
 } from "lucide-react";
 
 export function HomePage() {
@@ -59,6 +60,13 @@ export function HomePage() {
 			icon: Mic,
 			href: `/${locale}/tools/tuner`,
 			color: "text-yellow-500",
+		},
+		{
+			title: t("tools.practice.title"),
+			description: t("tools.practice.description"),
+			icon: Dumbbell,
+			href: `/${locale}/tools/practice`,
+			color: "text-orange-500",
 		},
 	];
 

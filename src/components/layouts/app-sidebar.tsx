@@ -22,7 +22,7 @@ import { useLocale } from "next-intl";
 
 export const AppSidebar = () => {
 	const pathname = usePathname();
-  const locale = useLocale();
+	const locale = useLocale();
 	const { isMobile, openMobile, setOpenMobile } = useSidebar();
 	const [isOpen, setIsOpen] = React.useState(() => {
 		if (typeof window !== "undefined") {
@@ -37,21 +37,22 @@ export const AppSidebar = () => {
 	}, [isOpen]);
 
 	const menuItems = [
-    { icon: Home, label: "Home", href: `/${locale}` },
+		{ icon: Home, label: "Home", href: `/${locale}` },
 		{
 			icon: Guitar,
 			label: "Guitar Tools",
 			href: "#",
 			subItems: [
-        { label: "Fretboard Game", href: `/${locale}/tools/fretboard` },
-        { label: "Scale Viewer", href: `/${locale}/tools/scales` },
-        { label: "Chord Library", href: `/${locale}/tools/chords` },
-        { label: "Guitar Tuner", href: `/${locale}/tools/tuner` },
-		{ label: "Sheet Music Composer", href: `/${locale}/tools/sheet` },
+				{ label: "Fretboard Game", href: `/${locale}/tools/fretboard` },
+				{ label: "Scale Viewer", href: `/${locale}/tools/scales` },
+				{ label: "Chord Library", href: `/${locale}/tools/chords` },
+				{ label: "Guitar Tuner", href: `/${locale}/tools/tuner` },
+				{ label: "Sheet Music Composer", href: `/${locale}/tools/sheet` },
+				{ label: "Daily Practice", href: `/${locale}/tools/practice` },
 			],
 		},
-    { icon: Book, label: "Lessons", href: `/${locale}/learn` },
-    { icon: Settings, label: "Settings", href: `/${locale}/settings` },
+		{ icon: Book, label: "Lessons", href: `/${locale}/learn` },
+		{ icon: Settings, label: "Settings", href: `/${locale}/settings` },
 	];
 
 	return (

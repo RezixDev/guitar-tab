@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useState } from 'react';
+
 import { FretboardScales } from './FretboardScales';
 import {
   Tuning,
@@ -12,9 +12,10 @@ import {
   majorPentatonicScale,
   minorPentatonicScale,
   bluesScale,
+  calculateNote,
+  getScaleNotes,
+  notes as NOTES
 } from '@/utils/noteUtils';
-
-export const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const;
 
 const SCALES = {
   Major: majorScale,
@@ -24,34 +25,20 @@ const SCALES = {
   Blues: bluesScale,
 } as const;
 
-// Korrekte Saitenreihenfolge (von oben nach unten)
-const STRING_ORDER = [
-  'E', // High E
-  'B',
-  'G',
-  'D',
-  'A',
-  'E'  // Low E
-] as const;
-
 type ScaleSelectorProps = {
   selectedScale: string;
   handleScaleChange: (scale: string) => void;
 }
 
 type GroundNoteSelectorProps = {
-  groundNote: Note;
-  handleGroundNoteChange: (note: Note) => void;
+  groundNote: string;
+  handleGroundNoteChange: (note: string) => void;
 }
-
-// Add type for NOTES
-export type Note = (typeof NOTES)[number];
 
 const ScaleSelector = ({
   selectedScale,
   handleScaleChange,
 }: ScaleSelectorProps) => {
-  const { theme } = useTheme();
 
   return (
     <div className="space-y-3">
@@ -60,11 +47,10 @@ const ScaleSelector = ({
         {Object.keys(SCALES).map((scale) => (
           <button
             key={scale}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedScale === scale
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted hover:bg-muted/80'
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedScale === scale
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted hover:bg-muted/80'
+              }`}
             onClick={() => handleScaleChange(scale)}
           >
             {scale}
@@ -79,7 +65,6 @@ const GroundNoteSelector = ({
   groundNote,
   handleGroundNoteChange,
 }: GroundNoteSelectorProps) => {
-  const { theme } = useTheme();
 
   return (
     <div className="space-y-3">
@@ -88,11 +73,10 @@ const GroundNoteSelector = ({
         {NOTES.map((note) => (
           <button
             key={note}
-            className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-              groundNote === note
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted hover:bg-muted/80'
-            }`}
+            className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${groundNote === note
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted hover:bg-muted/80'
+              }`}
             onClick={() => handleGroundNoteChange(note)}
           >
             {note}
@@ -114,49 +98,15 @@ export const ScaleViewer = ({
 }) => {
   const [guessedPositions, setGuessedPositions] = useState<NotePosition[]>([]);
   const [selectedScale, setSelectedScale] = useState<string>('Major');
-  const [groundNote, setGroundNote] = useState<Note>('C');
-  const { theme } = useTheme();
-
-  // Hilfsfunktion zum Finden aller Positionen einer Note auf dem Griffbrett
-  const findNotePositions = (targetNote: string): NotePosition[] => {
-    const positions: NotePosition[] = [];
-    
-    // Iteriere über alle Saiten
-    for (let string = 0; string < 6; string++) {
-      const openNote = STRING_ORDER[string];
-      const openNoteIndex = NOTES.indexOf(openNote);
-      
-      // Überprüfe die ersten 12 Bünde
-      for (let fret = 0; fret <= 12; fret++) {
-        const noteIndex = (openNoteIndex  + 1 + fret) % 12;
-        const currentNote = NOTES[noteIndex];
-        
-        if (currentNote === targetNote) {
-          positions.push({
-            string,
-            fret,
-            note: targetNote
-          });
-        }
-      }
-    }
-    
-    return positions;
-  };
+  const [groundNote, setGroundNote] = useState<string>('C');
 
   const handleFretClick = (visualString: number, fret: number) => {
-    const clickedPosition = { 
+    const clickedPosition = {
       string: visualString,
-      fret, 
-      note: calculateNoteAtPosition(visualString, fret)
+      fret,
+      note: calculateNote(visualString, fret, tuning)
     };
     setGuessedPositions([...guessedPositions, clickedPosition]);
-  };
-
-  const calculateNoteAtPosition = (string: number, fret: number): string => {
-    const stringNote = STRING_ORDER[string];
-    const noteIndex = NOTES.indexOf(stringNote);
-    return NOTES[(noteIndex + fret) % 12];
   };
 
   const handleScaleChange = (scale: string) => {
@@ -164,25 +114,15 @@ export const ScaleViewer = ({
     setGuessedPositions([]);
   };
 
-  const handleGroundNoteChange = (note: Note) => {
+  const handleGroundNoteChange = (note: string) => {
     setGroundNote(note);
     setGuessedPositions([]);
   };
 
-  const calculateScaleNotes = (): string[] => {
-    const scaleType = selectedScale as keyof typeof SCALES;
-    const scale = SCALES[scaleType];
-    if (!scale) return [];
-    
-    const rootIndex = NOTES.indexOf(groundNote);
-    return scale.map((interval) => {
-      const noteIndex = (rootIndex + interval) % 12;
-      return NOTES[noteIndex];
-    });
-  };
-
-  const scaleNotes = calculateScaleNotes();
-  const scalePositions = scaleNotes.flatMap(note => findNotePositions(note));
+  const scaleType = selectedScale as keyof typeof SCALES;
+  const scaleIntervals = SCALES[scaleType];
+  const scaleNotes = getScaleNotes(groundNote, scaleIntervals ? [...scaleIntervals] : []);
+  const scalePositions = scaleNotes.flatMap(note => getAllNotePositions(note, tuning));
 
   return (
     <div className="scale-viewer rounded-xl p-6 border bg-card text-card-foreground">
@@ -198,7 +138,7 @@ export const ScaleViewer = ({
       </div>
       <div className="overflow-x-auto rounded-lg bg-muted p-4">
         <FretboardScales
-          tuning={STRING_ORDER as unknown as Tuning}
+          tuning={tuning}
           width={width}
           height={height}
           onFretClick={handleFretClick}
