@@ -252,12 +252,16 @@ export function GuitarTuner() {
 									</div>
 
 									{tuningStatus && (
-										<div className={cn(
-											"inline-flex items-center gap-2 px-4 py-2 rounded-full font-medium mx-auto",
-											tuningStatus === "in-tune" && "bg-green-500/10 text-green-500",
-											tuningStatus === "flat" && "bg-blue-500/10 text-blue-500",
-											tuningStatus === "sharp" && "bg-red-500/10 text-red-500"
-										)}>
+										<div
+											role="status"
+											aria-live="polite"
+											className={cn(
+												"inline-flex items-center gap-2 px-4 py-2 rounded-full font-medium mx-auto",
+												tuningStatus === "in-tune" && "bg-green-500/10 text-green-500",
+												tuningStatus === "flat" && "bg-blue-500/10 text-blue-500",
+												tuningStatus === "sharp" && "bg-red-500/10 text-red-500"
+											)}
+										>
 											{tuningStatus === "in-tune" && <Check className="w-5 h-5" />}
 											{tuningStatus === "flat" && <ArrowDown className="w-5 h-5" />}
 											{tuningStatus === "sharp" && <ArrowUp className="w-5 h-5" />}
@@ -267,8 +271,17 @@ export function GuitarTuner() {
 
 									{detectedNote && (
 										<div className="space-y-2 mt-4">
-											<Progress value={tuningAccuracy} className="h-2" />
-											<div className="flex justify-between text-xs text-muted-foreground">
+											<Progress
+												value={tuningAccuracy}
+												className="h-2"
+												aria-label="Tuning accuracy"
+												aria-valuetext={
+													tuningStatus === "in-tune" ? "In Tune" :
+														tuningStatus === "flat" ? "Flat" :
+															tuningStatus === "sharp" ? "Sharp" : undefined
+												}
+											/>
+											<div className="flex justify-between text-xs text-muted-foreground" aria-hidden="true">
 												<span>♭ Flat</span>
 												<span>In Tune</span>
 												<span>Sharp ♯</span>
