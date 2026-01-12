@@ -6,13 +6,13 @@ export type GameSession = {
   correctAttempts: number;
   timeSpent: number;
   notesPlayed: string[];
-}
+};
 
 export class StatisticsManager {
   private storage: Storage | null = null;
 
   constructor() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       this.storage = window.localStorage;
     }
   }
@@ -27,9 +27,11 @@ export class StatisticsManager {
 
     stats[note].attempts++;
     if (correct) stats[note].correct++;
-    stats[note].avgTime = (stats[note].avgTime * (stats[note].attempts - 1) + time) / stats[note].attempts;
+    stats[note].avgTime =
+      (stats[note].avgTime * (stats[note].attempts - 1) + time) /
+      stats[note].attempts;
 
-    this.storage.setItem('fretboard_stats', JSON.stringify(stats));
+    this.storage.setItem("fretboard_stats", JSON.stringify(stats));
   }
 
   saveSession(session: GameSession) {
@@ -37,18 +39,31 @@ export class StatisticsManager {
 
     const sessions = this.getSessions();
     sessions.push(session);
-    this.storage.setItem('fretboard_sessions', JSON.stringify(sessions));
+    this.storage.setItem("fretboard_sessions", JSON.stringify(sessions));
   }
 
   private getStats() {
     if (!this.storage) return {};
-    const stats = this.storage.getItem('fretboard_stats');
-    return stats ? JSON.parse(stats) : {};
+    const stats = this.storage.getItem("fretboard_stats");
+    if (!stats) return {};
+    try {
+      return JSON.parse(stats);
+    } catch (error) {
+      console.warn("Error parsing fretboard_stats:", error);
+      return {};
+    }
   }
 
   private getSessions() {
     if (!this.storage) return [];
-    const sessions = this.storage.getItem('fretboard_sessions');
-    return sessions ? JSON.parse(sessions) : [];
+    const sessions = this.storage.getItem("fretboard_sessions");
+    if (!sessions) return [];
+    try {
+      const parsed = JSON.parse(sessions);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.warn("Error parsing fretboard_sessions:", error);
+      return [];
+    }
   }
 }
