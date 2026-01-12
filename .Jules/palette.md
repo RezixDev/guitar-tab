@@ -1,0 +1,3 @@
+## 2025-05-24 - Fretboard Keyboard Navigation
+**Learning:** For SVG-based interactive grids like the Fretboard, relying on a single focusable container (the SVG) creates a disjointed experience for screen reader users because the "virtual cursor" (state) doesn't match the browser's focus.
+**Action:** Implement the "Roving Tabindex" pattern: remove `tabIndex` from the container, apply `tabIndex={isFocused ? 0 : -1}` to the individual child elements (notes), and programmatically move focus (`.focus()`) when arrow keys are pressed. This ensures the screen reader announces the new element immediately.

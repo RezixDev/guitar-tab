@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useCallback } from "react"
+import { useMemo, useState, useCallback, useId } from "react"
 import { Tuning, Note, NotePosition, calculateNote } from "@/utils/noteUtils"
 
 type FretboardSVGProps = {
@@ -76,6 +76,7 @@ export function FretboardSVG({
 	isEasyMode,
 }: FretboardSVGProps) {
 	const [focused, setFocused] = useState<{ string: number; fret: number }>({ string: 0, fret: 0 })
+	const idPrefix = useId()
 
 	const stringSpacing = height / (STRING_COUNT + 1)
 	const fretSpacing = width / (FRET_COUNT + 1)
@@ -85,25 +86,38 @@ export function FretboardSVG({
 	const frets = useMemo(() => Array.from({ length: FRET_COUNT }, (_, i) => i), [])
 
 	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent<SVGSVGElement>) => {
+		(e: React.KeyboardEvent<SVGGElement>) => {
+			const direction = isFlipped ? -1 : 1
+			let nextString = focused.string
+			let nextFret = focused.fret
+			let handled = false
+
 			if (e.key === "ArrowUp") {
-				setFocused((p) => ({ ...p, string: clamp(p.string - 1, 0, STRING_COUNT - 1) }))
-				e.preventDefault()
+				// Move visually up (which might mean decreasing string index depending on flip)
+				nextString = clamp(focused.string + direction, 0, STRING_COUNT - 1)
+				handled = true
 			} else if (e.key === "ArrowDown") {
-				setFocused((p) => ({ ...p, string: clamp(p.string + 1, 0, STRING_COUNT - 1) }))
-				e.preventDefault()
+				nextString = clamp(focused.string - direction, 0, STRING_COUNT - 1)
+				handled = true
 			} else if (e.key === "ArrowLeft") {
-				setFocused((p) => ({ ...p, fret: clamp(p.fret - 1, 0, FRET_COUNT - 1) }))
-				e.preventDefault()
+				nextFret = clamp(focused.fret - 1, 0, FRET_COUNT - 1)
+				handled = true
 			} else if (e.key === "ArrowRight") {
-				setFocused((p) => ({ ...p, fret: clamp(p.fret + 1, 0, FRET_COUNT - 1) }))
-				e.preventDefault()
+				nextFret = clamp(focused.fret + 1, 0, FRET_COUNT - 1)
+				handled = true
 			} else if (e.key === "Enter" || e.key === " ") {
 				onFretClick(focused.string, focused.fret)
 				e.preventDefault()
+				return
+			}
+
+			if (handled) {
+				e.preventDefault()
+				const id = `${idPrefix}-fret-${nextString}-${nextFret}`
+				document.getElementById(id)?.focus()
 			}
 		},
-		[focused.fret, focused.string, onFretClick]
+		[focused.fret, focused.string, onFretClick, isFlipped, idPrefix]
 	)
 
 	return (
@@ -114,10 +128,8 @@ export function FretboardSVG({
 			preserveAspectRatio="xMidYMid meet"
 			xmlns="http://www.w3.org/2000/svg"
 			className={`border border-gray-400 rounded-lg ${highContrast ? "bg-black" : "bg-white"}`}
-			tabIndex={0}
 			role="application"
 			aria-label="Guitar Fretboard"
-			onKeyDown={handleKeyDown}
 		>
 			<g transform="translate(40, 0)">
 				{strings.map((i) => (
@@ -173,11 +185,13 @@ export function FretboardSVG({
 						return (
 							<g
 								key={`fret-note-${stringIndex}-${fretIndex}`}
+								id={`${idPrefix}-fret-${stringIndex}-${fretIndex}`}
 								onClick={() => onFretClick(stringIndex, fretIndex + 1)}
 								onFocus={() => setFocused({ string: stringIndex, fret: fretIndex })}
+								onKeyDown={handleKeyDown}
 								style={{ cursor: "pointer" }}
 								role="button"
-								tabIndex={0}
+								tabIndex={isFocused ? 0 : -1}
 								aria-label={`String ${stringIndex + 1}, Fret ${fretIndex + 1
 									}, Note ${note}`}
 							>
