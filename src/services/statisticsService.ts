@@ -1,12 +1,24 @@
 // app/services/statisticsService.ts
-export type GameSession = {
-  date: Date;
-  mode: string;
-  totalAttempts: number;
-  correctAttempts: number;
-  timeSpent: number;
-  notesPlayed: string[];
-}
+import { z } from 'zod';
+
+const NoteStatsSchema = z.object({
+  attempts: z.number(),
+  correct: z.number(),
+  avgTime: z.number(),
+});
+
+const StatsSchema = z.record(z.string(), NoteStatsSchema);
+
+const GameSessionSchema = z.object({
+  date: z.coerce.date(),
+  mode: z.string(),
+  totalAttempts: z.number(),
+  correctAttempts: z.number(),
+  timeSpent: z.number(),
+  notesPlayed: z.array(z.string()),
+});
+
+export type GameSession = z.infer<typeof GameSessionSchema>;
 
 export class StatisticsManager {
   private storage: Storage | null = null;
@@ -29,7 +41,11 @@ export class StatisticsManager {
     if (correct) stats[note].correct++;
     stats[note].avgTime = (stats[note].avgTime * (stats[note].attempts - 1) + time) / stats[note].attempts;
 
-    this.storage.setItem('fretboard_stats', JSON.stringify(stats));
+    try {
+      this.storage.setItem('fretboard_stats', JSON.stringify(stats));
+    } catch (e) {
+      console.error('Failed to save stats', e);
+    }
   }
 
   saveSession(session: GameSession) {
@@ -37,18 +53,52 @@ export class StatisticsManager {
 
     const sessions = this.getSessions();
     sessions.push(session);
-    this.storage.setItem('fretboard_sessions', JSON.stringify(sessions));
+    try {
+      this.storage.setItem('fretboard_sessions', JSON.stringify(sessions));
+    } catch (e) {
+      console.error('Failed to save session', e);
+    }
   }
 
   private getStats() {
     if (!this.storage) return {};
-    const stats = this.storage.getItem('fretboard_stats');
-    return stats ? JSON.parse(stats) : {};
+    try {
+      const stats = this.storage.getItem('fretboard_stats');
+      if (!stats) return {};
+
+      const parsed = JSON.parse(stats);
+      const result = StatsSchema.safeParse(parsed);
+
+      if (result.success) {
+        return result.data;
+      } else {
+        console.warn('Invalid stats data in localStorage, resetting.', result.error);
+        return {};
+      }
+    } catch (e) {
+      console.error('Failed to parse stats from localStorage', e);
+      return {};
+    }
   }
 
   private getSessions() {
     if (!this.storage) return [];
-    const sessions = this.storage.getItem('fretboard_sessions');
-    return sessions ? JSON.parse(sessions) : [];
+    try {
+      const sessions = this.storage.getItem('fretboard_sessions');
+      if (!sessions) return [];
+
+      const parsed = JSON.parse(sessions);
+      const result = z.array(GameSessionSchema).safeParse(parsed);
+
+      if (result.success) {
+        return result.data;
+      } else {
+        console.warn('Invalid sessions data in localStorage, resetting.', result.error);
+        return [];
+      }
+    } catch (e) {
+      console.error('Failed to parse sessions from localStorage', e);
+      return [];
+    }
   }
 }
