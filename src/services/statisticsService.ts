@@ -1,4 +1,5 @@
-// app/services/statisticsService.ts
+import { z } from 'zod';
+
 export type GameSession = {
   date: Date;
   mode: string;
@@ -7,6 +8,25 @@ export type GameSession = {
   timeSpent: number;
   notesPlayed: string[];
 }
+
+const NoteStatSchema = z.object({
+  attempts: z.number().default(0),
+  correct: z.number().default(0),
+  avgTime: z.number().default(0),
+});
+
+const StatsSchema = z.record(z.string(), NoteStatSchema);
+
+const GameSessionSchema = z.object({
+  date: z.coerce.date(),
+  mode: z.string().default('unknown'),
+  totalAttempts: z.number().default(0),
+  correctAttempts: z.number().default(0),
+  timeSpent: z.number().default(0),
+  notesPlayed: z.array(z.string()).default([]),
+});
+
+const SessionsSchema = z.array(GameSessionSchema);
 
 export class StatisticsManager {
   private storage: Storage | null = null;
@@ -40,15 +60,38 @@ export class StatisticsManager {
     this.storage.setItem('fretboard_sessions', JSON.stringify(sessions));
   }
 
-  private getStats() {
+  private getStats(): z.infer<typeof StatsSchema> {
     if (!this.storage) return {};
-    const stats = this.storage.getItem('fretboard_stats');
-    return stats ? JSON.parse(stats) : {};
+    try {
+      const stats = this.storage.getItem('fretboard_stats');
+      if (!stats) return {};
+      // Use safeParse to handle potential schema mismatches without throwing
+      const result = StatsSchema.safeParse(JSON.parse(stats));
+      if (!result.success) {
+        console.warn('Invalid stats data found, resetting or partial load:', result.error);
+        return {};
+      }
+      return result.data;
+    } catch (error) {
+      console.error('Error loading stats:', error);
+      return {};
+    }
   }
 
-  private getSessions() {
+  private getSessions(): z.infer<typeof SessionsSchema> {
     if (!this.storage) return [];
-    const sessions = this.storage.getItem('fretboard_sessions');
-    return sessions ? JSON.parse(sessions) : [];
+    try {
+      const sessions = this.storage.getItem('fretboard_sessions');
+      if (!sessions) return [];
+      const result = SessionsSchema.safeParse(JSON.parse(sessions));
+      if (!result.success) {
+        console.warn('Invalid sessions data found:', result.error);
+        return [];
+      }
+      return result.data;
+    } catch (error) {
+      console.error('Error loading sessions:', error);
+      return [];
+    }
   }
 }
