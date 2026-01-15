@@ -2,6 +2,7 @@
 import { useState } from 'react';
 
 import { FretboardScales } from './FretboardScales';
+import { Button } from '@/components/ui/button';
 import {
   Tuning,
   standardTuning,
@@ -45,16 +46,14 @@ const ScaleSelector = ({
       <h2 className="text-lg font-bold">Select Scale</h2>
       <div className="flex flex-wrap gap-2">
         {Object.keys(SCALES).map((scale) => (
-          <button
+          <Button
             key={scale}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedScale === scale
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted hover:bg-muted/80'
-              }`}
+            variant={selectedScale === scale ? 'default' : 'secondary'}
             onClick={() => handleScaleChange(scale)}
+            aria-pressed={selectedScale === scale}
           >
             {scale}
-          </button>
+          </Button>
         ))}
       </div>
     </div>
@@ -71,16 +70,15 @@ const GroundNoteSelector = ({
       <h2 className="text-lg font-bold">Select Root Note</h2>
       <div className="flex flex-wrap gap-2">
         {NOTES.map((note) => (
-          <button
+          <Button
             key={note}
-            className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${groundNote === note
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted hover:bg-muted/80'
-              }`}
+            variant={groundNote === note ? 'default' : 'secondary'}
+            className="w-10 h-10 p-0"
             onClick={() => handleGroundNoteChange(note)}
+            aria-pressed={groundNote === note}
           >
             {note}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

@@ -1,0 +1,3 @@
+## 2024-05-23 - Accessibility Upgrade for Interactive Elements
+**Learning:** Replacing raw HTML `button` elements with Shadcn `Button` components significantly improves accessibility out-of-the-box (focus rings, semantic variants) and maintains design consistency.
+**Action:** When auditing interactive components like selectors, prioritize refactoring to use the design system's `Button` component over custom-styled `div` or `button` tags, and ensure `aria-pressed` is used for toggle-like states.

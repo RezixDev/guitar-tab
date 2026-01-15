@@ -1,0 +1,13 @@
+
+> guitar-tab@0.1.0 dev /app
+> next dev --turbopack
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 4.5s
+○ Compiling /[locale]/tools/scales ...
+ GET /en/tools/scales 200 in 8.2s (compile: 7.2s, proxy.ts: 220ms, generate-params: 952ms, render: 693ms)
