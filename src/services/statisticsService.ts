@@ -1,12 +1,24 @@
 // app/services/statisticsService.ts
-export type GameSession = {
-  date: Date;
-  mode: string;
-  totalAttempts: number;
-  correctAttempts: number;
-  timeSpent: number;
-  notesPlayed: string[];
-}
+import { z } from 'zod';
+
+const NoteStatSchema = z.object({
+  attempts: z.number(),
+  correct: z.number(),
+  avgTime: z.number(),
+});
+
+const StatsSchema = z.record(z.string(), NoteStatSchema);
+
+const GameSessionSchema = z.object({
+  date: z.coerce.date(),
+  mode: z.string(),
+  totalAttempts: z.number(),
+  correctAttempts: z.number(),
+  timeSpent: z.number(),
+  notesPlayed: z.array(z.string()),
+});
+
+export type GameSession = z.infer<typeof GameSessionSchema>;
 
 export class StatisticsManager {
   private storage: Storage | null = null;
@@ -42,13 +54,43 @@ export class StatisticsManager {
 
   private getStats() {
     if (!this.storage) return {};
-    const stats = this.storage.getItem('fretboard_stats');
-    return stats ? JSON.parse(stats) : {};
+    try {
+      const stats = this.storage.getItem('fretboard_stats');
+      if (!stats) return {};
+
+      const parsed = JSON.parse(stats);
+      const result = StatsSchema.safeParse(parsed);
+
+      if (!result.success) {
+        console.error('Failed to parse stats:', result.error);
+        return {};
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error reading stats from storage:', error);
+      return {};
+    }
   }
 
   private getSessions() {
     if (!this.storage) return [];
-    const sessions = this.storage.getItem('fretboard_sessions');
-    return sessions ? JSON.parse(sessions) : [];
+    try {
+      const sessions = this.storage.getItem('fretboard_sessions');
+      if (!sessions) return [];
+
+      const parsed = JSON.parse(sessions);
+      const result = z.array(GameSessionSchema).safeParse(parsed);
+
+      if (!result.success) {
+        console.error('Failed to parse sessions:', result.error);
+        return [];
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error reading sessions from storage:', error);
+      return [];
+    }
   }
 }
