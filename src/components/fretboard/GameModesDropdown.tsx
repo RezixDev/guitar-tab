@@ -1,6 +1,4 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Info } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export type GameMode = "newbie" | "easy" | "hard" | "time" | "findAll"
 
@@ -27,37 +25,29 @@ export function GameModesDropdown({
 	disabled = false,
 	translations,
 }: GameModesDropdownProps) {
+	const selectedDescription = translations.modes[value].description;
+	const descriptionId = "game-mode-description";
+
 	return (
-		<div className="flex items-center gap-2">
-			<TooltipProvider>
-				<Select value={value} onValueChange={(v) => onChange(v as GameMode)} disabled={disabled}>
-					<SelectTrigger className="w-[200px]">
-						<SelectValue placeholder={translations.placeholder} />
-					</SelectTrigger>
-					<SelectContent>
-						{ORDER.map((key) => {
-							const { label, description } = translations.modes[key]
-							return (
-								<SelectItem key={key} value={key}>
-									<div className="flex items-center justify-between gap-2">
-										<span>{label}</span>
-										<Tooltip>
-											<TooltipTrigger asChild>
-												<span tabIndex={0} className="inline-flex">
-													<Info className="h-4 w-4 text-muted-foreground" />
-												</span>
-											</TooltipTrigger>
-											<TooltipContent>
-												<p>{description}</p>
-											</TooltipContent>
-										</Tooltip>
-									</div>
-								</SelectItem>
-							)
-						})}
-					</SelectContent>
-				</Select>
-			</TooltipProvider>
+		<div className="flex flex-col gap-2">
+			<Select value={value} onValueChange={(v) => onChange(v as GameMode)} disabled={disabled}>
+				<SelectTrigger className="w-full md:w-[200px]" aria-describedby={descriptionId}>
+					<SelectValue placeholder={translations.placeholder} />
+				</SelectTrigger>
+				<SelectContent>
+					{ORDER.map((key) => {
+						const { label } = translations.modes[key]
+						return (
+							<SelectItem key={key} value={key}>
+								{label}
+							</SelectItem>
+						)
+					})}
+				</SelectContent>
+			</Select>
+			<p id={descriptionId} className="text-sm text-muted-foreground">
+				{selectedDescription}
+			</p>
 		</div>
 	)
 }
