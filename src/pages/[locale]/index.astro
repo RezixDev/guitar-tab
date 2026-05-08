@@ -1,0 +1,15 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Home from "@features/home/Home.astro";
+import { LOCALES, type Locale } from "@shared/types/i18n";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout locale={locale} title="Guitar Lab">
+  <Home locale={locale} />
+</BaseLayout>

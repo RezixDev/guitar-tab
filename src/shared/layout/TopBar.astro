@@ -1,0 +1,58 @@
+---
+import type { Locale } from "@shared/types/i18n";
+import { getMessages } from "@shared/i18n/getMessages";
+import { makeTranslator } from "@shared/i18n/translate";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MobileNav } from "./MobileNav";
+import { ThemeIsland } from "@shared/theme/ThemeIsland";
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+const messages = getMessages(locale);
+const t = makeTranslator(messages);
+const base = `/${locale}`;
+
+const sections = [
+  {
+    label: "Overview",
+    links: [{ label: "Home", href: base }],
+  },
+  {
+    label: t("home.tools.title") || "Tools",
+    links: [
+      { label: t("home.tools.fretboard.title"), href: `${base}/tools/fretboard` },
+      { label: t("home.tools.scales.title"), href: `${base}/tools/scales` },
+      { label: t("home.tools.chords.title"), href: `${base}/tools/chords` },
+      { label: t("home.tools.tuner.title"), href: `${base}/tools/tuner` },
+      { label: t("home.tools.practice.title"), href: `${base}/tools/practice` },
+      { label: "Sheet Composer", href: `${base}/tools/sheet` },
+    ],
+  },
+  {
+    label: t("home.learning.title") || "Learning",
+    links: [{ label: t("learn.title"), href: `${base}/learn` }],
+  },
+];
+---
+
+<header
+  class="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-bg)]/80 px-4 md:px-6 backdrop-blur"
+>
+  <div class="flex items-center gap-2">
+    <MobileNav
+      client:load
+      brand="Guitar Lab"
+      sections={sections}
+      pathname={pathname}
+    />
+    <span class="md:hidden text-base font-semibold">Guitar Lab</span>
+  </div>
+  <div class="flex items-center gap-1">
+    <ThemeIsland client:only="react" />
+    <LanguageSwitcher client:load locale={locale} pathname={pathname} />
+  </div>
+</header>

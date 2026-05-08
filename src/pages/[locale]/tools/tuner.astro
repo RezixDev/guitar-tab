@@ -1,0 +1,15 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import TunerApp from "@features/tuner/TunerApp";
+import { LOCALES, type Locale } from "@shared/types/i18n";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout locale={locale} title="Tuner — Guitar Lab">
+  <TunerApp client:load />
+</BaseLayout>

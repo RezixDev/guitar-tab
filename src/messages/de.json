@@ -189,6 +189,12 @@
       "remainingPosition": "Richtig! Noch 1 Position übrig.",
       "tryAgainAll": "Versuch es noch einmal! Finde alle Positionen dieser Note.",
       "correct": "Richtig!"
+    },
+    "positions": {
+      "found": "Gefundene Positionen",
+      "remainingMany": "Noch {count} Positionen übrig",
+      "remainingOne": "Noch 1 Position übrig",
+      "allFound": "Alle Positionen gefunden! Drücke Enter oder klicke auf Nächste Note, um fortzufahren"
     }
   }
 }

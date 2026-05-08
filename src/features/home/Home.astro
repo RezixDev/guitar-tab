@@ -1,0 +1,219 @@
+---
+import type { Locale } from "@shared/types/i18n";
+import { getMessages } from "@shared/i18n/getMessages";
+import { makeTranslator } from "@shared/i18n/translate";
+import Icon from "./HeroIcons.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const messages = getMessages(locale);
+const t = makeTranslator(messages, "home");
+const base = `/${locale}`;
+
+const tools = [
+  {
+    icon: "guitar",
+    title: t("tools.fretboard.title"),
+    description: t("tools.fretboard.description"),
+    href: `${base}/tools/fretboard`,
+    accent: "from-violet-500/20 to-fuchsia-500/20",
+  },
+  {
+    icon: "music",
+    title: t("tools.scales.title"),
+    description: t("tools.scales.description"),
+    href: `${base}/tools/scales`,
+    accent: "from-sky-500/20 to-cyan-500/20",
+  },
+  {
+    icon: "bookopen",
+    title: t("tools.chords.title"),
+    description: t("tools.chords.description"),
+    href: `${base}/tools/chords`,
+    accent: "from-emerald-500/20 to-teal-500/20",
+  },
+  {
+    icon: "mic",
+    title: t("tools.tuner.title"),
+    description: t("tools.tuner.description"),
+    href: `${base}/tools/tuner`,
+    accent: "from-amber-500/20 to-orange-500/20",
+  },
+  {
+    icon: "dumbbell",
+    title: t("tools.practice.title"),
+    description: t("tools.practice.description"),
+    href: `${base}/tools/practice`,
+    accent: "from-rose-500/20 to-pink-500/20",
+  },
+  {
+    icon: "filetext",
+    title: "Sheet Composer",
+    description: "Compose simple melodies on a treble-clef staff.",
+    href: `${base}/tools/sheet`,
+    accent: "from-indigo-500/20 to-blue-500/20",
+  },
+] as const;
+
+const learningPaths = [
+  {
+    icon: "graduation",
+    title: t("learning.paths.learn.title"),
+    description: t("learning.paths.learn.description"),
+    href: `${base}/learn`,
+    features: [
+      t("learning.paths.learn.features.beginner"),
+      t("learning.paths.learn.features.intermediate"),
+      t("learning.paths.learn.features.advanced"),
+      t("learning.paths.learn.features.songs"),
+    ],
+  },
+  {
+    icon: "target",
+    title: t("learning.paths.practice.title"),
+    description: t("learning.paths.practice.description"),
+    href: `${base}/tools/practice`,
+    features: [
+      t("learning.paths.practice.features.exercises"),
+      t("learning.paths.practice.features.routines"),
+      t("learning.paths.practice.features.sessions"),
+      t("learning.paths.practice.features.progress"),
+    ],
+  },
+  {
+    icon: "book",
+    title: t("learning.paths.theory.title"),
+    description: t("learning.paths.theory.description"),
+    href: `${base}/learn`,
+    features: [
+      t("learning.paths.theory.features.circle"),
+      t("learning.paths.theory.features.keys"),
+      t("learning.paths.theory.features.chords"),
+      t("learning.paths.theory.features.harmony"),
+    ],
+  },
+] as const;
+---
+
+<section class="relative overflow-hidden border-b border-[var(--color-border)]">
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-[var(--color-accent-soft)] via-transparent to-transparent"
+  >
+  </div>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 md:py-28">
+    <div class="max-w-3xl">
+      <p
+        class="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs font-medium text-[var(--color-fg-muted)]"
+      >
+        <span class="size-1.5 rounded-full bg-[var(--color-accent)]"></span>
+        Interactive guitar toolkit
+      </p>
+      <h1
+        class="text-4xl font-semibold leading-tight tracking-tight md:text-6xl"
+      >
+        {t("hero.title")}
+      </h1>
+      <p
+        class="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--color-fg-muted)]"
+      >
+        {t("hero.subtitle")}
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href={`${base}/tools/fretboard`}
+          class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-[var(--color-accent-fg)] transition hover:opacity-90"
+        >
+          {t("hero.getStarted")}
+          <Icon name="arrow" class="size-4" />
+        </a>
+        <a
+          href="#tools"
+          class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-5 py-2.5 text-sm font-medium transition hover:bg-[var(--color-accent-soft)]"
+        >
+          {t("hero.exploreTools")}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tools" class="mx-auto max-w-6xl px-4 py-16">
+  <div class="mb-8 flex items-end justify-between">
+    <h2 class="text-2xl font-semibold tracking-tight md:text-3xl">
+      {t("tools.title")}
+    </h2>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      tools.map((tool) => (
+        <a
+          href={tool.href}
+          class="group relative flex flex-col gap-4 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 transition hover:border-[var(--color-accent)] hover:shadow-md"
+        >
+          <div
+            class:list={[
+              "absolute inset-x-0 top-0 h-24 bg-gradient-to-br opacity-60 transition group-hover:opacity-100",
+              tool.accent,
+            ]}
+          />
+          <div class="relative flex size-10 items-center justify-center rounded-lg bg-[var(--color-bg)] text-[var(--color-accent)] shadow-sm">
+            <Icon name={tool.icon} class="size-5" />
+          </div>
+          <div class="relative">
+            <h3 class="text-lg font-semibold tracking-tight">{tool.title}</h3>
+            <p class="mt-1 text-sm text-[var(--color-fg-muted)]">
+              {tool.description}
+            </p>
+          </div>
+          <div class="relative mt-auto inline-flex items-center gap-1 text-sm font-medium text-[var(--color-accent)]">
+            {t("tools.launchTool")}
+            <Icon name="arrow" class="size-4 transition group-hover:translate-x-0.5" />
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</section>
+
+<section class="border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)]">
+  <div class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="mb-8 text-2xl font-semibold tracking-tight md:text-3xl">
+      {t("learning.title")}
+    </h2>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {
+        learningPaths.map((path) => (
+          <article class="flex flex-col gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+              <Icon name={path.icon} class="size-5" />
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold tracking-tight">{path.title}</h3>
+              <p class="mt-1 text-sm text-[var(--color-fg-muted)]">
+                {path.description}
+              </p>
+            </div>
+            <ul class="space-y-2 text-sm">
+              {path.features.map((feature) => (
+                <li class="flex items-center gap-2 text-[var(--color-fg-muted)]">
+                  <Icon name="arrow" class="size-3.5 text-[var(--color-accent)]" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            <a
+              href={path.href}
+              class="mt-auto inline-flex items-center gap-1 text-sm font-medium text-[var(--color-accent)] hover:underline"
+            >
+              {t("learning.explore")} {path.title}
+              <Icon name="arrow" class="size-4" />
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

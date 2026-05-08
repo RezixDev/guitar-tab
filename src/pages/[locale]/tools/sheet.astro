@@ -1,0 +1,15 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SheetApp from "@features/sheet/SheetApp";
+import { LOCALES, type Locale } from "@shared/types/i18n";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout locale={locale} title="Sheet Music — Guitar Lab">
+  <SheetApp client:only="react" />
+</BaseLayout>
