@@ -1,0 +1,15 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PracticeApp from "@features/practice/PracticeApp";
+import { LOCALES, type Locale } from "@shared/types/i18n";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout locale={locale} title="Practice — Guitar Lab">
+  <PracticeApp client:load />
+</BaseLayout>

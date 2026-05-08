@@ -1,0 +1,111 @@
+---
+import type { Locale } from "@shared/types/i18n";
+import { getMessages } from "@shared/i18n/getMessages";
+import { makeTranslator } from "@shared/i18n/translate";
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+const messages = getMessages(locale);
+const t = makeTranslator(messages);
+
+const base = `/${locale}`;
+const tools = [
+  { key: "fretboard", href: `${base}/tools/fretboard` },
+  { key: "scales", href: `${base}/tools/scales` },
+  { key: "chords", href: `${base}/tools/chords` },
+  { key: "tuner", href: `${base}/tools/tuner` },
+  { key: "practice", href: `${base}/tools/practice` },
+] as const;
+
+const sections = [
+  {
+    label: "Overview",
+    links: [{ label: "Home", href: base }],
+  },
+  {
+    label: t("home.tools.title") || "Tools",
+    links: [
+      ...tools.map((tool) => ({
+        label: t(`home.tools.${tool.key}.title`),
+        href: tool.href,
+      })),
+      { label: "Sheet Composer", href: `${base}/tools/sheet` },
+    ],
+  },
+  {
+    label: t("home.learning.title") || "Learning",
+    links: [{ label: t("learn.title"), href: `${base}/learn` }],
+  },
+];
+
+const isActive = (href: string) => {
+  if (href === base) return pathname === base || pathname === `${base}/`;
+  return pathname === href || pathname.startsWith(`${href}/`);
+};
+---
+
+<aside
+  class="hidden md:flex w-64 shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg-elevated)]"
+>
+  <div
+    class="flex items-center gap-2 px-6 py-5 border-b border-[var(--color-border)]"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="text-[var(--color-accent)]"
+      aria-hidden="true"
+    >
+      <path d="M11.9 12.1 4 20" />
+      <path d="m20 4-7.9 7.9" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M14 6V2l4 4h-4Z" />
+    </svg>
+    <a href={base} class="text-lg font-semibold tracking-tight"
+      >Guitar Lab</a
+    >
+  </div>
+
+  <nav class="flex flex-col gap-6 overflow-y-auto px-3 py-5 scrollbar-thin">
+    {
+      sections.map((section) => (
+        <div>
+          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]">
+            {section.label}
+          </p>
+          <ul class="flex flex-col gap-1">
+            {section.links.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <li>
+                  <a
+                    href={link.href}
+                    class:list={[
+                      "flex rounded-md px-3 py-2 text-sm transition",
+                      active
+                        ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)] font-medium"
+                        : "text-[var(--color-fg)] hover:bg-[var(--color-accent-soft)]",
+                    ]}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    }
+  </nav>
+</aside>

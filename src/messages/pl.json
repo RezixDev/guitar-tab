@@ -228,6 +228,12 @@
       "remainingPosition": "Prawidłowo! Pozostała 1 pozycja.",
       "tryAgainAll": "Spróbuj ponownie! Znajdź wszystkie pozycje tej nuty.",
       "correct": "Prawidłowo!"
+    },
+    "positions": {
+      "found": "Znalezione pozycje",
+      "remainingMany": "Pozostało {count} pozycji",
+      "remainingOne": "Pozostała 1 pozycja",
+      "allFound": "Znaleziono wszystkie pozycje! Naciśnij Enter lub kliknij Następna Nuta, aby kontynuować"
     }
   }
 }

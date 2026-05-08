@@ -189,6 +189,12 @@
       "remainingPosition": "Correct! 1 position remaining.",
       "tryAgainAll": "Try again! Find all positions of this note.",
       "correct": "Correct!"
+    },
+    "positions": {
+      "found": "Positions Found",
+      "remainingMany": "{count} positions remaining",
+      "remainingOne": "1 position remaining",
+      "allFound": "All positions found! Press Enter or click Next Note to continue"
     }
   }
 }

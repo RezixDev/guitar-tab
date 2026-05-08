@@ -1,0 +1,17 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import LearnApp from "@features/learn/LearnApp";
+import { LOCALES, type Locale } from "@shared/types/i18n";
+import { getMessages } from "@shared/i18n/getMessages";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const messages = getMessages(locale);
+---
+
+<BaseLayout locale={locale} title="Learn — Guitar Lab">
+  <LearnApp client:load locale={locale} messages={messages} />
+</BaseLayout>
