@@ -6,7 +6,7 @@ import { ChordList } from "./ChordList";
 export function ChordTabs({
   filteredStandardChords,
   filteredExtendedChords,
-  handleChordChange,
+  handlePresetChange,
 }: ChordTabsProps) {
   return (
     <Tabs defaultValue="standard" className="mt-4">
@@ -17,12 +17,12 @@ export function ChordTabs({
 
       <TabsContent value="standard">
         <ScrollArea className="h-[420px] w-full pr-3">
-          <ChordList chords={filteredStandardChords} onChordSelect={handleChordChange} />
+          <ChordList presets={filteredStandardChords} onPresetSelect={handlePresetChange} />
         </ScrollArea>
       </TabsContent>
       <TabsContent value="extended">
         <ScrollArea className="h-[420px] w-full pr-3">
-          <ChordList chords={filteredExtendedChords} onChordSelect={handleChordChange} />
+          <ChordList presets={filteredExtendedChords} onPresetSelect={handlePresetChange} />
         </ScrollArea>
       </TabsContent>
     </Tabs>

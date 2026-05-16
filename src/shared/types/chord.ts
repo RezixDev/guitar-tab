@@ -12,6 +12,35 @@ export type Chord = {
   notes: ChordNote[];
 };
 
+export type ChordRootNote =
+  | "C"
+  | "C#"
+  | "D"
+  | "D#"
+  | "E"
+  | "F"
+  | "F#"
+  | "G"
+  | "G#"
+  | "A"
+  | "A#"
+  | "B";
+
+export type ChordQualityKey = "major" | "minor" | "7" | "maj7" | "m7";
+
+export type ChordDefinition = {
+  root: ChordRootNote;
+  quality: ChordQualityKey;
+  displayName?: string;
+  defaultStartingFret?: number;
+};
+
+export type ChordPreset = {
+  id: string;
+  category: "standard" | "extended";
+  definition: ChordDefinition;
+};
+
 export type ChordTheme = {
   name: string;
   backgroundColor: string;
@@ -40,9 +69,9 @@ export type ChordSVGProps = {
 };
 
 export type ChordTabsProps = {
-  filteredStandardChords: Chord[];
-  filteredExtendedChords: Chord[];
-  handleChordChange: (chord: Chord) => void;
+  filteredStandardChords: ChordPreset[];
+  filteredExtendedChords: ChordPreset[];
+  handlePresetChange: (preset: ChordPreset) => void;
 };
 
 export type ChordModalProps = {

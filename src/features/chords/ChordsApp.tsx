@@ -12,10 +12,11 @@ import { useChordState } from "./hooks/useChordState";
 export default function ChordsApp() {
   const {
     currentChord,
+    startingFret,
     searchTerm,
     filteredStandardChords,
     filteredExtendedChords,
-    handleChordChange,
+    handlePresetChange,
     handleNoteUpdate,
     handleNameChange,
     handleStartingFretChange,
@@ -60,7 +61,7 @@ export default function ChordsApp() {
             <ChordTabs
               filteredStandardChords={filteredStandardChords}
               filteredExtendedChords={filteredExtendedChords}
-              handleChordChange={handleChordChange}
+              handlePresetChange={handlePresetChange}
             />
           </CardContent>
         </Card>
@@ -85,6 +86,7 @@ export default function ChordsApp() {
           <CardContent>
             <ChordDetails
               chord={currentChord}
+              startingFret={startingFret}
               onNameChange={handleNameChange}
               onStartingFretChange={handleStartingFretChange}
               onNoteChange={handleNoteChange}

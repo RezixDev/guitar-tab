@@ -7,6 +7,7 @@ import { ThemeSelector } from "./ThemeSelector";
 
 type ChordDetailsProps = {
   chord: Chord;
+  startingFret: number;
   onNameChange: (value: string) => void;
   onStartingFretChange: (value: number) => void;
   onNoteChange: (index: number, field: keyof ChordNote, value: string) => void;
@@ -16,6 +17,7 @@ type ChordDetailsProps = {
 
 export function ChordDetails({
   chord,
+  startingFret,
   onNameChange,
   onStartingFretChange,
   onNoteChange,
@@ -38,12 +40,12 @@ export function ChordDetails({
           <Input
             type="number"
             id="starting-fret"
-            min={1}
-            max={27}
-            value={chord.startingFret}
+            min={0}
+            max={22}
+            value={startingFret}
             onChange={(e) => {
               const val = Number(e.target.value);
-              const clamped = Math.min(27, Math.max(1, val));
+              const clamped = Math.min(22, Math.max(0, val));
               onStartingFretChange(clamped);
             }}
           />
