@@ -54,50 +54,62 @@ function ChordFinder() {
       <CardContent className="space-y-6">
         <p className="text-sm text-[var(--color-fg-muted)]">
           Place notes on the fretboard the way you'd press them on your guitar.
-          Each string holds one note; click again to remove. Use the controls
-          below to mark a string as open or muted.
+          Each string holds one note; click again to remove. Use the string
+          panel on the left to mark a string as open (○) or muted (×).
         </p>
 
-        <div>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]">
-            Chord Suggestions
-          </h2>
-          <ChordMatches
-            matches={finder.matches}
-            selectedCount={finder.placedNotes.length}
-          />
+        <div className="grid gap-6 md:grid-cols-2">
+          <section
+            aria-labelledby="chord-suggestions-heading"
+            className="flex h-56 flex-col"
+          >
+            <h2
+              id="chord-suggestions-heading"
+              className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]"
+            >
+              Chord Suggestions
+            </h2>
+            <div className="flex-1 overflow-y-auto pr-1">
+              <ChordMatches
+                matches={finder.matches}
+                selectedCount={finder.placedNotes.length}
+              />
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="notes-heading"
+            className="flex h-56 flex-col"
+          >
+            <h2
+              id="notes-heading"
+              className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]"
+            >
+              Notes
+            </h2>
+            <p className="text-lg font-mono text-[var(--color-fg)]">
+              {notes.length === 0
+                ? "—"
+                : Array.from(new Set(notes)).join(" · ")}
+            </p>
+          </section>
         </div>
 
         <Separator />
 
-        <ChordFinderFretboard
-          tuning={finder.tuning}
-          selection={finder.selection}
-          onToggle={finder.toggleFret}
-          showNoteLabels={showLabels}
-        />
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]">
-              Strings
-            </h2>
-            <StringControls
-              tuning={finder.tuning}
-              selection={finder.selection}
-              onSetOpen={finder.setOpen}
-              onMute={finder.muteString}
-            />
-          </div>
-
-          <div>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]">
-              Notes
-            </h2>
-            <p className="text-sm font-mono text-[var(--color-fg)]">
-              {notes.length === 0 ? "—" : Array.from(new Set(notes)).join(" · ")}
-            </p>
-          </div>
+        <div className="grid gap-4 md:grid-cols-[12rem_1fr] md:items-start">
+          <StringControls
+            tuning={finder.tuning}
+            selection={finder.selection}
+            onSetOpen={finder.setOpen}
+            onMute={finder.muteString}
+          />
+          <ChordFinderFretboard
+            tuning={finder.tuning}
+            selection={finder.selection}
+            onToggle={finder.toggleFret}
+            showNoteLabels={showLabels}
+          />
         </div>
       </CardContent>
     </Card>
