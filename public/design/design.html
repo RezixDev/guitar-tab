@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar Lab – Design System</title>
+    <style>
+        /* ============================================
+           GUITAR LAB – DESIGN SYSTEM
+           Accessible · Multilingual · Light/Dark
+           ============================================ */
+
+        /* ----- CUSTOM PROPERTIES (TOKENS) ----- */
+        :root {
+            /* --- Light Mode (default) --- */
+            --color-bg-primary: #FDFCF8;
+            --color-bg-secondary: #F5F1E8;
+            --color-bg-tertiary: #EDE7D9;
+            --color-bg-card: #FFFFFF;
+            --color-bg-overlay: rgba(20, 18, 14, 0.6);
+            --color-bg-toolbar: #EAE3D4;
+            --color-bg-fretboard: #F7F3EB;
+            --color-bg-string: #E0D9C8;
+            --color-bg-input: #FFFFFF;
+            --color-bg-hover: #F0EBDF;
+            --color-bg-focus: #FFFBF2;
+            --color-bg-selected: #E8E0CD;
+            --color-bg-disabled: #E5E0D5;
+
+            --color-text-primary: #1E1B15;
+            --color-text-secondary: #4A463B;
+            --color-text-tertiary: #6E695D;
+            --color-text-on-primary: #FFFFFF;
+            --color-text-link: #7B5B3A;
+            --color-text-link-hover: #5C3E22;
+            --color-text-error: #B53B2C;
+            --color-text-success: #3D6B41;
+
+            --color-border-default: #D3CDBD;
+            --color-border-hover: #B8AE98;
+            --color-border-focus: #A68A5C;
+            --color-border-subtle: #E6E0D3;
+            --color-border-strong: #8C8270;
+
+            --color-accent-primary: #8B6F47;
+            --color-accent-primary-hover: #6F5635;
+            --color-accent-primary-active: #5A4428;
+            --color-accent-secondary: #C4A87C;
+            --color-accent-tertiary: #DDBF95;
+            --color-accent-warm: #D4894A;
+            --color-accent-cool: #5C7A6E;
+
+            --color-fret-marker: #D4894A;
+            --color-fret-nut: #4A463B;
+            --color-fret-wire: #8C8270;
+            --color-note-dot: #8B6F47;
+            --color-note-dot-root: #B5533A;
+            --color-string-line: #B8AE98;
+
+            --color-illumination: 0, 0, 0;
+            /* 0,0,0 for dark shadows in light mode */
+
+            --shadow-sm: 0 1px 3px rgba(var(--color-illumination), 0.08);
+            --shadow-md: 0 4px 12px rgba(var(--color-illumination), 0.1);
+            --shadow-lg: 0 8px 24px rgba(var(--color-illumination), 0.14);
+            --shadow-xl: 0 16px 40px rgba(var(--color-illumination), 0.18);
+            --shadow-fret: inset 0 2px 6px rgba(var(--color-illumination), 0.07);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+            --font-display: 'Instrument Serif', 'Palatino', Georgia, serif;
+
+            --text-scale-2xs: 0.6875rem;
+            /* 11px */
+            --text-scale-xs: 0.75rem;
+            /* 12px */
+            --text-scale-sm: 0.875rem;
+            /* 14px */
+            --text-scale-base: 1rem;
+            /* 16px */
+            --text-scale-md: 1.125rem;
+            /* 18px */
+            --text-scale-lg: 1.25rem;
+            /* 20px */
+            --text-scale-xl: 1.5rem;
+            /* 24px */
+            --text-scale-2xl: 1.875rem;
+            /* 30px */
+            --text-scale-3xl: 2.25rem;
+            /* 36px */
+            --text-scale-4xl: 3rem;
+            /* 48px */
+
+            --leading-tight: 1.15;
+            --leading-snug: 1.35;
+            --leading-normal: 1.6;
+            --leading-relaxed: 1.75;
+
+            --weight-regular: 400;
+            --weight-medium: 500;
+            --weight-semibold: 600;
+            --weight-bold: 700;
+
+            --space-2xs: 0.25rem;
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            --space-4xl: 6rem;
+
+            --duration-fast: 120ms;
+            --duration-normal: 220ms;
+            --duration-slow: 340ms;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
+
+            --focus-ring: 0 0 0 3px rgba(139, 111, 71, 0.45);
+            --focus-ring-offset: 3px;
+        }
+
+        /* ----- DARK MODE ----- */
+        [data-theme="dark"] {
+            --color-bg-primary: #171410;
+            --color-bg-secondary: #1F1C16;
+            --color-bg-tertiary: #29241D;
+            --color-bg-card: #211D17;
+            --color-bg-overlay: rgba(8, 7, 5, 0.75);
+            --color-bg-toolbar: #2C261E;
+            --color-bg-fretboard: #1E1B15;
+            --color-bg-string: #2F2A21;
+            --color-bg-input: #262219;
+            --color-bg-hover: #2E2920;
+            --color-bg-focus: #332D23;
+            --color-bg-selected: #352F25;
+            --color-bg-disabled: #25211A;
+
+            --color-text-primary: #EBE5D9;
+            --color-text-secondary: #BFB7A8;
+            --color-text-tertiary: #968E7E;
+            --color-text-on-primary: #171410;
+            --color-text-link: #DDBF95;
+            --color-text-link-hover: #F0D7B0;
+            --color-text-error: #F28B82;
+            --color-text-success: #81C784;
+
+            --color-border-default: #3E382E;
+            --color-border-hover: #5C5547;
+            --color-border-focus: #B39560;
+            --color-border-subtle: #332D23;
+            --color-border-strong: #6B6252;
+
+            --color-accent-primary: #C4A87C;
+            --color-accent-primary-hover: #DDBF95;
+            --color-accent-primary-active: #E9CFA0;
+            --color-accent-secondary: #8B6F47;
+            --color-accent-tertiary: #A6804C;
+            --color-accent-warm: #E09B5A;
+            --color-accent-cool: #7FA393;
+
+            --color-fret-marker: #E09B5A;
+            --color-fret-nut: #BFB7A8;
+            --color-fret-wire: #6B6252;
+            --color-note-dot: #DDBF95;
+            --color-note-dot-root: #E07B6A;
+            --color-string-line: #5C5547;
+
+            --color-illumination: 255, 255, 255;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+            --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.7);
+            --shadow-fret: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+            --focus-ring: 0 0 0 3px rgba(221, 191, 149, 0.5);
+        }
+
+        /* ----- RESET & BASE ----- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 100%;
+            scroll-behavior: smooth;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            font-size: var(--text-scale-base);
+            line-height: var(--leading-normal);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            transition: background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ----- FOCUS VISIBLE (ACCESSIBILITY) ----- */
+        :focus-visible {
+            outline: 2px solid var(--color-border-focus);
+            outline-offset: var(--focus-ring-offset);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: var(--space-md);
+            background: var(--color-accent-primary);
+            color: var(--color-text-on-primary);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-sm);
+            z-index: 1000;
+            font-weight: var(--weight-semibold);
+            text-decoration: none;
+            transition: top var(--duration-fast) var(--ease-out);
+        }
+        .skip-link:focus {
+            top: var(--space-md);
+        }
+
+        /* ----- LAYOUT ----- */
+        .ds-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .ds-section {
+            margin-bottom: var(--space-4xl);
+        }
+
+        .ds-section-header {
+            margin-bottom: var(--space-xl);
+            border-bottom: 2px solid var(--color-border-subtle);
+            padding-bottom: var(--space-md);
+        }
+
+        .ds-section-title {
+            font-family: var(--font-display);
+            font-size: var(--text-scale-3xl);
+            font-weight: var(--weight-bold);
+            color: var(--color-text-primary);
+            letter-spacing: -0.02em;
+            line-height: var(--leading-tight);
+        }
+        .ds-section-subtitle {
+            font-size: var(--text-scale-lg);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-xs);
+            font-weight: var(--weight-regular);
+        }
+
+        /* ----- GRID SYSTEMS ----- */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+        .grid-3col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-lg);
+        }
+        .grid-4col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: var(--space-md);
+        }
+
+        /* ----- CARDS ----- */
+        .ds-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out);
+        }
+        .ds-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-border-hover);
+        }
+
+        /* ----- SWATCHES ----- */
+        .swatch {
+            width: 100%;
+            aspect-ratio: 1.4 / 1;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-subtle);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: var(--space-sm);
+            font-size: var(--text-scale-xs);
+            font-weight: var(--weight-medium);
+            transition: transform var(--duration-fast) var(--ease-out);
+            position: relative;
+        }
+        .swatch:hover {
+            transform: scale(1.03);
+        }
+        .swatch-label {
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            width: fit-content;
+            font-family: var(--font-mono);
+            font-size: var(--text-scale-2xs);
+            margin-top: 2px;
+        }
+        .swatch-hex {
+            font-weight: var(--weight-bold);
+            font-size: var(--text-scale-xs);
+        }
+
+        /* ----- TYPOGRAPHY SHOWCASE ----- */
+        .type-sample {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--color-border-subtle);
+        }
+        .type-label {
+            font-family: var(--font-mono);
+            font-size: var(--text-scale-2xs);
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ----- BUTTONS ----- */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            align-items: center;
+            margin-top: var(--space-md);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: var(--text-scale-sm);
+            padding: 0.6em 1.4em;
+            border-radius: var(--radius-full);
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--duration-fast) var(--ease-out);
+            line-height: 1.3;
+            min-height: 44px;
+            /* accessible touch target */
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--color-accent-primary);
+            color: var(--color-text-on-primary);
+            border-color: var(--color-accent-primary);
+        }
+        .btn-primary:hover {
+            background: var(--color-accent-primary-hover);
+            border-color: var(--color-accent-primary-hover);
+        }
+        .btn-primary:active {
+            background: var(--color-accent-primary-active);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text-primary);
+            border-color: var(--color-border-default);
+        }
+        .btn-secondary:hover {
+            background: var(--color-bg-hover);
+            border-color: var(--color-border-hover);
+        }
+        .btn-ghost {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-link);
+        }
+        .btn-ghost:hover {
+            background: var(--color-bg-hover);
+            color: var(--color-text-link-hover);
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--color-border-focus);
+            outline-offset: 3px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            background: var(--color-bg-disabled);
+            border-color: var(--color-border-subtle);
+            color: var(--color-text-tertiary);
+        }
+
+        /* ----- FORM ELEMENTS ----- */
+        .ds-input {
+            font-family: var(--font-sans);
+            font-size: var(--text-scale-base);
+            padding: 0.7em 1em;
+            background: var(--color-bg-input);
+            border: 2px solid var(--color-border-default);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            width: 100%;
+            transition: border var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+        }
+        .ds-input:hover {
+            border-color: var(--color-border-hover);
+        }
+        .ds-input:focus {
+            border-color: var(--color-border-focus);
+            box-shadow: var(--focus-ring);
+            outline: none;
+        }
+
+        /* ----- TABS / SEGMENTED CONTROL ----- */
+        .segmented-control {
+            display: inline-flex;
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            gap: 2px;
+        }
+        .segmented-option {
+            padding: 0.5em 1.2em;
+            border-radius: var(--radius-full);
+            font-weight: var(--weight-medium);
+            font-size: var(--text-scale-sm);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        .segmented-option[aria-pressed="true"] {
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ----- FRETBOARD SIMULATION ----- */
+        .fretboard-demo {
+            background: var(--color-bg-fretboard);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid var(--color-border-subtle);
+            box-shadow: var(--shadow-fret);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-x: auto;
+        }
+        .fret-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .string-label {
+            width: 28px;
+            font-family: var(--font-mono);
+            font-size: var(--text-scale-xs);
+            color: var(--color-text-tertiary);
+            text-align: right;
+            padding-right: 6px;
+        }
+        .fret-cell {
+            width: 38px;
+            height: 38px;
+            border-right: 2px solid var(--color-fret-wire);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .fret-cell:first-child {
+            border-left: 4px solid var(--color-fret-nut);
+        }
+        .note-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--color-note-dot);
+            border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+        .note-dot.root {
+            background: var(--color-note-dot-root);
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ----- LANGUAGE SWITCHER ----- */
+        .lang-switcher {
+            display: flex;
+            gap: 4px;
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-full);
+            padding: 3px;
+        }
+        .lang-option {
+            padding: 0.4em 1em;
+            border-radius: var(--radius-full);
+            font-weight: var(--weight-semibold);
+            font-size: var(--text-scale-sm);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+        }
+        .lang-option[aria-current="true"] {
+            background: var(--color-accent-primary);
+            color: var(--color-text-on-primary);
+        }
+
+        /* ----- BADGE / TAG ----- */
+        .tag {
+            display: inline-block;
+            padding: 0.2em 0.8em;
+            border-radius: var(--radius-full);
+            font-size: var(--text-scale-xs);
+            font-weight: var(--weight-semibold);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            letter-spacing: 0.02em;
+        }
+
+        /* ----- TOOLTIP / ACCESSIBLE ----- */
+        .tooltip-trigger {
+            text-decoration: underline dotted;
+            cursor: help;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 600px) {
+            .ds-container {
+                padding: var(--space-md);
+            }
+            .ds-section-title {
+                font-size: var(--text-scale-2xl);
+            }
+        }
+
+        /* ----- THEME TOGGLE ----- */
+        .theme-toggle {
+            background: var(--color-bg-tertiary);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--color-text-primary);
+            transition: background var(--duration-fast);
+        }
+        .theme-toggle:hover {
+            background: var(--color-bg-hover);
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="ds-container" id="main-content">
+        <!-- HEADER -->
+        <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: var(--space-3xl);">
+            <div>
+                <h1 style="font-family: var(--font-display); font-size: var(--text-scale-4xl); font-weight: var(--weight-bold); letter-spacing: -0.03em;">Guitar Lab</h1>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-scale-lg);">Design System · Accessible · Multilingual</p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="lang-switcher" role="radiogroup" aria-label="Language selection">
+                    <button class="lang-option" role="radio" aria-checked="true" aria-current="true" tabindex="0">EN</button>
+                    <button class="lang-option" role="radio" aria-checked="false" tabindex="-1">ES</button>
+                    <button class="lang-option" role="radio" aria-checked="false" tabindex="-1">FR</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Toggle light/dark mode">☀️</button>
+            </div>
+        </header>
+
+        <!-- COLOR PALETTE -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">🎨 Color Palette</h2>
+                <p class="ds-section-subtitle">Light & Dark mode tokens — WCAG AA compliant contrast ratios.</p>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <span class="tag">Light Mode</span>
+                <span class="tag" style="background: var(--color-bg-tertiary);">Dark Mode (toggle ↗)</span>
+            </div>
+            <div class="color-grid">
+                <div class="swatch" style="background: var(--color-bg-primary);"><span class="swatch-label">bg-primary</span></div>
+                <div class="swatch" style="background: var(--color-bg-secondary);"><span class="swatch-label">bg-secondary</span></div>
+                <div class="swatch" style="background: var(--color-bg-card);"><span class="swatch-label">bg-card</span></div>
+                <div class="swatch" style="background: var(--color-bg-fretboard);"><span class="swatch-label">bg-fretboard</span></div>
+                <div class="swatch" style="background: var(--color-accent-primary);"><span class="swatch-label">accent-primary</span></div>
+                <div class="swatch" style="background: var(--color-accent-secondary);"><span class="swatch-label">accent-secondary</span></div>
+                <div class="swatch" style="background: var(--color-text-primary);"><span class="swatch-label" style="color:#fff;">text-primary</span></div>
+                <div class="swatch" style="background: var(--color-text-secondary);"><span class="swatch-label">text-secondary</span></div>
+                <div class="swatch" style="background: var(--color-border-default);"><span class="swatch-label">border-default</span></div>
+                <div class="swatch" style="background: var(--color-note-dot-root);"><span class="swatch-label">note-root</span></div>
+            </div>
+        </section>
+
+        <!-- TYPOGRAPHY -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">🔤 Typography</h2>
+                <p class="ds-section-subtitle">Inter (UI) + Instrument Serif (display) + JetBrains Mono (code/tabs)</p>
+            </div>
+            <div class="type-sample">
+                <span class="type-label">Display · Instrument Serif</span>
+                <span style="font-family: var(--font-display); font-size: var(--text-scale-3xl);">Master the Guitar</span>
+            </div>
+            <div class="type-sample">
+                <span class="type-label">Heading · Inter SemiBold</span>
+                <span style="font-weight: var(--weight-semibold); font-size: var(--text-scale-xl);">Fretboard Trainer</span>
+            </div>
+            <div class="type-sample">
+                <span class="type-label">Body · Inter Regular</span>
+                <span>Learn, practice, and improve your guitar playing with our interactive tools.</span>
+            </div>
+            <div class="type-sample">
+                <span class="type-label">Mono · JetBrains Mono</span>
+                <span style="font-family: var(--font-mono);">E2 A2 E3 A3 C#4 E4</span>
+            </div>
+            <div style="margin-top:1rem;">
+                <span class="tag">Multilingual support: English · Español · Français — All weights include Latin Extended glyphs.</span>
+            </div>
+        </section>
+
+        <!-- BUTTONS & STATES -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">🧩 Buttons & Interactive States</h2>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary">Get Started</button>
+                <button class="btn btn-secondary">Explore Tools</button>
+                <button class="btn btn-ghost">Launch Tool →</button>
+                <button class="btn btn-primary" disabled>Disabled</button>
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                <div class="segmented-control" role="radiogroup" aria-label="Chord display style">
+                    <button class="segmented-option" role="radio" aria-checked="true" aria-pressed="true">Standard</button>
+                    <button class="segmented-option" role="radio" aria-checked="false">Extended</button>
+                    <button class="segmented-option" role="radio" aria-checked="false">Blueprint</button>
+                </div>
+                <input class="ds-input" style="max-width: 240px;" placeholder="Search chords..." aria-label="Search chords">
+            </div>
+        </section>
+
+        <!-- FRETBOARD & VISUAL TOOLS -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">🎸 Fretboard & Chord Visualization</h2>
+            </div>
+            <div class="grid-2col">
+                <div class="ds-card">
+                    <h3 style="font-weight: var(--weight-semibold); margin-bottom: 0.5rem;">A Major Chord <span class="tag">Fret 1</span></h3>
+                    <div class="fretboard-demo" aria-label="A Major chord diagram, 6 strings, 5 frets">
+                        <div class="fret-row"><span class="string-label">e</span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                        <div class="fret-row"><span class="string-label">B</span><span class="fret-cell"></span><span class="fret-cell"><span class="note-dot"></span></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                        <div class="fret-row"><span class="string-label">G</span><span class="fret-cell"></span><span class="fret-cell"><span class="note-dot"></span></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                        <div class="fret-row"><span class="string-label">D</span><span class="fret-cell"></span><span class="fret-cell"><span class="note-dot"></span></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                        <div class="fret-row"><span class="string-label">A</span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                        <div class="fret-row"><span class="string-label">E</span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span><span class="fret-cell"></span></div>
+                    </div>
+                    <p style="font-family: var(--font-mono); font-size: var(--text-scale-xs); margin-top: 0.5rem;">Notes: E2, A2, E3, A3, C#4, E4</p>
+                </div>
+                <div class="ds-card">
+                    <h3 style="font-weight: var(--weight-semibold); margin-bottom: 0.5rem;">Scale Viewer · E Minor Pentatonic</h3>
+                    <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:1rem;">
+                        <span class="tag">Root: E</span><span class="tag">Minor Pentatonic</span>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:0.8rem; font-family: var(--font-mono); font-size:var(--text-scale-xs);">
+                        <span>E</span><span>G</span><span>A</span><span>B</span><span>D</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TUNER & TOOLS -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">🎛️ Tuner & Interactive Tools</h2>
+            </div>
+            <div class="grid-3col">
+                <div class="ds-card">
+                    <h4 style="font-weight: var(--weight-semibold);">Guitar Tuner</h4>
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-scale-sm);">Standard (EADGBe)</p>
+                    <div style="display:flex; gap:6px; margin-top:0.8rem; flex-wrap:wrap;">
+                        <span class="tag">E2</span><span class="tag">A2</span><span class="tag">D3</span><span class="tag">G3</span><span class="tag">B3</span><span class="tag">E4</span>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:1rem;">Start Tuning</button>
+                </div>
+                <div class="ds-card">
+                    <h4 style="font-weight: var(--weight-semibold);">Daily Practice</h4>
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-scale-sm);">Generate tabs for daily exercises</p>
+                    <button class="btn btn-secondary" style="margin-top:1rem;">Launch Tool →</button>
+                </div>
+                <div class="ds-card">
+                    <h4 style="font-weight: var(--weight-semibold);">Sheet Composer</h4>
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-scale-sm);">Compose melodies on treble-clef staff.</p>
+                    <button class="btn btn-ghost" style="margin-top:1rem;">Launch Tool →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEARNING PATHS -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">📚 Learning Paths</h2>
+                <p class="ds-section-subtitle">Structured lessons, practice routines & music theory.</p>
+            </div>
+            <div class="grid-3col">
+                <div class="ds-card">
+                    <h3 style="font-weight: var(--weight-bold);">Learn</h3>
+                    <ul style="list-style: none; margin-top: 0.5rem; color: var(--color-text-secondary); font-size: var(--text-scale-sm);">
+                        <li>→ Beginner Fundamentals</li>
+                        <li>→ Intermediate Techniques</li>
+                        <li>→ Advanced Concepts</li>
+                    </ul>
+                    <button class="btn btn-ghost" style="margin-top:0.8rem;">Explore Learn →</button>
+                </div>
+                <div class="ds-card">
+                    <h3 style="font-weight: var(--weight-bold);">Practice</h3>
+                    <ul style="list-style: none; margin-top: 0.5rem; color: var(--color-text-secondary); font-size: var(--text-scale-sm);">
+                        <li>→ Technical Exercises</li>
+                        <li>→ Guided Sessions</li>
+                        <li>→ Progress Tracking</li>
+                    </ul>
+                    <button class="btn btn-ghost" style="margin-top:0.8rem;">Explore Practice →</button>
+                </div>
+                <div class="ds-card">
+                    <h3 style="font-weight: var(--weight-bold);">Music Theory</h3>
+                    <ul style="list-style: none; margin-top: 0.5rem; color: var(--color-text-secondary); font-size: var(--text-scale-sm);">
+                        <li>→ Circle of Fifths</li>
+                        <li>→ Chord Construction</li>
+                        <li>→ Harmony Concepts</li>
+                    </ul>
+                    <button class="btn btn-ghost" style="margin-top:0.8rem;">Explore Music Theory →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACCESSIBILITY NOTES -->
+        <section class="ds-section">
+            <div class="ds-section-header">
+                <h2 class="ds-section-title">♿ Accessibility & i18n Commitments</h2>
+            </div>
+            <div class="ds-card" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <p><strong>🌐 3 Languages:</strong> English, Español, Français — All labels, alt text, and aria attributes support language switching via JSON dictionaries.</p>
+                <p><strong>🎯 WCAG 2.1 AA:</strong> Minimum contrast ratio 4.5:1 for text, 3:1 for large text. Focus rings always visible.</p>
+                <p><strong>⌨️ Keyboard navigation:</strong> Full tab order, skip link, arrow key navigation for fretboard diagrams.</p>
+                <p><strong>📱 Responsive:</strong> Touch targets ≥ 44px, no horizontal scroll on mobile.</p>
+                <p><strong>🧠 Screen reader:</strong> Semantic HTML, live regions for tuner, chord names read as text.</p>
+                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                    <span class="tag">lang="en"</span>
+                    <span class="tag">aria-live="polite"</span>
+                    <span class="tag">role="application"</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        (function() {
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const langButtons = document.querySelectorAll('.lang-option');
+
+            // THEME TOGGLE
+            function setTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('guitar-lab-theme', theme);
+                if (themeToggle) {
+                    themeToggle.setAttribute('aria-label', theme === 'dark' ?
+                        'Switch to light mode' : 'Switch to dark mode');
+                    themeToggle.innerHTML = theme === 'dark' ? '🌙' : '☀️';
+                }
+            }
+
+            const savedTheme = localStorage.getItem('guitar-lab-theme') || 'light';
+            setTheme(savedTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const current = html.getAttribute('data-theme');
+                    setTheme(current === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            // LANGUAGE SWITCHER (demo)
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    langButtons.forEach(b => {
+                        b.setAttribute('aria-checked', 'false');
+                        b.removeAttribute('aria-current');
+                        b.tabIndex = -1;
+                    });
+                    this.setAttribute('aria-checked', 'true');
+                    this.setAttribute('aria-current', 'true');
+                    this.tabIndex = 0;
+                    // In production: trigger i18n library to change UI language
+                    console.log('Language switched to:', this.textContent);
+                });
+            });
+
+            // SEGMENTED CONTROL DEMO
+            document.querySelectorAll('.segmented-control').forEach(group => {
+                const options = group.querySelectorAll('.segmented-option');
+                options.forEach(opt => {
+                    opt.addEventListener('click', function() {
+                        options.forEach(o => {
+                            o.setAttribute('aria-checked', 'false');
+                            o.setAttribute('aria-pressed', 'false');
+                        });
+                        this.setAttribute('aria-checked', 'true');
+                        this.setAttribute('aria-pressed', 'true');
+                    });
+                });
+            });
+
+            console.log('🎸 Guitar Lab Design System ready — Light/Dark, EN/ES/FR, fully accessible.');
+        })();
+    </script>
+</body>
+</html>
