@@ -36,6 +36,10 @@
       "noteDetector": {
         "title": "Detektor nut na żywo",
         "description": "Zagraj nutę i zobacz jej nazwę na żywo z mikrofonu"
+      },
+      "chordDetector": {
+        "title": "Detektor akordów na żywo",
+        "description": "Zagraj akord i zobacz go na żywo z mikrofonu"
       }
     },
     "learning": {

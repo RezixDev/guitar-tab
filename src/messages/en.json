@@ -36,6 +36,10 @@
       "noteDetector": {
         "title": "Live Note Detector",
         "description": "Play a note and see its name live from your microphone"
+      },
+      "chordDetector": {
+        "title": "Live Chord Detector",
+        "description": "Strum a chord and see what you played live from your microphone"
       }
     },
     "learning": {

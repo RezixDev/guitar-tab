@@ -36,6 +36,10 @@
       "noteDetector": {
         "title": "Live Noten-Erkennung",
         "description": "Spiele eine Note und sieh ihren Namen live vom Mikrofon"
+      },
+      "chordDetector": {
+        "title": "Live Akkord-Erkennung",
+        "description": "Schlage einen Akkord an und sieh ihn live vom Mikrofon"
       }
     },
     "learning": {
