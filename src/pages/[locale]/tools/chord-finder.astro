@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import ChordFinderApp from "@features/chord-finder/ChordFinderApp";
 import { LOCALES, type Locale } from "@shared/types/i18n";
 import { getMessages } from "@shared/i18n/getMessages";
+import { makeTranslator } from "@shared/i18n/translate";
 
 export function getStaticPaths() {
   return LOCALES.map((locale) => ({ params: { locale } }));
@@ -10,8 +11,9 @@ export function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale };
 const messages = getMessages(locale);
+const t = makeTranslator(messages, "ChordFinder");
 ---
 
-<BaseLayout locale={locale} title="Chord Finder — Guitar Lab">
+<BaseLayout locale={locale} title={`${t("title")} — Guitar Lab`}>
   <ChordFinderApp client:load locale={locale} messages={messages} />
 </BaseLayout>

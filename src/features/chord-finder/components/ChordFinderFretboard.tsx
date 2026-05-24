@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslations } from "@shared/i18n/I18nProvider";
 import { Fretboard, FretboardMarker } from "@shared/music/Fretboard";
 import { calculateNote } from "@shared/music/notes";
 import {
@@ -8,11 +9,8 @@ import {
 } from "@shared/music/fretboardConstants";
 import type { Tuning } from "@shared/types/music";
 
-type StringFrets = Record<number, number | null>; // null = explicit open (fret 0 handled here too)
-
 type Props = {
   tuning: Tuning;
-  /** Map of stringIndex -> selected fret (0 = open). Missing key = muted. */
   selection: Record<number, number>;
   onToggle: (stringIndex: number, fret: number) => void;
   showNoteLabels: boolean;
@@ -36,6 +34,8 @@ export function ChordFinderFretboard({
   onToggle,
   showNoteLabels,
 }: Props) {
+  const t = useTranslations("ChordFinder");
+
   const cells = useMemo<Cell[]>(() => {
     const out: Cell[] = [];
     for (let s = 0; s < STRING_COUNT; s++) {
@@ -58,10 +58,14 @@ export function ChordFinderFretboard({
       height={300}
       flipped
       role="application"
-      ariaLabel="Chord finder fretboard"
+      ariaLabel={t("fretboard.ariaLabel")}
     >
       {cells.map((c) => {
         const isSelected = selection[c.string] === c.fret;
+        const params = { string: c.string + 1, fret: c.fret, note: c.note };
+        const aria = isSelected
+          ? t("fretboard.cellAriaSelected", params)
+          : t("fretboard.cellAria", params);
         return (
           <FretboardMarker
             key={`cell-${c.string}-${c.fret}`}
@@ -79,12 +83,10 @@ export function ChordFinderFretboard({
                 : NORMAL_COLORS[c.note] ?? "currentColor"
             }
             onClick={() => handleClick(c.string, c.fret)}
-            ariaLabel={`String ${c.string + 1}, Fret ${c.fret}, Note ${c.note}${isSelected ? " (selected)" : ""}`}
+            ariaLabel={aria}
           />
         );
       })}
     </Fretboard>
   );
 }
-
-export type { StringFrets };

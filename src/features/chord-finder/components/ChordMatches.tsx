@@ -1,3 +1,4 @@
+import { useTranslations } from "@shared/i18n/I18nProvider";
 import { Badge } from "@shared/ui/Badge";
 import type { ChordMatch } from "../lib/chordMatcher";
 
@@ -7,11 +8,12 @@ type Props = {
 };
 
 export function ChordMatches({ matches, selectedCount }: Props) {
+  const t = useTranslations("ChordFinder");
+
   if (selectedCount === 0) {
     return (
       <p className="text-sm text-[var(--color-fg-muted)]">
-        Click frets on the fretboard to place notes. The chord name will appear
-        here as soon as the notes form a recognizable chord.
+        {t("matches.empty")}
       </p>
     );
   }
@@ -19,7 +21,7 @@ export function ChordMatches({ matches, selectedCount }: Props) {
   if (matches.length === 0) {
     return (
       <p className="text-sm text-[var(--color-fg-muted)]">
-        No chord matches those notes. Try adding or removing a note.
+        {t("matches.noMatch")}
       </p>
     );
   }
@@ -30,13 +32,10 @@ export function ChordMatches({ matches, selectedCount }: Props) {
   return (
     <div className="space-y-4">
       {exact.length > 0 && (
-        <Section title="Matches" matches={exact} />
+        <Section title={t("matches.exact")} matches={exact} />
       )}
       {partial.length > 0 && (
-        <Section
-          title="Possible chords (missing some tones)"
-          matches={partial}
-        />
+        <Section title={t("matches.partial")} matches={partial} />
       )}
     </div>
   );

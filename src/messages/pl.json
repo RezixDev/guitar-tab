@@ -28,6 +28,10 @@
       "practice": {
         "title": "Codzienne ćwiczenia",
         "description": "Generuj tabulatury do codziennych ćwiczeń"
+      },
+      "chordFinder": {
+        "title": "Wyszukiwarka akordów",
+        "description": "Umieść nuty na gryfie i zidentyfikuj akord"
       }
     },
     "learning": {
@@ -234,6 +238,37 @@
       "remainingMany": "Pozostało {count} pozycji",
       "remainingOne": "Pozostała 1 pozycja",
       "allFound": "Znaleziono wszystkie pozycje! Naciśnij Enter lub kliknij Następna Nuta, aby kontynuować"
+    }
+  },
+  "ChordFinder": {
+    "title": "Wyszukiwarka akordów",
+    "intro": "Umieść nuty na gryfie tak, jakbyś chwytał je na gitarze. Każda struna zawiera jedną nutę; kliknij ponownie, aby usunąć. Użyj panelu strun po lewej, aby zaznaczyć strunę jako otwartą (○) lub stłumioną (×).",
+    "actions": {
+      "noteLabels": "Etykiety nut",
+      "clear": "Wyczyść"
+    },
+    "sections": {
+      "suggestions": "Sugestie akordów",
+      "notes": "Nuty"
+    },
+    "matches": {
+      "exact": "Dopasowania",
+      "partial": "Możliwe akordy (brakuje niektórych dźwięków)",
+      "empty": "Kliknij progi na gryfie, aby umieścić nuty. Nazwa akordu pojawi się tutaj, gdy tylko nuty utworzą rozpoznawalny akord.",
+      "noMatch": "Żaden akord nie pasuje do tych nut. Spróbuj dodać lub usunąć nutę."
+    },
+    "strings": {
+      "listLabel": "Sterowanie strunami",
+      "stateLabel": "Stan struny {string}",
+      "muteAria": "Wycisz strunę {string}",
+      "openAria": "Zagraj strunę {string} otwartą",
+      "muted": "wyciszona",
+      "open": "{string} (otwarta)"
+    },
+    "fretboard": {
+      "ariaLabel": "Gryf wyszukiwarki akordów",
+      "cellAria": "Struna {string}, Próg {fret}, Nuta {note}",
+      "cellAriaSelected": "Struna {string}, Próg {fret}, Nuta {note} (wybrana)"
     }
   }
 }

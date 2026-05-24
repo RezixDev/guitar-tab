@@ -28,6 +28,10 @@
       "practice": {
         "title": "Daily Practice",
         "description": "Generate tabs for daily practice exercises"
+      },
+      "chordFinder": {
+        "title": "Chord Finder",
+        "description": "Place notes on the fretboard and identify the chord"
       }
     },
     "learning": {
@@ -195,6 +199,37 @@
       "remainingMany": "{count} positions remaining",
       "remainingOne": "1 position remaining",
       "allFound": "All positions found! Press Enter or click Next Note to continue"
+    }
+  },
+  "ChordFinder": {
+    "title": "Chord Finder",
+    "intro": "Place notes on the fretboard the way you'd press them on your guitar. Each string holds one note; click again to remove. Use the string panel on the left to mark a string as open (○) or muted (×).",
+    "actions": {
+      "noteLabels": "Note labels",
+      "clear": "Clear"
+    },
+    "sections": {
+      "suggestions": "Chord Suggestions",
+      "notes": "Notes"
+    },
+    "matches": {
+      "exact": "Matches",
+      "partial": "Possible chords (missing some tones)",
+      "empty": "Click frets on the fretboard to place notes. The chord name will appear here as soon as the notes form a recognizable chord.",
+      "noMatch": "No chord matches those notes. Try adding or removing a note."
+    },
+    "strings": {
+      "listLabel": "String controls",
+      "stateLabel": "String {string} state",
+      "muteAria": "Mute string {string}",
+      "openAria": "Play string {string} open",
+      "muted": "muted",
+      "open": "{string} (open)"
+    },
+    "fretboard": {
+      "ariaLabel": "Chord finder fretboard",
+      "cellAria": "String {string}, Fret {fret}, Note {note}",
+      "cellAriaSelected": "String {string}, Fret {fret}, Note {note} (selected)"
     }
   }
 }

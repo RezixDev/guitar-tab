@@ -28,6 +28,10 @@
       "practice": {
         "title": "Tägliches Üben",
         "description": "Generiere Tabs für tägliche Übungen"
+      },
+      "chordFinder": {
+        "title": "Akkord-Finder",
+        "description": "Platziere Noten auf dem Griffbrett und finde den Akkord"
       }
     },
     "learning": {
@@ -195,6 +199,37 @@
       "remainingMany": "Noch {count} Positionen übrig",
       "remainingOne": "Noch 1 Position übrig",
       "allFound": "Alle Positionen gefunden! Drücke Enter oder klicke auf Nächste Note, um fortzufahren"
+    }
+  },
+  "ChordFinder": {
+    "title": "Akkord-Finder",
+    "intro": "Platziere Noten auf dem Griffbrett so, wie du sie auf deiner Gitarre greifen würdest. Jede Saite enthält eine Note; klicke erneut, um sie zu entfernen. Verwende die Saitenleiste links, um eine Saite als leer (○) oder stumm (×) zu markieren.",
+    "actions": {
+      "noteLabels": "Notenbeschriftung",
+      "clear": "Zurücksetzen"
+    },
+    "sections": {
+      "suggestions": "Akkord-Vorschläge",
+      "notes": "Noten"
+    },
+    "matches": {
+      "exact": "Treffer",
+      "partial": "Mögliche Akkorde (es fehlen einige Töne)",
+      "empty": "Klicke auf die Bünde am Griffbrett, um Noten zu platzieren. Der Akkordname erscheint hier, sobald die Noten einen erkennbaren Akkord bilden.",
+      "noMatch": "Kein Akkord passt zu diesen Noten. Versuche, eine Note hinzuzufügen oder zu entfernen."
+    },
+    "strings": {
+      "listLabel": "Saitensteuerung",
+      "stateLabel": "Zustand der Saite {string}",
+      "muteAria": "Saite {string} stummschalten",
+      "openAria": "Saite {string} leer spielen",
+      "muted": "stumm",
+      "open": "{string} (leer)"
+    },
+    "fretboard": {
+      "ariaLabel": "Akkord-Finder Griffbrett",
+      "cellAria": "Saite {string}, Bund {fret}, Note {note}",
+      "cellAriaSelected": "Saite {string}, Bund {fret}, Note {note} (ausgewählt)"
     }
   }
 }

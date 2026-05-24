@@ -1,3 +1,4 @@
+import { useTranslations } from "@shared/i18n/I18nProvider";
 import { calculateNote } from "@shared/music/notes";
 import { STRING_COUNT } from "@shared/music/fretboardConstants";
 import { cn } from "@shared/lib/cn";
@@ -12,21 +13,14 @@ type Props = {
 
 type State = "muted" | "open" | "fretted";
 
-/**
- * Per-string control column — one row per string in the same order as the
- * (flipped) fretboard. Each row is a labelled radio-like group with three
- * buttons: Mute (×), Open (○), and a readout of the currently played note.
- *
- * Designed to sit to the left of the fretboard so users can scan a single
- * vertical strip to see the whole hand position.
- */
 export function StringControls({ tuning, selection, onSetOpen, onMute }: Props) {
+  const t = useTranslations("ChordFinder");
   const rows = Array.from({ length: STRING_COUNT }, (_, i) => i);
 
   return (
     <ul
       role="list"
-      aria-label="String controls"
+      aria-label={t("strings.listLabel")}
       className="flex flex-col gap-2"
     >
       {rows.map((s) => {
@@ -42,7 +36,7 @@ export function StringControls({ tuning, selection, onSetOpen, onMute }: Props) 
             className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2 py-1.5"
           >
             <span
-              aria-label={`String ${s + 1} (${tuning[s]})`}
+              aria-hidden="true"
               className="w-6 text-center font-mono text-sm font-semibold text-[var(--color-fg)]"
             >
               {tuning[s]}
@@ -50,17 +44,17 @@ export function StringControls({ tuning, selection, onSetOpen, onMute }: Props) 
 
             <div
               role="radiogroup"
-              aria-label={`String ${tuning[s]} state`}
+              aria-label={t("strings.stateLabel", { string: tuning[s] })}
               className="flex items-center gap-1"
             >
               <StateButton
-                label={`Mute string ${tuning[s]}`}
+                label={t("strings.muteAria", { string: tuning[s] })}
                 symbol="×"
                 active={state === "muted"}
                 onClick={() => onMute(s)}
               />
               <StateButton
-                label={`Play string ${tuning[s]} open`}
+                label={t("strings.openAria", { string: tuning[s] })}
                 symbol="○"
                 active={state === "open"}
                 onClick={() => onSetOpen(s)}
@@ -77,9 +71,9 @@ export function StringControls({ tuning, selection, onSetOpen, onMute }: Props) 
               aria-live="polite"
             >
               {state === "muted"
-                ? "muted"
+                ? t("strings.muted")
                 : state === "open"
-                  ? `${tuning[s]} (open)`
+                  ? t("strings.open", { string: tuning[s] })
                   : `${note} · ${fret}`}
             </span>
           </li>
