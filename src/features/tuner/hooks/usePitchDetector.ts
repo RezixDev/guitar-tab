@@ -7,6 +7,16 @@ import {
   sensitivityToGain,
 } from "../lib/pitch";
 
+export type PitchDetectorOptions = {
+  ensureAudioContext: () => Promise<AudioContext | null>;
+  /** Sensitivity 1–10. Re-applies live to the input gain. */
+  sensitivity: number;
+  /** Min detectable frequency in Hz. Defaults to the tuner's lower bound. */
+  minFrequency?: number;
+  /** Max detectable frequency in Hz. Defaults to the tuner's upper bound. */
+  maxFrequency?: number;
+};
+
 type PitchDetector = (input: Float32Array) => number | null;
 
 const SMOOTHING_COUNT = 5;
@@ -25,18 +35,17 @@ type PitchDetectorState = {
   error: string | null;
 };
 
-type Options = {
-  ensureAudioContext: () => Promise<AudioContext | null>;
-  /** Sensitivity 1–10. Re-applies live to the input gain. */
-  sensitivity: number;
-};
-
 /**
  * Mic → gain → analyser pipeline driven by `requestAnimationFrame`. Each frame
  * computes RMS for the level meter, gates pitch detection on silence, and
  * smooths the YIN output over the last few frames.
  */
-export function usePitchDetector({ ensureAudioContext, sensitivity }: Options) {
+export function usePitchDetector({
+  ensureAudioContext,
+  sensitivity,
+  minFrequency = MIN_GUITAR_FREQUENCY,
+  maxFrequency = MAX_GUITAR_FREQUENCY,
+}: PitchDetectorOptions) {
   const [state, setState] = useState<PitchDetectorState>({
     frequency: null,
     signalLevel: 0,
@@ -143,7 +152,7 @@ export function usePitchDetector({ ensureAudioContext, sensitivity }: Options) {
       }
 
       const freq = detector(buffer);
-      if (freq && freq > MIN_GUITAR_FREQUENCY && freq < MAX_GUITAR_FREQUENCY) {
+      if (freq && freq > minFrequency && freq < maxFrequency) {
         const history = historyRef.current;
         history.push(freq);
         if (history.length > SMOOTHING_COUNT) history.shift();
@@ -157,7 +166,7 @@ export function usePitchDetector({ ensureAudioContext, sensitivity }: Options) {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-  }, [ensureAudioContext, sensitivity]);
+  }, [ensureAudioContext, sensitivity, minFrequency, maxFrequency]);
 
   // Live-update input gain when the user moves the sensitivity slider
   useEffect(() => {

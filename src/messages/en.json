@@ -32,6 +32,10 @@
       "chordFinder": {
         "title": "Chord Finder",
         "description": "Place notes on the fretboard and identify the chord"
+      },
+      "noteDetector": {
+        "title": "Live Note Detector",
+        "description": "Play a note and see its name live from your microphone"
       }
     },
     "learning": {

@@ -32,6 +32,10 @@
       "chordFinder": {
         "title": "Wyszukiwarka akordów",
         "description": "Umieść nuty na gryfie i zidentyfikuj akord"
+      },
+      "noteDetector": {
+        "title": "Detektor nut na żywo",
+        "description": "Zagraj nutę i zobacz jej nazwę na żywo z mikrofonu"
       }
     },
     "learning": {

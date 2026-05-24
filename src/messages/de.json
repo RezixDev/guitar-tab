@@ -32,6 +32,10 @@
       "chordFinder": {
         "title": "Akkord-Finder",
         "description": "Platziere Noten auf dem Griffbrett und finde den Akkord"
+      },
+      "noteDetector": {
+        "title": "Live Noten-Erkennung",
+        "description": "Spiele eine Note und sieh ihren Namen live vom Mikrofon"
       }
     },
     "learning": {
